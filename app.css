@@ -1,0 +1,140 @@
+:root{
+  --oat:#ECE4D5; --paper:#F7F2E9; --ink:#34302A; --slate:#2C3E4A;
+  --red:#A02020; --button:#A4532A; --button-press:#8C4522; --green:#4F5C3A;
+}
+*{box-sizing:border-box;}
+html{font-size:100%;}
+body{
+  margin:0; min-height:100vh; min-height:100dvh;
+  background:#DDD0BA; color:var(--ink);
+  font-family:'Nunito', system-ui, sans-serif; font-size:1.0625rem; line-height:1.5;
+  display:flex; justify-content:center;
+}
+.app{
+  width:100%; max-width:28rem; min-height:100vh; min-height:100dvh;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(168,94,103,0.30) 0%, rgba(168,94,103,0) 55%),
+    radial-gradient(circle at 100% 0%, rgba(224,162,78,0.34) 0%, rgba(224,162,78,0) 55%),
+    radial-gradient(circle at 0% 100%, rgba(224,162,78,0.34) 0%, rgba(224,162,78,0) 55%),
+    radial-gradient(circle at 100% 100%, rgba(168,94,103,0.30) 0%, rgba(168,94,103,0) 55%),
+    linear-gradient(160deg, #EFE6D6 0%, #E4D8C3 100%);
+  display:flex; flex-direction:column;
+}
+.screen{
+  flex:1; display:flex; flex-direction:column; gap:1.5rem;
+  padding:2rem 1.5rem 1.75rem;
+}
+.screen[hidden]{display:none;}
+
+.tagline{
+  margin:0; text-align:center;
+  font-family:'Caveat', cursive; font-weight:600; font-size:1.75rem; line-height:1.2; color:var(--slate);
+}
+.couch{display:block; width:100%; max-width:22rem; height:auto; margin:0 auto;}
+.couch.small{max-width:11rem;}
+
+h1{
+  margin:0; font-family:'Dangrek', system-ui, sans-serif; font-weight:400;
+  font-size:2rem; line-height:1.3; text-wrap:balance; text-align:center;
+}
+h1 .line{display:block;}
+h1 .opt{color:var(--red);}
+
+.body{margin:0; font-size:1.0625rem; text-align:center;}
+.hero{flex:1; display:flex; flex-direction:column; justify-content:center; gap:1.5rem;}
+.note{margin:0; font-family:'Caveat', cursive; font-weight:600; font-size:1.5rem; line-height:1.3; color:var(--green);}
+
+.actions{margin-top:auto; display:flex; flex-direction:column; gap:0.5rem;}
+.btn{
+  min-height:3.5rem; width:100%; border:none; border-radius:1.75rem;
+  background:var(--button); color:var(--paper);
+  font-family:inherit; font-size:1.1875rem; font-weight:700; cursor:pointer;
+}
+.btn:hover{background:var(--button-press);}
+.btn:active{background:var(--button-press);}
+.link{
+  min-height:2.75rem; width:100%; border:none; background:none; color:var(--ink);
+  font-family:inherit; font-size:1.0625rem; font-weight:700; text-decoration:underline; cursor:pointer;
+}
+.link:hover{color:var(--red);}
+:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0.1875rem;}
+
+.private{
+  margin:0; display:flex; align-items:center; justify-content:center; gap:0.5rem;
+  font-size:1rem; text-align:center;
+}
+.private svg{flex-shrink:0;}
+
+label{display:block; margin-bottom:0.75rem; text-align:center;}
+label.plain{margin:0;}
+.hint{display:block;}
+.back{
+  align-self:flex-start; width:2.75rem; height:2.75rem; margin:-0.75rem 0 -1rem -0.5rem;
+  border:none; background:none; color:var(--ink); border-radius:50%; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+.back:hover{color:var(--red);}
+#meet .hero, #you .hero{gap:1.25rem;}
+#meet .actions{margin-top:0.5rem;}
+input[type="text"]{
+  width:100%; min-height:3.25rem; padding:0.75rem 1rem;
+  border:0.125rem solid var(--ink); border-radius:0.75rem; background:#fff; color:var(--ink);
+  font-family:inherit; font-size:1.0625rem; text-align:center;
+}
+.confirm{margin:0; font-weight:700; font-size:1.1875rem;}
+.preview-note{
+  margin:0; padding:1rem; border-radius:0.75rem; background:var(--paper); font-size:1rem; text-align:center;
+}
+
+.center{text-align:center;}
+.sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;}
+#more .hero, #signup .hero, #key .hero, #login .hero{gap:1.25rem;}
+.choices{display:flex; flex-direction:column; gap:0.75rem;}
+.choice{
+  min-height:3.5rem; width:100%; padding:0.75rem 1rem; text-align:left;
+  border:0.125rem solid var(--ink); border-radius:0.875rem; background:var(--paper); color:var(--ink);
+  font-family:inherit; font-size:1.125rem; font-weight:700; cursor:pointer;
+}
+.choice:hover{background:#fff;}
+.choice span{display:inline-block; width:1.75rem;}
+.field{display:flex; flex-direction:column;}
+.flabel{font-weight:700; text-align:left; margin-bottom:0.375rem;}
+.field input, .pw input{text-align:left;}
+input[type="email"], input[type="password"]{
+  width:100%; min-height:3.25rem; padding:0.75rem 1rem;
+  border:0.125rem solid var(--ink); border-radius:0.75rem; background:#fff; color:var(--ink);
+  font-family:inherit; font-size:1.0625rem;
+}
+.pw{position:relative;}
+.pw input{padding-right:5rem;}
+.show{
+  position:absolute; right:0.25rem; top:50%; transform:translateY(-50%);
+  min-width:4rem; min-height:2.75rem; border:none; background:none; color:var(--ink);
+  font-family:inherit; font-size:1rem; font-weight:700; text-decoration:underline; cursor:pointer;
+}
+.hintline{margin:0.375rem 0 0; font-size:1rem;}
+.error{margin:0.375rem 0 0; font-size:1rem; font-weight:700; color:#8A1C1C;}
+.error:empty{display:none;}
+.error::before{content:"! "; }
+input[aria-invalid="true"]{border-color:#8A1C1C; border-width:0.1875rem;}
+.keybox{
+  padding:1.25rem 1rem; border-radius:0.875rem; background:var(--paper); border:0.125rem solid var(--ink);
+  display:flex; flex-direction:column; align-items:center; gap:0.75rem;
+}
+.keytext{
+  margin:0; font-family:ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size:1.25rem; font-weight:700; letter-spacing:0.05em; text-align:center; word-spacing:0.25em; line-height:1.6;
+}
+.copy{
+  min-height:2.75rem; padding:0.5rem 1.25rem; border:0.125rem solid var(--ink); border-radius:1.5rem;
+  background:none; color:var(--ink); font-family:inherit; font-size:1.0625rem; font-weight:700; cursor:pointer;
+}
+.copy:hover{background:#fff;}
+#copy-status:empty{display:none;}
+.check{display:flex; align-items:center; gap:0.75rem; min-height:2.75rem; margin:0; text-align:left; font-weight:700; cursor:pointer;}
+.check input{width:1.5rem; height:1.5rem; flex-shrink:0; accent-color:var(--button);}
+
+@media (prefers-reduced-motion: no-preference){
+  .screen:not([hidden]){animation:fade 0.25s ease;}
+  @keyframes fade{from{opacity:0;} to{opacity:1;}}
+}

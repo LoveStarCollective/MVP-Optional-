@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Optional</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dangrek&family=Caveat:wght@600&family=Nunito:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<main class="app">
+
+  <!-- PAGE 1 · WELCOME -->
+  <section class="screen" id="welcome" aria-labelledby="welcome-title">
+    <p class="tagline">no rules, just choices</p>
+    <div class="hero">
+      <img class="couch" src="couch.png" alt="Optional, written across a cozy couch with pillows and a blanket" width="502" height="315">
+      <h1 id="welcome-title">
+        <span class="line">Before you do that&hellip;</span>
+        <span class="line"><em>thing&hellip;</em></span>
+        <span class="line">consider your <span class="opt">options.</span></span>
+      </h1>
+    </div>
+    <div class="actions">
+      <button type="button" class="btn" data-go="meet">Let's go</button>
+      <button type="button" class="link" data-go="login">I already have an account</button>
+    </div>
+    <p class="private">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+      <span>Private. Only you can read your entries.</span>
+    </p>
+  </section>
+
+  <!-- PAGE 2 · MEET YOUR OPTIONAL FRIEND -->
+  <section class="screen" id="meet" aria-labelledby="meet-title" hidden>
+    <button type="button" class="back" data-go="welcome" aria-label="Back to the welcome page">
+      <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </button>
+    <form id="name-form" class="hero" novalidate>
+      <img class="couch small" src="couch.png" alt="" width="502" height="315">
+      <h1 id="meet-title">Hi, I'm your <span class="opt">Optional</span> Friend!</h1>
+      <p class="body">I&rsquo;m here to help you spot them cues, the little signals from your mind and body that let you know something&rsquo;s up. That way, you&rsquo;re the front seat driver of your choices.</p>
+      <div>
+        <label class="note" for="cheer-name">Name me Something Good <span class="hint">(or keep it as Bestie &#128521;!)</span></label>
+        <input type="text" id="cheer-name" name="cheer-name" placeholder="Bestie" autocomplete="off" maxlength="30">
+      </div>
+      <div class="actions">
+        <button type="submit" class="btn">Let's go</button>
+        <button type="button" class="link" id="skip-intro">Skip intro</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- YOUR NAME -->
+  <section class="screen" id="you" aria-labelledby="you-title" hidden>
+    <button type="button" class="back" data-go="meet" aria-label="Back to naming your Friend">
+      <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </button>
+    <form id="you-form" class="hero" novalidate>
+      <img class="couch small" src="couch.png" alt="" width="502" height="315">
+      <p class="note center"><span class="who">Bestie</span> is officially on your team.</p>
+      <h1 id="you-title" tabindex="-1"><label for="user-name" class="plain">And what should I call you?</label></h1>
+      <div>
+        <input type="text" id="user-name" name="user-name" autocomplete="nickname" maxlength="30" aria-describedby="you-hint">
+        <p class="hintline center" id="you-hint">A nickname works.</p>
+      </div>
+      <div class="actions">
+        <button type="submit" class="btn">Let's go</button>
+        <button type="button" class="link" id="skip-you">Skip</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- WHAT WOULD YOU LIKE MORE OF TODAY -->
+  <section class="screen" id="more" aria-labelledby="more-title" hidden>
+    <div class="hero">
+      <h1 id="more-title">What would you like more of today<span class="me"></span>?</h1>
+      <div class="choices">
+        <button type="button" class="choice" data-more="Calm &amp; Space"><span aria-hidden="true">&#127807;</span> Calm &amp; Space</button>
+        <button type="button" class="choice" data-more="Movement / Energy"><span aria-hidden="true">&#9889;</span> Movement / Energy</button>
+        <button type="button" class="choice" data-more="Connection / Community"><span aria-hidden="true">&#128101;</span> Connection / Community</button>
+        <button type="button" class="choice" data-more="Distraction &amp; Play"><span aria-hidden="true">&#127912;</span> Distraction &amp; Play</button>
+        <button type="button" class="choice" data-more="Open my mind"><span aria-hidden="true">&#10024;</span> Open my mind</button>
+      </div>
+      <form id="jot-form" novalidate>
+        <label class="sr-only" for="jot">Or jot down what's on your mind</label>
+        <input type="text" id="jot" placeholder="Or jot down what's on your mind..." autocomplete="off" maxlength="200">
+      </form>
+      <div class="actions">
+        <button type="button" class="link" id="maybe-later">Maybe later</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE 4a · CREATE ACCOUNT -->
+  <section class="screen" id="signup" aria-labelledby="signup-title" hidden>
+    <button type="button" class="back" data-go="you" aria-label="Back">
+      <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </button>
+    <form id="signup-form" class="hero" novalidate>
+      <h1 id="signup-title" tabindex="-1">Create your account</h1>
+      <p class="body">Create an account to save <span class="who">Bestie</span> and keep everything private.</p>
+      <div class="field">
+        <label class="flabel" for="su-email">Email</label>
+        <input type="email" id="su-email" autocomplete="email" inputmode="email" aria-describedby="su-email-err">
+        <p class="error" id="su-email-err" role="alert"></p>
+      </div>
+      <div class="field">
+        <label class="flabel" for="su-pass">Password</label>
+        <div class="pw">
+          <input type="password" id="su-pass" autocomplete="new-password" aria-describedby="su-pass-hint su-pass-err">
+          <button type="button" class="show" data-toggle="su-pass" aria-pressed="false">Show</button>
+        </div>
+        <p class="hintline" id="su-pass-hint">At least 10 characters. A few words strung together works well.</p>
+        <p class="error" id="su-pass-err" role="alert"></p>
+      </div>
+      <div class="actions">
+        <button type="submit" class="btn">Create account</button>
+        <button type="button" class="link" data-go="login">I already have an account</button>
+      </div>
+      <p class="preview-note">Preview only. Nothing you type here is saved or sent yet.</p>
+    </form>
+  </section>
+
+  <!-- PAGE 4b · RECOVERY KEY -->
+  <section class="screen" id="key" aria-labelledby="key-title" hidden>
+    <form id="key-form" class="hero" novalidate>
+      <h1 id="key-title" tabindex="-1">Save your recovery key</h1>
+      <p class="body">If you forget your password, this key is the only way back to your journal. We can't reset it for you, because we can't read your entries.</p>
+      <div class="keybox">
+        <p class="keytext" id="key-text" aria-label="Your recovery key">----</p>
+        <button type="button" class="copy" id="copy-key">Copy key</button>
+        <p class="hintline center" id="copy-status" role="status"></p>
+      </div>
+      <p class="body">Write it down or keep it in a password manager. Don't store it in this app.</p>
+      <div>
+        <label class="check" for="key-saved">
+          <input type="checkbox" id="key-saved" aria-describedby="key-err">
+          <span>I saved my recovery key somewhere safe</span>
+        </label>
+        <p class="error" id="key-err" role="alert"></p>
+      </div>
+      <div class="actions">
+        <button type="submit" class="btn">Continue</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- END OF PREVIEW -->
+  <section class="screen" id="done" aria-labelledby="done-title" hidden>
+    <div class="hero">
+      <img class="couch small" src="couch.png" alt="" width="502" height="315">
+      <h1 id="done-title" tabindex="-1">You're in<span class="me"></span>.</h1>
+      <p class="preview-note">This is where the preview ends. Home comes next, and it will open on what you picked. You chose <strong id="picked">nothing yet</strong>.</p>
+      <div class="actions">
+        <button type="button" class="link" data-go="welcome">Start over</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOG IN -->
+  <section class="screen" id="login" aria-labelledby="login-title" hidden>
+    <button type="button" class="back" data-go="welcome" aria-label="Back to the welcome page">
+      <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </button>
+    <form id="login-form" class="hero" novalidate>
+      <img class="couch small" src="couch.png" alt="" width="502" height="315">
+      <h1 id="login-title" tabindex="-1">Welcome back.</h1>
+      <div class="field">
+        <label class="flabel" for="li-email">Email</label>
+        <input type="email" id="li-email" autocomplete="email" inputmode="email" aria-describedby="li-err">
+      </div>
+      <div class="field">
+        <label class="flabel" for="li-pass">Password</label>
+        <div class="pw">
+          <input type="password" id="li-pass" autocomplete="current-password" aria-describedby="li-err">
+          <button type="button" class="show" data-toggle="li-pass" aria-pressed="false">Show</button>
+        </div>
+        <p class="error" id="li-err" role="alert"></p>
+      </div>
+      <div class="actions">
+        <button type="submit" class="btn">Log in</button>
+        <button type="button" class="link" id="forgot">Forgot password? Use your recovery key</button>
+        <button type="button" class="link" data-go="meet">Create an account</button>
+      </div>
+      <p class="preview-note" id="login-note" role="status">Preview only. Log in starts working once Supabase is connected.</p>
+    </form>
+  </section>
+
+</main>
+<script src="app.js"></script>
+</body>
+</html>
