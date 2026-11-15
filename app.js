@@ -1,12 +1,23 @@
+// =========================================================
+// OPTIONAL — page behavior
+// Screens are <section> elements. One shows at a time.
+// Accounts and encryption live in account.js (window.OptionalAccount).
+// =========================================================
 (function(){
-  var screens = ['welcome','meet','you','more','signup','key','done','login'];
-  var cheerName = 'Bestie';
-  var picked = '';
+  var screens = ['welcome','meet','you','signup','key','more','done','login'];
+  var needsLogin = ['key','more','done'];   // screens only a logged-in person can see
+
+  var friendName = 'Bestie';   // what the user named their Optional Friend
+  var nickname = '';           // what the app calls the user
+  var picked = '';             // what they chose on the "more of" page
+  var Account = window.OptionalAccount;
 
   function $(id){ return document.getElementById(id); }
 
+  // ---------- moving between screens ----------
   function show(id, moveFocus){
     if (screens.indexOf(id) === -1){ id = 'welcome'; }
+    if (needsLogin.indexOf(id) !== -1 && !Account.isLoggedIn()){ id = 'welcome'; }
     for (var i = 0; i < screens.length; i++){
       $(screens[i]).hidden = (screens[i] !== id);
     }
@@ -22,17 +33,20 @@
     else { location.hash = id; }
   }
 
-  function setName(name){
-    cheerName = name || 'Bestie';
+  // ---------- names ----------
+  function setFriend(name){
+    friendName = name || 'Bestie';
     var spots = document.querySelectorAll('.who');
-    for (var i = 0; i < spots.length; i++){ spots[i].textContent = cheerName; }
+    for (var i = 0; i < spots.length; i++){ spots[i].textContent = friendName; }
   }
 
-  function setMe(name){
+  function setNickname(name){
+    nickname = name || '';
     var spots = document.querySelectorAll('.me');
-    for (var i = 0; i < spots.length; i++){ spots[i].textContent = name ? ', ' + name : ''; }
+    for (var i = 0; i < spots.length; i++){ spots[i].textContent = nickname ? ', ' + nickname : ''; }
   }
 
+  // ---------- form helpers ----------
   function setError(inputId, errId, message){
     var input = inputId ? $(inputId) : null;
     $(errId).textContent = message;
@@ -46,25 +60,35 @@
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
   }
 
-  function makeKey(){
-    var letters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    var values = new Uint8Array(24);
-    (window.crypto || window.msCrypto).getRandomValues(values);
-    var out = '';
-    for (var i = 0; i < values.length; i++){
-      if (i > 0 && i % 4 === 0){ out += ' '; }
-      out += letters[values[i] % letters.length];
+  // Show a button as working, so nobody taps twice.
+  function setBusy(button, busy, busyText){
+    if (busy){
+      button.setAttribute('data-label', button.textContent);
+      button.textContent = busyText;
+      button.disabled = true;
+      button.setAttribute('aria-busy', 'true');
+    } else {
+      button.textContent = button.getAttribute('data-label') || button.textContent;
+      button.disabled = false;
+      button.removeAttribute('aria-busy');
     }
-    return out;
   }
 
-  // plain navigation buttons
+  function showRecoveryKey(key){
+    $('key-text').textContent = key;
+    $('key-saved').checked = false;
+    $('copy-status').textContent = '';
+    setError(null, 'key-err', '');
+    go('key');
+  }
+
+  // ---------- plain navigation buttons ----------
   var buttons = document.querySelectorAll('[data-go]');
   for (var b = 0; b < buttons.length; b++){
     buttons[b].addEventListener('click', function(){ go(this.getAttribute('data-go')); });
   }
 
-  // show / hide password
+  // ---------- show / hide password ----------
   var toggles = document.querySelectorAll('[data-toggle]');
   for (var t = 0; t < toggles.length; t++){
     toggles[t].addEventListener('click', function(){
@@ -76,51 +100,30 @@
     });
   }
 
-  // page 2: name the Friend
+  // ---------- name the Friend ----------
   $('name-form').addEventListener('submit', function(event){
     event.preventDefault();
-    setName($('cheer-name').value.trim());
+    setFriend($('cheer-name').value.trim());
     go('you');
   });
   $('skip-intro').addEventListener('click', function(){
-    setName('');
-    setMe('');
+    setFriend('');
+    setNickname('');
     go('signup');
   });
 
-  // your name
+  // ---------- your name ----------
   $('you-form').addEventListener('submit', function(event){
     event.preventDefault();
-    setMe($('user-name').value.trim());
+    setNickname($('user-name').value.trim());
     go('signup');
   });
   $('skip-you').addEventListener('click', function(){
-    setMe('');
+    setNickname('');
     go('signup');
   });
 
-  // what would you like more of
-  var choices = document.querySelectorAll('.choice');
-  for (var c = 0; c < choices.length; c++){
-    choices[c].addEventListener('click', function(){
-      picked = this.getAttribute('data-more');
-      finish();
-    });
-  }
-  $('jot-form').addEventListener('submit', function(event){
-    event.preventDefault();
-    var text = $('jot').value.trim();
-    if (text){ picked = text; }
-    finish();
-  });
-
-  function finish(){
-    $('picked').textContent = picked || 'nothing yet';
-    go('done');
-  }
-  $('maybe-later').addEventListener('click', function(){ picked = ''; finish(); });
-
-  // create account
+  // ---------- create account ----------
   $('signup-form').addEventListener('submit', function(event){
     event.preventDefault();
     var email = $('su-email').value.trim();
@@ -129,16 +132,27 @@
     var passOk = pass.length >= 10;
     setError('su-email', 'su-email-err', emailOk ? '' : 'Enter your email address, like name@example.com.');
     setError('su-pass', 'su-pass-err', passOk ? '' : 'Your password needs at least 10 characters.');
+    setError(null, 'su-form-err', '');
     if (!emailOk){ $('su-email').focus(); return; }
     if (!passOk){ $('su-pass').focus(); return; }
-    $('key-text').textContent = makeKey();
-    $('key-saved').checked = false;
-    $('copy-status').textContent = '';
-    setError(null, 'key-err', '');
-    go('key');
+
+    var button = this.querySelector('.btn');
+    setBusy(button, true, 'Creating your account…');
+    Account.signUp(email, pass, { friend: friendName, nick: nickname }).then(function(result){
+      setBusy(button, false);
+      $('su-pass').value = '';
+      if (result.needsConfirm){
+        setError(null, 'su-form-err', 'Check your email for a confirmation link, then log in.');
+        return;
+      }
+      showRecoveryKey(result.recoveryKey);
+    }, function(error){
+      setBusy(button, false);
+      setError(null, 'su-form-err', error.message);
+    });
   });
 
-  // page 4b: recovery key
+  // ---------- recovery key ----------
   $('copy-key').addEventListener('click', function(){
     var status = $('copy-status');
     var text = $('key-text').textContent;
@@ -159,27 +173,78 @@
       $('key-saved').focus();
       return;
     }
+    $('key-text').textContent = '----';
     picked = '';
     $('jot').value = '';
     go('more');
   });
 
-  // log in (preview)
+  // ---------- what would you like more of ----------
+  function finish(){
+    $('picked').textContent = picked || 'nothing yet';
+    go('done');
+  }
+  var choices = document.querySelectorAll('.choice');
+  for (var c = 0; c < choices.length; c++){
+    choices[c].addEventListener('click', function(){
+      picked = this.getAttribute('data-more');
+      finish();
+    });
+  }
+  $('jot-form').addEventListener('submit', function(event){
+    event.preventDefault();
+    var text = $('jot').value.trim();
+    if (text){ picked = text; }
+    finish();
+  });
+  $('maybe-later').addEventListener('click', function(){ picked = ''; finish(); });
+
+  // ---------- log in ----------
   $('login-form').addEventListener('submit', function(event){
     event.preventDefault();
-    var ok = looksLikeEmail($('li-email').value.trim()) && $('li-pass').value.length > 0;
-    setError(null, 'li-err', ok ? '' : 'Enter your email and password.');
-    if (ok){ $('login-note').textContent = 'That is all the preview does. Real log in arrives with Supabase.'; }
+    var email = $('li-email').value.trim();
+    var pass = $('li-pass').value;
+    if (!looksLikeEmail(email) || pass.length === 0){
+      setError(null, 'li-err', 'Enter your email and password.');
+      return;
+    }
+    setError(null, 'li-err', '');
+    $('login-note').textContent = '';
+
+    var button = this.querySelector('.btn');
+    setBusy(button, true, 'Logging in…');
+    Account.logIn(email, pass).then(function(result){
+      setBusy(button, false);
+      $('li-pass').value = '';
+      setFriend(result.settings.friend || '');
+      setNickname(result.settings.nick || '');
+      if (result.recoveryKey){ showRecoveryKey(result.recoveryKey); }
+      else { picked = ''; go('more'); }
+    }, function(error){
+      setBusy(button, false);
+      setError(null, 'li-err', error.message);
+    });
   });
   $('forgot').addEventListener('click', function(){
-    $('login-note').textContent = 'The recovery key screen for forgotten passwords gets built with Supabase.';
+    $('login-note').textContent = 'Resetting a password with your recovery key is the next piece being built.';
   });
 
+  // ---------- log out ----------
+  $('logout').addEventListener('click', function(){
+    Account.logOut().then(function(){
+      setFriend('');
+      setNickname('');
+      $('cheer-name').value = '';
+      $('user-name').value = '';
+      $('su-email').value = '';
+      $('li-email').value = '';
+      go('welcome');
+    });
+  });
+
+  // ---------- start ----------
   window.addEventListener('hashchange', function(){
     show(location.hash.replace('#','') || 'welcome', true);
   });
-
-  var start = location.hash.replace('#','') || 'welcome';
-  if (start === 'key' || start === 'more' || start === 'done'){ start = 'welcome'; }
-  show(start, false);
+  show(location.hash.replace('#','') || 'welcome', false);
 })();

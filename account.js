@@ -1,0 +1,247 @@
+// =========================================================
+// OPTIONAL — accounts and encryption
+//
+// How privacy works here:
+// 1. Each account gets one random "data key" made on the phone.
+// 2. Everything private is scrambled with that data key before it
+//    is sent to Supabase, so the database only ever holds gibberish.
+// 3. The data key itself is stored twice, scrambled two ways:
+//    once with a key made from the password, and once with a key
+//    made from the recovery key. Either one can unlock it.
+// 4. The password-made key and recovery key never leave the phone.
+// =========================================================
+(function(){
+  // These two values are safe to publish. The SECRET key never goes here.
+  var SUPABASE_URL = 'https://qpwdqtbeynzlaamkauum.supabase.co';
+  var SUPABASE_KEY = 'sb_publishable_LXXN_KBpW-l_e-_935nDEg_TzUgfrAy';
+
+  var ITERATIONS = 600000;   // how hard a password is stretched (PBKDF2)
+  var client = null;         // the Supabase connection
+  var dataKey = null;        // lives in memory only while logged in
+  var userId = null;
+
+  var encoder = new TextEncoder();
+  var decoder = new TextDecoder();
+
+  // ---------- small helpers ----------
+  function getClient(){
+    if (!client){
+      if (!window.supabase){ throw new Error('offline'); }
+      client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+        // Nothing about the login is kept on the phone after the page closes.
+        auth: { persistSession: false, autoRefreshToken: true, detectSessionInUrl: false }
+      });
+    }
+    return client;
+  }
+
+  function toBase64(bytes){
+    var view = new Uint8Array(bytes);
+    var text = '';
+    for (var i = 0; i < view.length; i++){ text += String.fromCharCode(view[i]); }
+    return btoa(text);
+  }
+
+  function fromBase64(text){
+    var raw = atob(text);
+    var bytes = new Uint8Array(raw.length);
+    for (var i = 0; i < raw.length; i++){ bytes[i] = raw.charCodeAt(i); }
+    return bytes;
+  }
+
+  function randomBytes(count){
+    var bytes = new Uint8Array(count);
+    window.crypto.getRandomValues(bytes);
+    return bytes;
+  }
+
+  // ---------- encryption ----------
+  // Turn a password or recovery key into an encryption key.
+  async function deriveKey(secret, salt, iterations){
+    var base = await crypto.subtle.importKey('raw', encoder.encode(secret), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: salt, iterations: iterations, hash: 'SHA-256' },
+      base,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['encrypt', 'decrypt']
+    );
+  }
+
+  // Scramble bytes. The result is "iv.ciphertext", both in base64.
+  async function encryptBytes(key, bytes){
+    var iv = randomBytes(12);
+    var scrambled = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, key, bytes);
+    return toBase64(iv) + '.' + toBase64(scrambled);
+  }
+
+  async function decryptBytes(key, packed){
+    var parts = packed.split('.');
+    var plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: fromBase64(parts[0]) }, key, fromBase64(parts[1]));
+    return new Uint8Array(plain);
+  }
+
+  async function encryptJSON(value){
+    return encryptBytes(dataKey, encoder.encode(JSON.stringify(value)));
+  }
+
+  async function decryptJSON(packed){
+    return JSON.parse(decoder.decode(await decryptBytes(dataKey, packed)));
+  }
+
+  // ---------- recovery key ----------
+  // 24 characters from 32 easy-to-read letters and numbers.
+  function makeRecoveryKey(){
+    var letters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    var values = randomBytes(24);
+    var out = '';
+    for (var i = 0; i < values.length; i++){
+      if (i > 0 && i % 4 === 0){ out += ' '; }
+      out += letters[values[i] % letters.length];
+    }
+    return out;
+  }
+
+  function cleanRecoveryKey(text){
+    return text.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+  }
+
+  // ---------- friendly error messages ----------
+  function friendly(error){
+    var code = (error && error.code) || '';
+    var message = ((error && error.message) || '').toLowerCase();
+    if (message === 'offline' || message.indexOf('failed to fetch') !== -1 || message.indexOf('network') !== -1){
+      return "Couldn't reach the server. Check your connection and try again.";
+    }
+    if (code === 'user_already_exists' || message.indexOf('already registered') !== -1){
+      return 'That email already has an account. Try logging in.';
+    }
+    if (code === 'invalid_credentials' || message.indexOf('invalid login') !== -1){
+      return "That email and password don't match.";
+    }
+    if (code === 'email_not_confirmed' || message.indexOf('not confirmed') !== -1){
+      return 'Check your email for a confirmation link, then log in.';
+    }
+    if (code === 'weak_password'){
+      return 'Please choose a stronger password.';
+    }
+    if (code.indexOf('rate_limit') !== -1 || message.indexOf('rate limit') !== -1){
+      return 'Too many tries. Wait a minute and try again.';
+    }
+    return 'Something went wrong. Please try again.';
+  }
+
+  function fail(error){
+    if (window.console){ console.error('Optional account error:', error); }
+    var wrapped = new Error(friendly(error));
+    wrapped.original = error;
+    return wrapped;
+  }
+
+  // ---------- account setup ----------
+  // Makes the data key, wraps it with the password and the recovery key,
+  // and saves the wrapped copies. Returns the recovery key to show once.
+  async function createProfile(password, settings){
+    var rawKey = randomBytes(32);
+    dataKey = await crypto.subtle.importKey('raw', rawKey, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']);
+
+    var passwordSalt = randomBytes(16);
+    var recoverySalt = randomBytes(16);
+    var recoveryKey = makeRecoveryKey();
+
+    var passwordKey = await deriveKey(password, passwordSalt, ITERATIONS);
+    var recoveryDerived = await deriveKey(cleanRecoveryKey(recoveryKey), recoverySalt, ITERATIONS);
+
+    var row = {
+      user_id: userId,
+      kdf_iterations: ITERATIONS,
+      password_salt: toBase64(passwordSalt),
+      key_by_password: await encryptBytes(passwordKey, rawKey),
+      recovery_salt: toBase64(recoverySalt),
+      key_by_recovery: await encryptBytes(recoveryDerived, rawKey),
+      settings: await encryptJSON(settings || {})
+    };
+    rawKey.fill(0);
+
+    var result = await getClient().from('profiles').insert(row);
+    if (result.error){ throw result.error; }
+    return recoveryKey;
+  }
+
+  // ---------- what the pages call ----------
+  var Account = {
+
+    // Create an account. settings = { friend: "...", nick: "..." }
+    // Resolves to { recoveryKey } or { needsConfirm: true }.
+    signUp: async function(email, password, settings){
+      try {
+        var result = await getClient().auth.signUp({ email: email, password: password });
+        if (result.error){ throw result.error; }
+        if (!result.data || !result.data.session){
+          return { needsConfirm: true };
+        }
+        userId = result.data.user.id;
+        var recoveryKey = await createProfile(password, settings);
+        return { recoveryKey: recoveryKey };
+      } catch (error){
+        throw fail(error);
+      }
+    },
+
+    // Log in and unlock the data key.
+    // Resolves to { settings } and, for a first log in, { recoveryKey } too.
+    logIn: async function(email, password){
+      try {
+        var result = await getClient().auth.signInWithPassword({ email: email, password: password });
+        if (result.error){ throw result.error; }
+        userId = result.data.user.id;
+
+        var found = await getClient().from('profiles').select('*').eq('user_id', userId).maybeSingle();
+        if (found.error){ throw found.error; }
+
+        // Account exists but was never set up (for example, email was confirmed later).
+        if (!found.data){
+          var recoveryKey = await createProfile(password, {});
+          return { settings: {}, recoveryKey: recoveryKey };
+        }
+
+        var row = found.data;
+        var passwordKey = await deriveKey(password, fromBase64(row.password_salt), row.kdf_iterations);
+        var rawKey = await decryptBytes(passwordKey, row.key_by_password);
+        dataKey = await crypto.subtle.importKey('raw', rawKey, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']);
+        rawKey.fill(0);
+
+        var settings = row.settings ? await decryptJSON(row.settings) : {};
+        return { settings: settings };
+      } catch (error){
+        dataKey = null;
+        throw fail(error);
+      }
+    },
+
+    // Save the Friend's name and the user's nickname, encrypted.
+    saveSettings: async function(settings){
+      try {
+        if (!dataKey){ throw new Error('locked'); }
+        var result = await getClient().from('profiles')
+          .update({ settings: await encryptJSON(settings), updated_at: new Date().toISOString() })
+          .eq('user_id', userId);
+        if (result.error){ throw result.error; }
+      } catch (error){
+        throw fail(error);
+      }
+    },
+
+    logOut: async function(){
+      dataKey = null;
+      userId = null;
+      try { await getClient().auth.signOut(); } catch (error){ /* already logged out */ }
+    },
+
+    isLoggedIn: function(){
+      return !!dataKey;
+    }
+  };
+
+  window.OptionalAccount = Account;
+})();

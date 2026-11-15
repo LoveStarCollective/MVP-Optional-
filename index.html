@@ -118,7 +118,7 @@
         <button type="submit" class="btn">Create account</button>
         <button type="button" class="link" data-go="login">I already have an account</button>
       </div>
-      <p class="preview-note">Preview only. Nothing you type here is saved or sent yet.</p>
+      <p class="error center" id="su-form-err" role="alert"></p>
     </form>
   </section>
 
@@ -151,9 +151,10 @@
     <div class="hero">
       <img class="couch small" src="couch.png" alt="" width="502" height="315">
       <h1 id="done-title" tabindex="-1">You're in<span class="me"></span>.</h1>
-      <p class="preview-note">This is where the preview ends. Home comes next, and it will open on what you picked. You chose <strong id="picked">nothing yet</strong>.</p>
+      <p class="preview-note">This is as far as the app goes for now. Home comes next, and it will open on what you picked. You chose <strong id="picked">nothing yet</strong>.</p>
       <div class="actions">
-        <button type="button" class="link" data-go="welcome">Start over</button>
+        <button type="button" class="link" data-go="more">Pick again</button>
+        <button type="button" class="link" id="logout">Log out</button>
       </div>
     </div>
   </section>
@@ -183,11 +184,13 @@
         <button type="button" class="link" id="forgot">Forgot password? Use your recovery key</button>
         <button type="button" class="link" data-go="meet">Create an account</button>
       </div>
-      <p class="preview-note" id="login-note" role="status">Preview only. Log in starts working once Supabase is connected.</p>
+      <p class="hintline center" id="login-note" role="status"></p>
     </form>
   </section>
 
 </main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="account.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

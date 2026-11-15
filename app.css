@@ -115,6 +115,9 @@ input[type="email"], input[type="password"]{
 .hintline{margin:0.375rem 0 0; font-size:1rem;}
 .error{margin:0.375rem 0 0; font-size:1rem; font-weight:700; color:#8A1C1C;}
 .error:empty{display:none;}
+.error.center{text-align:center;}
+.btn:disabled{opacity:0.7; cursor:progress;}
+#login-note:empty{display:none;}
 .error::before{content:"! "; }
 input[aria-invalid="true"]{border-color:#8A1C1C; border-width:0.1875rem;}
 .keybox{
