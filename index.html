@@ -75,16 +75,17 @@
   <section class="screen" id="more" aria-labelledby="more-title" hidden>
     <div class="hero">
       <h1 id="more-title">What would you like more of today<span class="me"></span>?</h1>
-      <div class="choices">
-        <button type="button" class="choice" data-more="Calm &amp; Space"><span aria-hidden="true">&#127807;</span> Calm &amp; Space</button>
-        <button type="button" class="choice" data-more="Movement / Energy"><span aria-hidden="true">&#9889;</span> Movement / Energy</button>
-        <button type="button" class="choice" data-more="Connection / Community"><span aria-hidden="true">&#128101;</span> Connection / Community</button>
-        <button type="button" class="choice" data-more="Distraction &amp; Play"><span aria-hidden="true">&#127912;</span> Distraction &amp; Play</button>
-        <button type="button" class="choice" data-more="Open my mind"><span aria-hidden="true">&#10024;</span> Open my mind</button>
+      <div class="strips">
+        <button type="button" class="choice strip pin-red tear0" data-more="Calm &amp; Space">Calm &amp; Space</button>
+        <button type="button" class="choice strip pin-blue tear1" data-more="Movement / Energy">Movement / Energy</button>
+        <button type="button" class="choice strip pin-green tear2" data-more="Connection / Community">Connection / Community</button>
+        <button type="button" class="choice strip pin-amber tear3" data-more="Distraction &amp; Play">Distraction &amp; Play</button>
+        <button type="button" class="choice strip pin-pink tear4" data-more="Open my mind">Open my mind</button>
       </div>
-      <form id="jot-form" novalidate>
+      <form id="jot-form" class="journalbox" novalidate>
         <label class="sr-only" for="jot">Or jot down what's on your mind</label>
-        <input type="text" id="jot" placeholder="Or jot down what's on your mind..." autocomplete="off" maxlength="200">
+        <textarea id="jot" rows="3" maxlength="2000" placeholder="Or jot down what's on your mind..."></textarea>
+        <button type="submit" class="send" aria-label="Send what you wrote"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg></button>
       </form>
       <div class="actions">
         <button type="button" class="link" id="maybe-later">Maybe later</button>
@@ -125,6 +126,7 @@
   <!-- PAGE 4b · RECOVERY KEY -->
   <section class="screen" id="key" aria-labelledby="key-title" hidden>
     <form id="key-form" class="hero" novalidate>
+      <p class="note center" id="key-ready">Your account is ready.</p>
       <h1 id="key-title" tabindex="-1">Save your recovery key</h1>
       <p class="body">If you forget your password, this key is the only way back to your journal. We can't reset it for you, because we can't read your entries.</p>
       <div class="keybox">
@@ -143,6 +145,97 @@
       <div class="actions">
         <button type="submit" class="btn">Continue</button>
       </div>
+    </form>
+  </section>
+
+  <!-- EMAIL CODE (used for sign-up and for password reset) -->
+  <section class="screen" id="code" aria-labelledby="code-title" hidden>
+    <form id="code-form" class="hero" novalidate>
+      <h1 id="code-title" tabindex="-1">Check your email</h1>
+      <p class="body">We sent a code to <strong id="code-email">your email</strong>. Enter it here.</p>
+      <div class="field">
+        <label class="flabel" for="code-input">Code from the email</label>
+        <input type="text" id="code-input" inputmode="numeric" autocomplete="one-time-code" maxlength="10" aria-describedby="code-err">
+        <p class="error" id="code-err" role="alert"></p>
+      </div>
+      <div class="actions">
+        <button type="submit" class="btn">Continue</button>
+        <button type="button" class="link" id="code-resend">Send a new code</button>
+        <button type="button" class="link" data-go="login">Back to log in</button>
+      </div>
+      <p class="hintline center" id="code-status" role="status"></p>
+    </form>
+  </section>
+
+  <!-- FORGOT PASSWORD · step 1 -->
+  <section class="screen" id="forgot" aria-labelledby="forgot-title" hidden>
+    <button type="button" class="back" data-go="login" aria-label="Back to log in"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></button>
+    <form id="forgot-form" class="hero" novalidate>
+      <h1 id="forgot-title" tabindex="-1">Forgot your password?</h1>
+      <p class="body">Enter your email and we'll send you a code. Have your recovery key ready.</p>
+      <div class="field">
+        <label class="flabel" for="fg-email">Email</label>
+        <input type="email" id="fg-email" autocomplete="email" inputmode="email" aria-describedby="fg-err">
+        <p class="error" id="fg-err" role="alert"></p>
+      </div>
+      <div class="actions">
+        <button type="submit" class="btn">Send code</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- FORGOT PASSWORD · step 3: recovery key and new password -->
+  <section class="screen" id="reset" aria-labelledby="reset-title" hidden>
+    <form id="reset-form" class="hero" novalidate>
+      <h1 id="reset-title" tabindex="-1">Set a new password</h1>
+      <p class="body">Enter your recovery key and choose a new password. Your entries stay safe.</p>
+      <div class="field">
+        <label class="flabel" for="rs-key">Recovery key</label>
+        <input type="text" id="rs-key" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="rs-key-err">
+        <p class="error" id="rs-key-err" role="alert"></p>
+      </div>
+      <div class="field">
+        <label class="flabel" for="rs-pass">New password</label>
+        <div class="pw">
+          <input type="password" id="rs-pass" autocomplete="new-password" aria-describedby="rs-pass-hint rs-pass-err">
+          <button type="button" class="show" data-toggle="rs-pass" aria-pressed="false">Show</button>
+        </div>
+        <p class="hintline" id="rs-pass-hint">At least 10 characters, and 15 or more is even better. A few random words strung together works well.</p>
+        <p class="error" id="rs-pass-err" role="alert"></p>
+      </div>
+      <div class="actions">
+        <button type="submit" class="btn">Save new password</button>
+        <button type="button" class="link" data-go="fresh">I lost my recovery key</button>
+      </div>
+      <p class="error center" id="rs-form-err" role="alert"></p>
+    </form>
+  </section>
+
+  <!-- FORGOT PASSWORD · no recovery key: start fresh -->
+  <section class="screen" id="fresh" aria-labelledby="fresh-title" hidden>
+    <form id="fresh-form" class="hero" novalidate>
+      <h1 id="fresh-title" tabindex="-1">Start fresh?</h1>
+      <p class="body">Without your recovery key, nobody can unlock your old entries, including us. You can keep your account and start over, but your old entries will be erased for good.</p>
+      <div class="field">
+        <label class="flabel" for="fr-pass">New password</label>
+        <div class="pw">
+          <input type="password" id="fr-pass" autocomplete="new-password" aria-describedby="fr-pass-err">
+          <button type="button" class="show" data-toggle="fr-pass" aria-pressed="false">Show</button>
+        </div>
+        <p class="error" id="fr-pass-err" role="alert"></p>
+      </div>
+      <div>
+        <label class="check" for="fr-sure">
+          <input type="checkbox" id="fr-sure" aria-describedby="fr-sure-err">
+          <span>I understand my old entries will be erased</span>
+        </label>
+        <p class="error" id="fr-sure-err" role="alert"></p>
+      </div>
+      <div class="actions">
+        <button type="submit" class="btn">Erase and start fresh</button>
+        <button type="button" class="link" data-go="reset">Go back, I have my key</button>
+      </div>
+      <p class="error center" id="fr-form-err" role="alert"></p>
     </form>
   </section>
 
@@ -181,10 +274,9 @@
       </div>
       <div class="actions">
         <button type="submit" class="btn">Log in</button>
-        <button type="button" class="link" id="forgot">Forgot password? Use your recovery key</button>
+        <button type="button" class="link" data-go="forgot">Forgot password?</button>
         <button type="button" class="link" data-go="meet">Create an account</button>
       </div>
-      <p class="hintline center" id="login-note" role="status"></p>
     </form>
   </section>
 

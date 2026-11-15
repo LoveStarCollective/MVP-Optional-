@@ -19,6 +19,10 @@
   var client = null;         // the Supabase connection
   var dataKey = null;        // lives in memory only while logged in
   var userId = null;
+  var pending = null;        // a sign-up waiting for its email code: { email, password, settings }
+  var resetEmail = null;     // a password reset in progress
+  var resetRow = null;       // that account's saved row, once the email code is accepted
+  var resetReady = false;
 
   var encoder = new TextEncoder();
   var decoder = new TextDecoder();
@@ -122,6 +126,21 @@
     if (code === 'email_not_confirmed' || message.indexOf('not confirmed') !== -1){
       return 'Check your email for a confirmation link, then log in.';
     }
+    if (message === 'wrong-key'){
+      return "That recovery key doesn't match. Check each character and try again.";
+    }
+    if (message === 'needs-reset'){
+      return 'Your password was changed but your entries were not unlocked. Tap "Forgot password?" and use your recovery key.';
+    }
+    if (message === 'no-pending'){
+      return 'That step timed out. Please start again.';
+    }
+    if (code === 'otp_expired' || message.indexOf('expired') !== -1 || message.indexOf('invalid') !== -1 && message.indexOf('token') !== -1){
+      return "That code didn't work. Check it, or ask for a new one.";
+    }
+    if (code === 'same_password'){
+      return "Choose a password you haven't used here before.";
+    }
     if (code === 'weak_password'){
       return 'Please choose a stronger password.';
     }
@@ -178,7 +197,8 @@
         var result = await getClient().auth.signUp({ email: email, password: password });
         if (result.error){ throw result.error; }
         if (!result.data || !result.data.session){
-          return { needsConfirm: true };
+          pending = { email: email, password: password, settings: settings || {} };
+          return { needsCode: true, email: email };
         }
         userId = result.data.user.id;
         var recoveryKey = await createProfile(password, settings);
@@ -193,6 +213,11 @@
     logIn: async function(email, password){
       try {
         var result = await getClient().auth.signInWithPassword({ email: email, password: password });
+        if (result.error && result.error.code === 'email_not_confirmed'){
+          pending = { email: email, password: password, settings: {} };
+          await getClient().auth.resend({ type: 'signup', email: email });
+          return { needsCode: true, email: email };
+        }
         if (result.error){ throw result.error; }
         userId = result.data.user.id;
 
@@ -207,7 +232,9 @@
 
         var row = found.data;
         var passwordKey = await deriveKey(password, fromBase64(row.password_salt), row.kdf_iterations);
-        var rawKey = await decryptBytes(passwordKey, row.key_by_password);
+        var rawKey;
+        try { rawKey = await decryptBytes(passwordKey, row.key_by_password); }
+        catch (locked){ throw new Error('needs-reset'); }
         dataKey = await crypto.subtle.importKey('raw', rawKey, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']);
         rawKey.fill(0);
 
@@ -231,6 +258,140 @@
         throw fail(error);
       }
     },
+
+    // Finish a sign-up by typing the code from the confirmation email.
+    confirmSignUp: async function(code){
+      try {
+        if (!pending){ throw new Error('no-pending'); }
+        var result = await getClient().auth.verifyOtp({ email: pending.email, token: code, type: 'email' });
+        if (result.error){ throw result.error; }
+        userId = result.data.user.id;
+
+        // If this account was already set up, just unlock it.
+        var found = await getClient().from('profiles').select('*').eq('user_id', userId).maybeSingle();
+        if (found.error){ throw found.error; }
+        if (found.data){
+          var key = await deriveKey(pending.password, fromBase64(found.data.password_salt), found.data.kdf_iterations);
+          var raw;
+          try { raw = await decryptBytes(key, found.data.key_by_password); }
+          catch (locked){ throw new Error('needs-reset'); }
+          dataKey = await crypto.subtle.importKey('raw', raw, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']);
+          raw.fill(0);
+          var saved = found.data.settings ? await decryptJSON(found.data.settings) : {};
+          pending = null;
+          return { settings: saved };
+        }
+
+        var settings = pending.settings;
+        var recoveryKey = await createProfile(pending.password, settings);
+        pending = null;
+        return { recoveryKey: recoveryKey, settings: settings };
+      } catch (error){
+        throw fail(error);
+      }
+    },
+
+    // Send the sign-up code again.
+    resendSignUp: async function(){
+      try {
+        if (!pending){ throw new Error('no-pending'); }
+        var result = await getClient().auth.resend({ type: 'signup', email: pending.email });
+        if (result.error){ throw result.error; }
+      } catch (error){
+        throw fail(error);
+      }
+    },
+
+    // ----- forgot password -----
+    // Step 1: email a code. (Supabase answers the same way whether or not the
+    // email has an account, so nobody can use this to check who is signed up.)
+    startReset: async function(email){
+      try {
+        resetEmail = email; resetRow = null; resetReady = false;
+        var result = await getClient().auth.resetPasswordForEmail(email);
+        if (result.error){ throw result.error; }
+      } catch (error){
+        throw fail(error);
+      }
+    },
+
+    // Step 2: the code from the email proves they own the address.
+    verifyResetCode: async function(code){
+      try {
+        if (!resetEmail){ throw new Error('no-pending'); }
+        var result = await getClient().auth.verifyOtp({ email: resetEmail, token: code, type: 'recovery' });
+        if (result.error){ throw result.error; }
+        userId = result.data.user.id;
+        var found = await getClient().from('profiles').select('*').eq('user_id', userId).maybeSingle();
+        if (found.error){ throw found.error; }
+        resetRow = found.data || null;
+        resetReady = true;
+        return { hasEntries: !!resetRow };
+      } catch (error){
+        throw fail(error);
+      }
+    },
+
+    // Step 3: the recovery key unlocks the data key, which is then
+    // locked again with the new password. Nothing is lost.
+    finishReset: async function(recoveryKey, newPassword){
+      try {
+        if (!resetReady || !resetRow){ throw new Error('no-pending'); }
+        var recoveryDerived = await deriveKey(cleanRecoveryKey(recoveryKey), fromBase64(resetRow.recovery_salt), resetRow.kdf_iterations);
+        var rawKey;
+        try { rawKey = await decryptBytes(recoveryDerived, resetRow.key_by_recovery); }
+        catch (wrong){ throw new Error('wrong-key'); }
+
+        var changed = await getClient().auth.updateUser({ password: newPassword });
+        if (changed.error){ rawKey.fill(0); throw changed.error; }
+
+        var passwordSalt = randomBytes(16);
+        var passwordKey = await deriveKey(newPassword, passwordSalt, ITERATIONS);
+        var wrapped = await encryptBytes(passwordKey, rawKey);
+        // The recovery copy is re-made too, so both copies use the same settings.
+        var recoverySalt = randomBytes(16);
+        var recoveryAgain = await deriveKey(cleanRecoveryKey(recoveryKey), recoverySalt, ITERATIONS);
+        var saved = await getClient().from('profiles').update({
+          kdf_iterations: ITERATIONS,
+          password_salt: toBase64(passwordSalt),
+          key_by_password: wrapped,
+          recovery_salt: toBase64(recoverySalt),
+          key_by_recovery: await encryptBytes(recoveryAgain, rawKey),
+          updated_at: new Date().toISOString()
+        }).eq('user_id', userId);
+        if (saved.error){ rawKey.fill(0); throw saved.error; }
+
+        dataKey = await crypto.subtle.importKey('raw', rawKey, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']);
+        rawKey.fill(0);
+        var settings = resetRow.settings ? await decryptJSON(resetRow.settings) : {};
+        resetEmail = null; resetRow = null; resetReady = false;
+        return { settings: settings };
+      } catch (error){
+        throw fail(error);
+      }
+    },
+
+    // Lost the recovery key too: keep the account, erase what can never be
+    // unlocked, and set up a brand new key.
+    startFresh: async function(newPassword){
+      try {
+        if (!resetReady){ throw new Error('no-pending'); }
+        var changed = await getClient().auth.updateUser({ password: newPassword });
+        if (changed.error){ throw changed.error; }
+        var wipedEntries = await getClient().from('entries').delete().eq('user_id', userId);
+        if (wipedEntries.error){ throw wipedEntries.error; }
+        var wipedProfile = await getClient().from('profiles').delete().eq('user_id', userId);
+        if (wipedProfile.error){ throw wipedProfile.error; }
+        var recoveryKey = await createProfile(newPassword, {});
+        resetEmail = null; resetRow = null; resetReady = false;
+        return { recoveryKey: recoveryKey };
+      } catch (error){
+        throw fail(error);
+      }
+    },
+
+    hasPendingCode: function(){ return !!pending; },
+    resetStage: function(){ return resetReady ? (resetRow ? 'ready' : 'empty') : (resetEmail ? 'code' : 'none'); },
 
     // Has this password shown up in a known data breach?
     // Only the first 5 characters of a scrambled (SHA-1) version are sent,
@@ -261,6 +422,7 @@
     logOut: async function(){
       dataKey = null;
       userId = null;
+      pending = null; resetEmail = null; resetRow = null; resetReady = false;
       try { await getClient().auth.signOut(); } catch (error){ /* already logged out */ }
     },
 

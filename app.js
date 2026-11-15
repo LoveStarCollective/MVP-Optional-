@@ -4,12 +4,13 @@
 // Accounts and encryption live in account.js (window.OptionalAccount).
 // =========================================================
 (function(){
-  var screens = ['welcome','meet','you','signup','key','more','done','login'];
+  var screens = ['welcome','meet','you','signup','code','key','more','done','login','forgot','reset','fresh'];
   var needsLogin = ['key','more','done'];   // screens only a logged-in person can see
 
   var friendName = 'Bestie';   // what the user named their Optional Friend
   var nickname = '';           // what the app calls the user
   var picked = '';             // what they chose on the "more of" page
+  var codeMode = '';           // 'signup' or 'reset' while the email-code screen is in use
   var Account = window.OptionalAccount;
 
   function $(id){ return document.getElementById(id); }
@@ -18,6 +19,9 @@
   function show(id, moveFocus){
     if (screens.indexOf(id) === -1){ id = 'welcome'; }
     if (needsLogin.indexOf(id) !== -1 && !Account.isLoggedIn()){ id = 'welcome'; }
+    if (id === 'code' && !codeMode){ id = 'login'; }
+    if ((id === 'reset' || id === 'fresh') && Account.resetStage() !== 'ready' && Account.resetStage() !== 'empty'){ id = 'forgot'; }
+    if (id === 'reset' && Account.resetStage() === 'empty'){ id = 'fresh'; }
     for (var i = 0; i < screens.length; i++){
       $(screens[i]).hidden = (screens[i] !== id);
     }
@@ -60,10 +64,18 @@
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
   }
 
+  // The password rules, in one place. Returns '' when the password is fine.
+  function passwordProblem(pass){
+    if (pass.length < 10){ return 'Your password needs at least 10 characters.'; }
+    if (pass.length > 72){ return 'Please keep your password to 72 characters or fewer.'; }
+    return '';
+  }
+  var LEAKED = "That password has shown up in a data breach, so it isn't safe to use. Please choose a different one.";
+
   // Show a button as working, so nobody taps twice.
   function setBusy(button, busy, busyText){
     if (busy){
-      button.setAttribute('data-label', button.textContent);
+      if (!button.getAttribute('data-label')){ button.setAttribute('data-label', button.textContent); }
       button.textContent = busyText;
       button.disabled = true;
       button.setAttribute('aria-busy', 'true');
@@ -74,12 +86,31 @@
     }
   }
 
-  function showRecoveryKey(key){
+  function showRecoveryKey(key, readyLine){
+    $('key-ready').textContent = readyLine;
     $('key-text').textContent = key;
     $('key-saved').checked = false;
     $('copy-status').textContent = '';
     setError(null, 'key-err', '');
     go('key');
+  }
+
+  function enterApp(settings){
+    setFriend((settings && settings.friend) || '');
+    setNickname((settings && settings.nick) || '');
+    picked = '';
+    $('jot').value = '';
+    go('more');
+  }
+
+  // Open the "check your email" screen for a sign-up or a password reset.
+  function openCode(mode, email){
+    codeMode = mode;
+    $('code-email').textContent = email;
+    $('code-input').value = '';
+    setError('code-input', 'code-err', '');
+    $('code-status').textContent = '';
+    go('code');
   }
 
   // ---------- plain navigation buttons ----------
@@ -129,9 +160,7 @@
     var email = $('su-email').value.trim();
     var pass = $('su-pass').value;
     var emailOk = looksLikeEmail(email);
-    var passError = '';
-    if (pass.length < 10){ passError = 'Your password needs at least 10 characters.'; }
-    else if (pass.length > 72){ passError = 'Please keep your password to 72 characters or fewer.'; }
+    var passError = passwordProblem(pass);
     setError('su-email', 'su-email-err', emailOk ? '' : 'Enter your email address, like name@example.com.');
     setError('su-pass', 'su-pass-err', passError);
     setError(null, 'su-form-err', '');
@@ -139,27 +168,77 @@
     if (passError){ $('su-pass').focus(); return; }
 
     var button = this.querySelector('.btn');
-    setBusy(button, true, 'Checking your password\u2026');
+    setBusy(button, true, 'Checking your password…');
     Account.isLeakedPassword(pass).then(function(leaked){
       if (leaked){
         setBusy(button, false);
-        setError('su-pass', 'su-pass-err', "That password has shown up in a data breach, so it isn't safe to use. Please choose a different one.");
+        setError('su-pass', 'su-pass-err', LEAKED);
         $('su-pass').focus();
         return;
       }
-      button.textContent = 'Creating your account\u2026';
+      button.textContent = 'Creating your account…';
       return Account.signUp(email, pass, { friend: friendName, nick: nickname }).then(function(result){
         setBusy(button, false);
         $('su-pass').value = '';
-        if (result.needsConfirm){
-          setError(null, 'su-form-err', 'Check your email for a confirmation link, then log in.');
-          return;
-        }
-        showRecoveryKey(result.recoveryKey);
+        if (result.needsCode){ openCode('signup', result.email); return; }
+        showRecoveryKey(result.recoveryKey, 'Your account is ready.');
       });
     }).catch(function(error){
       setBusy(button, false);
       setError(null, 'su-form-err', error.message);
+    });
+  });
+
+  // ---------- the code from the email ----------
+  $('code-form').addEventListener('submit', function(event){
+    event.preventDefault();
+    var code = $('code-input').value.replace(/\s/g, '');
+    if (!/^\d{6,10}$/.test(code)){
+      setError('code-input', 'code-err', 'Enter the code from the email. It is all numbers.');
+      $('code-input').focus();
+      return;
+    }
+    setError('code-input', 'code-err', '');
+    var button = this.querySelector('.btn');
+    setBusy(button, true, 'Checking…');
+
+    if (codeMode === 'reset'){
+      Account.verifyResetCode(code).then(function(result){
+        setBusy(button, false);
+        codeMode = '';
+        $('rs-key').value = ''; $('rs-pass').value = ''; $('fr-pass').value = ''; $('fr-sure').checked = false;
+        go(result.hasEntries ? 'reset' : 'fresh');
+      }, function(error){
+        setBusy(button, false);
+        setError('code-input', 'code-err', error.message);
+      });
+      return;
+    }
+
+    Account.confirmSignUp(code).then(function(result){
+      setBusy(button, false);
+      codeMode = '';
+      if (result.recoveryKey){
+        setFriend((result.settings && result.settings.friend) || friendName);
+        setNickname((result.settings && result.settings.nick) || nickname);
+        showRecoveryKey(result.recoveryKey, 'Your account is ready.');
+      } else {
+        enterApp(result.settings);
+      }
+    }, function(error){
+      setBusy(button, false);
+      setError('code-input', 'code-err', error.message);
+    });
+  });
+
+  $('code-resend').addEventListener('click', function(){
+    var status = $('code-status');
+    status.textContent = 'Sending…';
+    var again = codeMode === 'reset' ? Account.startReset($('code-email').textContent) : Account.resendSignUp();
+    again.then(function(){
+      status.textContent = 'Sent. It can take a minute to arrive.';
+    }, function(error){
+      status.textContent = error.message;
     });
   });
 
@@ -202,6 +281,7 @@
       finish();
     });
   }
+  // The Friend's box takes several lines, so Enter makes a new line and the arrow sends.
   $('jot-form').addEventListener('submit', function(event){
     event.preventDefault();
     var text = $('jot').value.trim();
@@ -220,24 +300,117 @@
       return;
     }
     setError(null, 'li-err', '');
-    $('login-note').textContent = '';
 
     var button = this.querySelector('.btn');
     setBusy(button, true, 'Logging in…');
     Account.logIn(email, pass).then(function(result){
       setBusy(button, false);
       $('li-pass').value = '';
-      setFriend(result.settings.friend || '');
-      setNickname(result.settings.nick || '');
-      if (result.recoveryKey){ showRecoveryKey(result.recoveryKey); }
-      else { picked = ''; go('more'); }
+      if (result.needsCode){ openCode('signup', result.email); return; }
+      if (result.recoveryKey){
+        setFriend(''); setNickname('');
+        showRecoveryKey(result.recoveryKey, 'Your account is ready.');
+      } else {
+        enterApp(result.settings);
+      }
     }, function(error){
       setBusy(button, false);
       setError(null, 'li-err', error.message);
     });
   });
-  $('forgot').addEventListener('click', function(){
-    $('login-note').textContent = 'Resetting a password with your recovery key is the next piece being built.';
+
+  // ---------- forgot password: step 1, send a code ----------
+  $('forgot-form').addEventListener('submit', function(event){
+    event.preventDefault();
+    var email = $('fg-email').value.trim();
+    if (!looksLikeEmail(email)){
+      setError('fg-email', 'fg-err', 'Enter your email address, like name@example.com.');
+      $('fg-email').focus();
+      return;
+    }
+    setError('fg-email', 'fg-err', '');
+    var button = this.querySelector('.btn');
+    setBusy(button, true, 'Sending…');
+    Account.startReset(email).then(function(){
+      setBusy(button, false);
+      openCode('reset', email);
+    }, function(error){
+      setBusy(button, false);
+      setError('fg-email', 'fg-err', error.message);
+    });
+  });
+
+  // ---------- forgot password: step 3, recovery key and new password ----------
+  $('reset-form').addEventListener('submit', function(event){
+    event.preventDefault();
+    var key = $('rs-key').value.trim();
+    var pass = $('rs-pass').value;
+    var keyError = key.replace(/[^A-Za-z0-9]/g, '').length < 20 ? 'Enter your full recovery key. It has 24 letters and numbers.' : '';
+    var passError = passwordProblem(pass);
+    setError('rs-key', 'rs-key-err', keyError);
+    setError('rs-pass', 'rs-pass-err', passError);
+    setError(null, 'rs-form-err', '');
+    if (keyError){ $('rs-key').focus(); return; }
+    if (passError){ $('rs-pass').focus(); return; }
+
+    var button = this.querySelector('.btn');
+    setBusy(button, true, 'Checking your password…');
+    Account.isLeakedPassword(pass).then(function(leaked){
+      if (leaked){
+        setBusy(button, false);
+        setError('rs-pass', 'rs-pass-err', LEAKED);
+        $('rs-pass').focus();
+        return;
+      }
+      button.textContent = 'Unlocking your entries…';
+      return Account.finishReset(key, pass).then(function(result){
+        setBusy(button, false);
+        $('rs-key').value = ''; $('rs-pass').value = '';
+        enterApp(result.settings);
+      });
+    }).catch(function(error){
+      setBusy(button, false);
+      if (error.original && error.original.message === 'wrong-key'){
+        setError('rs-key', 'rs-key-err', error.message);
+        $('rs-key').focus();
+      } else {
+        setError(null, 'rs-form-err', error.message);
+      }
+    });
+  });
+
+  // ---------- forgot password: no recovery key, start fresh ----------
+  $('fresh-form').addEventListener('submit', function(event){
+    event.preventDefault();
+    var pass = $('fr-pass').value;
+    var passError = passwordProblem(pass);
+    var sure = $('fr-sure').checked;
+    setError('fr-pass', 'fr-pass-err', passError);
+    setError(null, 'fr-sure-err', sure ? '' : 'Tick the box to confirm.');
+    setError(null, 'fr-form-err', '');
+    if (passError){ $('fr-pass').focus(); return; }
+    if (!sure){ $('fr-sure').focus(); return; }
+
+    var button = this.querySelector('.btn');
+    setBusy(button, true, 'Checking your password…');
+    Account.isLeakedPassword(pass).then(function(leaked){
+      if (leaked){
+        setBusy(button, false);
+        setError('fr-pass', 'fr-pass-err', LEAKED);
+        $('fr-pass').focus();
+        return;
+      }
+      button.textContent = 'Starting fresh…';
+      return Account.startFresh(pass).then(function(result){
+        setBusy(button, false);
+        $('fr-pass').value = ''; $('fr-sure').checked = false;
+        setFriend(''); setNickname('');
+        showRecoveryKey(result.recoveryKey, "You're set up again. Here is your new key.");
+      });
+    }).catch(function(error){
+      setBusy(button, false);
+      setError(null, 'fr-form-err', error.message);
+    });
   });
 
   // ---------- log out ----------
@@ -245,10 +418,9 @@
     Account.logOut().then(function(){
       setFriend('');
       setNickname('');
-      $('cheer-name').value = '';
-      $('user-name').value = '';
-      $('su-email').value = '';
-      $('li-email').value = '';
+      codeMode = '';
+      var clear = ['cheer-name','user-name','su-email','li-email','fg-email','rs-key','jot'];
+      for (var i = 0; i < clear.length; i++){ $(clear[i]).value = ''; }
       go('welcome');
     });
   });
