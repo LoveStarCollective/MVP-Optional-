@@ -129,24 +129,35 @@
     var email = $('su-email').value.trim();
     var pass = $('su-pass').value;
     var emailOk = looksLikeEmail(email);
-    var passOk = pass.length >= 10;
+    var passError = '';
+    if (pass.length < 10){ passError = 'Your password needs at least 10 characters.'; }
+    else if (pass.length > 72){ passError = 'Please keep your password to 72 characters or fewer.'; }
     setError('su-email', 'su-email-err', emailOk ? '' : 'Enter your email address, like name@example.com.');
-    setError('su-pass', 'su-pass-err', passOk ? '' : 'Your password needs at least 10 characters.');
+    setError('su-pass', 'su-pass-err', passError);
     setError(null, 'su-form-err', '');
     if (!emailOk){ $('su-email').focus(); return; }
-    if (!passOk){ $('su-pass').focus(); return; }
+    if (passError){ $('su-pass').focus(); return; }
 
     var button = this.querySelector('.btn');
-    setBusy(button, true, 'Creating your account…');
-    Account.signUp(email, pass, { friend: friendName, nick: nickname }).then(function(result){
-      setBusy(button, false);
-      $('su-pass').value = '';
-      if (result.needsConfirm){
-        setError(null, 'su-form-err', 'Check your email for a confirmation link, then log in.');
+    setBusy(button, true, 'Checking your password\u2026');
+    Account.isLeakedPassword(pass).then(function(leaked){
+      if (leaked){
+        setBusy(button, false);
+        setError('su-pass', 'su-pass-err', "That password has shown up in a data breach, so it isn't safe to use. Please choose a different one.");
+        $('su-pass').focus();
         return;
       }
-      showRecoveryKey(result.recoveryKey);
-    }, function(error){
+      button.textContent = 'Creating your account\u2026';
+      return Account.signUp(email, pass, { friend: friendName, nick: nickname }).then(function(result){
+        setBusy(button, false);
+        $('su-pass').value = '';
+        if (result.needsConfirm){
+          setError(null, 'su-form-err', 'Check your email for a confirmation link, then log in.');
+          return;
+        }
+        showRecoveryKey(result.recoveryKey);
+      });
+    }).catch(function(error){
       setBusy(button, false);
       setError(null, 'su-form-err', error.message);
     });

@@ -232,6 +232,32 @@
       }
     },
 
+    // Has this password shown up in a known data breach?
+    // Only the first 5 characters of a scrambled (SHA-1) version are sent,
+    // never the password itself. If the lookup fails, we let the password through.
+    isLeakedPassword: async function(password){
+      try {
+        var digest = await crypto.subtle.digest('SHA-1', encoder.encode(password));
+        var bytes = new Uint8Array(digest);
+        var hex = '';
+        for (var i = 0; i < bytes.length; i++){
+          hex += ('0' + bytes[i].toString(16)).slice(-2);
+        }
+        hex = hex.toUpperCase();
+        var response = await fetch('https://api.pwnedpasswords.com/range/' + hex.slice(0, 5));
+        if (!response.ok){ return false; }
+        var lines = (await response.text()).split('\n');
+        var rest = hex.slice(5);
+        for (var n = 0; n < lines.length; n++){
+          var parts = lines[n].trim().split(':');
+          if (parts[0] === rest && parseInt(parts[1], 10) > 0){ return true; }
+        }
+        return false;
+      } catch (error){
+        return false;
+      }
+    },
+
     logOut: async function(){
       dataKey = null;
       userId = null;
