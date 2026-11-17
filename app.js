@@ -4,12 +4,14 @@
 // Accounts and encryption live in account.js (window.OptionalAccount).
 // =========================================================
 (function(){
-  var screens = ['welcome','meet','you','signup','code','key','more','done','login','forgot','reset','fresh'];
-  var needsLogin = ['key','more','done'];   // screens only a logged-in person can see
+  var screens = ['welcome','meet','you','signup','code','key','more','options','dash','help','login','forgot','reset','fresh'];
+  var needsLogin = ['key','more','options','dash','help'];   // screens only a logged-in person can see
+  var inApp = ['options','dash','help'];   // screens that show the companion bar
 
   var friendName = 'Bestie';   // what the user named their Optional Friend
   var nickname = '';           // what the app calls the user
   var picked = '';             // what they chose on the "more of" page
+  var avatar = 'curly';        // the picture they chose on their page
   var codeMode = '';           // 'signup' or 'reset' while the email-code screen is in use
   var Account = window.OptionalAccount;
 
@@ -25,6 +27,8 @@
     for (var i = 0; i < screens.length; i++){
       $(screens[i]).hidden = (screens[i] !== id);
     }
+    document.body.classList.toggle('in-app', inApp.indexOf(id) !== -1);
+    if (window.OptionalInApp){ window.OptionalInApp.onShow(id); }
     window.scrollTo(0, 0);
     if (moveFocus){
       var heading = document.querySelector('#' + id + ' h1');
@@ -42,12 +46,18 @@
     friendName = name || 'Bestie';
     var spots = document.querySelectorAll('.who');
     for (var i = 0; i < spots.length; i++){ spots[i].textContent = friendName; }
+    var talk = $('talk');
+    if (talk){ talk.placeholder = 'Talk to ' + friendName + '...'; $('talk-label').textContent = 'Talk to ' + friendName; }
   }
 
   function setNickname(name){
     nickname = name || '';
     var spots = document.querySelectorAll('.me');
     for (var i = 0; i < spots.length; i++){ spots[i].textContent = nickname ? ', ' + nickname : ''; }
+    var plain = document.querySelectorAll('.nick-name');
+    for (var j = 0; j < plain.length; j++){ plain[j].textContent = nickname || 'You'; }
+    var hello = document.querySelectorAll('.hello-name');
+    for (var k = 0; k < hello.length; k++){ hello[k].textContent = nickname ? ', ' + nickname : ''; }
   }
 
   // ---------- form helpers ----------
@@ -95,12 +105,24 @@
     go('key');
   }
 
-  function enterApp(settings){
-    setFriend((settings && settings.friend) || '');
-    setNickname((settings && settings.nick) || '');
+  // "What would you like more of today?" shows once a day, the first time the app opens.
+  function today(){ var d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+  function openStart(){
+    var seen = '';
+    try { seen = localStorage.getItem('optional-more-day') || ''; } catch (e){}
+    if (seen === today()){ go('options'); return; }
+    try { localStorage.setItem('optional-more-day', today()); } catch (e){}
     picked = '';
     $('jot').value = '';
     go('more');
+  }
+
+  function enterApp(settings){
+    setFriend((settings && settings.friend) || '');
+    setNickname((settings && settings.nick) || '');
+    avatar = (settings && settings.avatar) || 'curly';
+    if (window.OptionalInApp){ window.OptionalInApp.setAvatar(avatar); }
+    openStart();
   }
 
   // Open the "check your email" screen for a sign-up or a password reset.
@@ -264,15 +286,12 @@
       return;
     }
     $('key-text').textContent = '----';
-    picked = '';
-    $('jot').value = '';
-    go('more');
+    openStart();
   });
 
   // ---------- what would you like more of ----------
   function finish(){
-    $('picked').textContent = picked || 'nothing yet';
-    go('done');
+    go('options');
   }
   var choices = document.querySelectorAll('.choice');
   for (var c = 0; c < choices.length; c++){
@@ -414,7 +433,8 @@
   });
 
   // ---------- log out ----------
-  $('logout').addEventListener('click', function(){
+  function logOut(){
+    if (window.OptionalInApp){ window.OptionalInApp.closeAll(); }
     Account.logOut().then(function(){
       setFriend('');
       setNickname('');
@@ -423,7 +443,18 @@
       for (var i = 0; i < clear.length; i++){ $(clear[i]).value = ''; }
       go('welcome');
     });
-  });
+  }
+  var outs = document.querySelectorAll('.do-logout');
+  for (var o = 0; o < outs.length; o++){ outs[o].addEventListener('click', logOut); }
+
+  // ---------- what the in-app pages need from here ----------
+  window.OptionalApp = {
+    go: go,
+    saveAvatar: function(key){
+      avatar = key;
+      return Account.saveSettings({ friend: friendName, nick: nickname, avatar: key });
+    }
+  };
 
   // ---------- start ----------
   window.addEventListener('hashchange', function(){

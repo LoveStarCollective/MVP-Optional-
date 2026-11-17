@@ -40,6 +40,7 @@
       <img class="couch small" src="couch.png" alt="" width="502" height="315">
       <h1 id="meet-title">Hi, I'm your <span class="opt">Optional</span> Friend!</h1>
       <p class="body">I&rsquo;m here to help you spot them cues, the little signals from your mind and body that let you know something&rsquo;s up. That way, you&rsquo;re the front seat driver of your choices.</p>
+      <p class="body">And when things are a bit much and you need a moment, tap the <span class="beaticon" role="img" aria-label="heartbeat button"><svg aria-hidden="true" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 9h5l2.5-6 4 12 3-8 1.8 2H23"/></svg></span> and we&rsquo;ll slow down together.</p>
       <div>
         <label class="note" for="cheer-name">Name me Something Good <span class="hint">(or keep it as Bestie &#128521;!)</span></label>
         <input type="text" id="cheer-name" name="cheer-name" placeholder="Bestie" autocomplete="off" maxlength="30">
@@ -239,16 +240,83 @@
     </form>
   </section>
 
-  <!-- END OF PREVIEW -->
-  <section class="screen" id="done" aria-labelledby="done-title" hidden>
-    <div class="hero">
-      <img class="couch small" src="couch.png" alt="" width="502" height="315">
-      <h1 id="done-title" tabindex="-1">You're in<span class="me"></span>.</h1>
-      <p class="preview-note">This is as far as the app goes for now. Home comes next, and it will open on what you picked. You chose <strong id="picked">nothing yet</strong>.</p>
-      <div class="actions">
-        <button type="button" class="link" data-go="more">Pick again</button>
-        <button type="button" class="link" id="logout">Log out</button>
-      </div>
+  <!-- OPTIONS (the menu page) -->
+  <section class="screen" id="options" aria-labelledby="options-title" hidden>
+    <div class="topbar">
+      <button type="button" class="iconbtn" id="open-menu" aria-label="Open menu" aria-expanded="false" aria-controls="menu">
+        <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg>
+      </button>
+      <p class="wordmark">Optional</p>
+      <button type="button" class="avatarbtn" id="open-dash" aria-label="Your page"><span class="av-slot"></span></button>
+    </div>
+    <p class="hello">Hi<span class="hello-name"></span></p>
+    <p class="daily" id="daily" aria-label="Today's quote"><span class="words" id="daily-words"></span><span class="by" id="daily-by"></span></p>
+    <h1 id="options-title">Options on top of Options</h1>
+    <div class="hubstrips">
+      <button type="button" class="hubstrip soon-btn"><span class="t">Out in the World</span></button>
+      <button type="button" class="hubstrip green soon-btn"><span class="t">Mind Body Connect</span></button>
+      <button type="button" class="hubstrip blue soon-btn"><span class="t">Real Talk</span><span class="soon">soon</span></button>
+      <button type="button" class="hubstrip pink soon-btn"><span class="t">Good to Know</span></button>
+    </div>
+    <p class="hubnote" role="status"></p>
+  </section>
+
+  <!-- YOU & YOUR FRIEND (placeholder dashboard) -->
+  <section class="screen inapp" id="dash" aria-labelledby="dash-title" hidden>
+    <div class="topbar">
+      <button type="button" class="iconbtn inback" aria-label="Back"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></button>
+      <h1 class="title" id="dash-title"><span class="nick-name">You</span> &amp; <span class="who">Bestie</span></h1>
+      <span class="spacer"></span>
+    </div>
+    <div class="youcard">
+      <div class="avatar-big"><span class="av-slot"></span></div>
+      <p class="name"><span class="nick-name"></span></p>
+      <button type="button" class="linkbtn" id="change-av" aria-expanded="false" aria-controls="avpicker">Change my picture</button>
+    </div>
+    <div class="avpicker" id="avpicker" hidden>
+      <h2>Pick a picture</h2>
+      <div class="avgrid" id="avgrid"></div>
+      <p class="small">Adding your own photo is coming later. It will be kept private, like your journal.</p>
+      <p class="small" id="av-status" role="status"></p>
+    </div>
+    <div class="yousec">
+      <h2><span class="who">Bestie</span></h2>
+      <p class="soonbox"><strong>Coming soon</strong>This is where you and <span class="who">Bestie</span> will talk.</p>
+    </div>
+    <div class="yousec">
+      <h2>My journal</h2>
+      <p class="soonbox"><strong>Coming soon</strong>Your journal will live here, private to you.</p>
+    </div>
+    <div class="btnrow">
+      <button type="button" class="pbtn ghost soon-btn">Settings</button>
+      <button type="button" class="pbtn ghost do-logout">Log out</button>
+    </div>
+    <p class="hubnote" role="status"></p>
+  </section>
+
+  <!-- HELP IF NEEDED -->
+  <section class="screen inapp" id="help" aria-labelledby="help-title" hidden>
+    <div class="topbar">
+      <button type="button" class="iconbtn inback" aria-label="Back">
+        <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+      </button>
+      <h1 class="title help-title" id="help-title">Help if Needed</h1>
+      <span class="spacer"></span>
+    </div>
+    <div class="helpcard">
+      <h2>In an emergency</h2>
+      <p>Call 911.</p>
+      <div class="btnrow"><a class="pbtn helpbtn" href="tel:911">Call 911</a></div>
+    </div>
+    <div class="helpcard">
+      <h2>Talk to someone now</h2>
+      <p>The 988 Suicide &amp; Crisis Lifeline is free, confidential and open 24/7.</p>
+      <div class="btnrow"><a class="pbtn helpbtn" href="tel:988">Call 988</a><a class="pbtn ghost helpbtn" href="sms:988">Text 988</a></div>
+    </div>
+    <div class="helpcard">
+      <h2>Find treatment or support</h2>
+      <p>SAMHSA&rsquo;s National Helpline is free, confidential and open 24/7. They can point you to treatment, support groups and community services near you.</p>
+      <div class="btnrow"><a class="pbtn helpbtn" href="tel:18006624357">Call 1-800-662-4357</a><a class="pbtn ghost helpbtn" href="https://findtreatment.gov" target="_blank" rel="noopener">FindTreatment.gov</a></div>
     </div>
   </section>
 
@@ -281,8 +349,109 @@
   </section>
 
 </main>
+
+<div class="scrim" id="menu-scrim" hidden></div>
+<nav class="drawer menudrawer" id="menu" aria-label="Menu" hidden>
+  <div class="head">
+    <p class="wordmark">Optional</p>
+    <button type="button" class="iconbtn" id="close-menu" aria-label="Close menu" style="margin:0 -0.5rem 0 0">
+      <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <ul class="menulist">
+    <li><button type="button" data-goto="options">Options</button></li>
+    <li><button type="button" data-goto="dash"><span><span class="nick-name">You</span> &amp; <span class="who">Bestie</span></span></button></li>
+    <li><button type="button" class="soon-btn">Out in the World</button></li>
+    <li><button type="button" class="soon-btn">Mind Body Connect</button></li>
+    <li><button type="button" class="soon-btn">Real Talk <span class="soon soonin">soon</span></button></li>
+    <li><button type="button" class="soon-btn">Good to Know</button></li>
+    <li><button type="button" class="soon-btn">Settings</button></li>
+    <li><button type="button" class="do-logout">Log out</button></li>
+  </ul>
+  <p class="menunote" id="menu-note" role="status"></p>
+  <button type="button" class="helplink" data-goto="help">Help if Needed</button>
+</nav>
+<div class="sheet-scrim" id="pulse-scrim" hidden>
+  <div class="sheet-wrap"><div class="sheet" role="dialog" aria-modal="true" aria-label="Pulse">
+    <div class="shead">
+      <p>Pulse</p>
+      <button type="button" class="iconbtn" id="close-pulse" aria-label="Close" style="margin:0 -0.5rem 0 0">
+        <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="step" data-step="intro">
+      <h2 id="pulse-title" class="beat-title" tabindex="-1">Let&rsquo;s take a Beat</h2>
+      <button type="button" class="startbtn" data-next="g5">Ground
+        <svg aria-hidden="true" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M1 9h5l2.5-6 4 12 3-8 1.8 2H23"/></svg>
+      </button>
+    </div>
+    <div class="step" data-step="g5" hidden>
+      <p class="bignum" aria-hidden="true">5</p>
+      <h2 tabindex="-1">5 things you can see</h2>
+      <p class="sub">Name 5 things your eyes land on. Anything counts: a lamp, a crack on the floor, the sky.</p>
+      <div class="gdots" role="group" aria-label="Tap one for each you notice"><button type="button" class="gdot" aria-pressed="false" aria-label="Found 1 of 5"></button><button type="button" class="gdot" aria-pressed="false" aria-label="Found 2 of 5"></button><button type="button" class="gdot" aria-pressed="false" aria-label="Found 3 of 5"></button><button type="button" class="gdot" aria-pressed="false" aria-label="Found 4 of 5"></button><button type="button" class="gdot" aria-pressed="false" aria-label="Found 5 of 5"></button></div>
+      <button type="button" class="startbtn nextpill" data-next="g4">Next</button>
+    </div>
+    <div class="step" data-step="g4" hidden>
+      <p class="bignum" aria-hidden="true">4</p>
+      <h2 tabindex="-1">4 things you can feel</h2>
+      <p class="sub">Touch 4 things around you&mdash;the floor, your hair, anything.</p>
+      <div class="gdots" role="group" aria-label="Tap one for each you notice"><button type="button" class="gdot" aria-pressed="false" aria-label="Found 1 of 4"></button><button type="button" class="gdot" aria-pressed="false" aria-label="Found 2 of 4"></button><button type="button" class="gdot" aria-pressed="false" aria-label="Found 3 of 4"></button><button type="button" class="gdot" aria-pressed="false" aria-label="Found 4 of 4"></button></div>
+      <button type="button" class="startbtn nextpill" data-next="g3">Next</button>
+    </div>
+    <div class="step" data-step="g3" hidden>
+      <p class="bignum" aria-hidden="true">3</p>
+      <h2 tabindex="-1">3 things you can hear</h2>
+      <p class="sub">Listen. What are 3 sounds you hear? Even the hum of a fridge counts.</p>
+      <div class="gdots" role="group" aria-label="Tap one for each you notice"><button type="button" class="gdot" aria-pressed="false" aria-label="Found 1 of 3"></button><button type="button" class="gdot" aria-pressed="false" aria-label="Found 2 of 3"></button><button type="button" class="gdot" aria-pressed="false" aria-label="Found 3 of 3"></button></div>
+      <button type="button" class="startbtn nextpill" data-next="g2">Next</button>
+    </div>
+    <div class="step" data-step="g2" hidden>
+      <p class="bignum" aria-hidden="true">2</p>
+      <h2 tabindex="-1">2 things you can smell</h2>
+      <p class="sub">Sniff the air. What&rsquo;s greeting your nose? Name 2.</p>
+      <div class="gdots" role="group" aria-label="Tap one for each you notice"><button type="button" class="gdot" aria-pressed="false" aria-label="Found 1 of 2"></button><button type="button" class="gdot" aria-pressed="false" aria-label="Found 2 of 2"></button></div>
+      <button type="button" class="startbtn nextpill" data-next="g1">Next</button>
+    </div>
+    <div class="step" data-step="g1" hidden>
+      <p class="bignum" aria-hidden="true">1</p>
+      <h2 tabindex="-1">1 thing you can taste</h2>
+      <p class="sub">Finally, what can you taste? Your last meal, perhaps, or maybe just the inside of your mouth.</p>
+      <div class="gdots" role="group" aria-label="Tap one for each you notice"><button type="button" class="gdot" aria-pressed="false" aria-label="Found 1 of 1"></button></div>
+      <button type="button" class="startbtn nextpill" data-next="end">Next</button>
+    </div>
+    <div class="step" data-step="end" hidden>
+      <h2 tabindex="-1">You're here, right now.</h2>
+      <p class="done-msg">You tapped into your human senses, the superpowers that we take for granted, and found yourself still in your body and still functioning. You are working as intended.</p>
+      <p class="sub ask"><span class="who">Bestie</span>&rsquo;s here if you want to unfold.</p>
+      <button type="button" class="startbtn talkbtn" id="pulse-talk"><span>Talk to <span class="who">Bestie</span></span></button>
+      <button type="button" class="linkbtn notnow" id="pulse-done">Not right now</button>
+      <p class="crisis">If this feels like more than you can handle, you can call or text <a href="tel:988">988</a> any time.</p>
+    </div>
+  </div></div>
+</div>
+<div class="friendbar-wrap">
+  <div class="friendbar">
+    <p class="talknote" id="talk-note" role="status" aria-live="polite"></p>
+    <div class="inner">
+      <button type="button" class="pulsebtn" id="open-pulse" aria-label="Pulse. Tap when you're feeling a type of way.">
+        <svg aria-hidden="true" width="26" height="20" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 9h5l2.5-6 4 12 3-8 1.8 2H23"/></svg>
+        <span class="ring" aria-hidden="true"></span>
+      </button>
+      <label class="sr-only" for="talk" id="talk-label">Talk to Bestie</label>
+      <input type="text" id="talk" placeholder="Talk to Bestie..." autocomplete="off">
+      <button type="button" class="send" aria-label="Send to Bestie">
+        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+      </button>
+    </div>
+  </div>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="quotes.js"></script>
+<script src="avatars.js"></script>
 <script src="account.js"></script>
+<script src="inapp.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
