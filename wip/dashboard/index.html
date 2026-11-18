@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Optional: Options page and Astride &amp; Bestie (preview)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dangrek&family=Caveat:wght@600&family=Nunito:wght@400;600;700&display=swap">
+<style>
+
+
+:root{
+  --oat:#ECE4D5; --paper:#F7F2E9; --ink:#34302A; --slate:#2C3E4A;
+  --red:#A02020; --button:#A4532A; --button-press:#8C4522; --green:#4F5C3A;
+}
+*{box-sizing:border-box;}
+html{font-size:100%;}
+body{
+  margin:0; min-height:100vh; min-height:100dvh;
+  background:#DDD0BA; color:var(--ink);
+  font-family:'Nunito', system-ui, sans-serif; font-size:1.0625rem; line-height:1.5;
+  display:flex; justify-content:center;
+}
+.app{
+  width:100%; max-width:28rem; min-height:100vh; min-height:100dvh;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(168,94,103,0.30) 0%, rgba(168,94,103,0) 55%),
+    radial-gradient(circle at 100% 0%, rgba(224,162,78,0.34) 0%, rgba(224,162,78,0) 55%),
+    radial-gradient(circle at 0% 100%, rgba(224,162,78,0.34) 0%, rgba(224,162,78,0) 55%),
+    radial-gradient(circle at 100% 100%, rgba(168,94,103,0.30) 0%, rgba(168,94,103,0) 55%),
+    linear-gradient(160deg, #EFE6D6 0%, #E4D8C3 100%);
+  display:flex; flex-direction:column;
+}
+.screen{
+  flex:1; display:flex; flex-direction:column; gap:1.5rem;
+  padding:2rem 1.5rem 1.75rem;
+}
+.screen[hidden]{display:none;}
+
+.tagline{
+  margin:0; text-align:center;
+  font-family:'Caveat', cursive; font-weight:600; font-size:1.75rem; line-height:1.2; color:var(--slate);
+}
+.couch{display:block; width:100%; max-width:22rem; height:auto; margin:0 auto;}
+.couch.small{max-width:11rem;}
+
+h1{
+  margin:0; font-family:'Dangrek', system-ui, sans-serif; font-weight:400;
+  font-size:2rem; line-height:1.3; text-wrap:balance; text-align:center;
+}
+h1 .line{display:block;}
+h1 .opt{color:var(--red);}
+
+.body{margin:0; font-size:1.0625rem; text-align:center;}
+.hero{flex:1; display:flex; flex-direction:column; justify-content:center; gap:1.5rem;}
+.note{margin:0; font-family:'Caveat', cursive; font-weight:600; font-size:1.5rem; line-height:1.3; color:var(--green);}
+
+.actions{margin-top:auto; display:flex; flex-direction:column; gap:0.5rem;}
+.btn{
+  min-height:3.5rem; width:100%; border:none; border-radius:1.75rem;
+  background:var(--button); color:var(--paper);
+  font-family:inherit; font-size:1.1875rem; font-weight:700; cursor:pointer;
+}
+.btn:hover{background:var(--button-press);}
+.btn:active{background:var(--button-press);}
+.link{
+  min-height:2.75rem; width:100%; border:none; background:none; color:var(--ink);
+  font-family:inherit; font-size:1.0625rem; font-weight:700; text-decoration:underline; cursor:pointer;
+}
+.link:hover{color:var(--red);}
+:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0.1875rem;}
+
+.private{
+  margin:0; display:flex; align-items:center; justify-content:center; gap:0.5rem;
+  font-size:1rem; text-align:center;
+}
+.private svg{flex-shrink:0;}
+
+label{display:block; margin-bottom:0.75rem; text-align:center;}
+label.plain{margin:0;}
+.hint{display:block;}
+.back{
+  align-self:flex-start; width:2.75rem; height:2.75rem; margin:-0.75rem 0 -1rem -0.5rem;
+  border:none; background:none; color:var(--ink); border-radius:50%; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+.back:hover{color:var(--red);}
+#meet .hero, #you .hero{gap:1.25rem;}
+#meet .actions{margin-top:0.5rem;}
+input[type="text"]{
+  width:100%; min-height:3.25rem; padding:0.75rem 1rem;
+  border:0.125rem solid var(--ink); border-radius:0.75rem; background:#fff; color:var(--ink);
+  font-family:inherit; font-size:1.0625rem; text-align:center;
+}
+.confirm{margin:0; font-weight:700; font-size:1.1875rem;}
+.preview-note{
+  margin:0; padding:1rem; border-radius:0.75rem; background:var(--paper); font-size:1rem; text-align:center;
+}
+
+.center{text-align:center;}
+.sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;}
+#more .hero, #signup .hero, #key .hero, #login .hero{gap:1.25rem;}
+.choices{display:flex; flex-direction:column; gap:0.75rem;}
+.choice{
+  min-height:3.5rem; width:100%; padding:0.75rem 1rem; text-align:left;
+  border:0.125rem solid var(--ink); border-radius:0.875rem; background:var(--paper); color:var(--ink);
+  font-family:inherit; font-size:1.125rem; font-weight:700; cursor:pointer;
+}
+.choice:hover{background:#fff;}
+.choice span{display:inline-block; width:1.75rem;}
+.field{display:flex; flex-direction:column;}
+.flabel{font-weight:700; text-align:left; margin-bottom:0.375rem;}
+.field input, .pw input{text-align:left;}
+input[type="email"], input[type="password"]{
+  width:100%; min-height:3.25rem; padding:0.75rem 1rem;
+  border:0.125rem solid var(--ink); border-radius:0.75rem; background:#fff; color:var(--ink);
+  font-family:inherit; font-size:1.0625rem;
+}
+.pw{position:relative;}
+.pw input{padding-right:5rem;}
+.show{
+  position:absolute; right:0.25rem; top:50%; transform:translateY(-50%);
+  min-width:4rem; min-height:2.75rem; border:none; background:none; color:var(--ink);
+  font-family:inherit; font-size:1rem; font-weight:700; text-decoration:underline; cursor:pointer;
+}
+.hintline{margin:0.375rem 0 0; font-size:1rem;}
+.error{margin:0.375rem 0 0; font-size:1rem; font-weight:700; color:#8A1C1C;}
+.error:empty{display:none;}
+.error.center{text-align:center;}
+.btn:disabled{opacity:0.7; cursor:progress;}
+#login-note:empty{display:none;}
+.error::before{content:"! "; }
+input[aria-invalid="true"]{border-color:#8A1C1C; border-width:0.1875rem;}
+.keybox{
+  padding:1.25rem 1rem; border-radius:0.875rem; background:var(--paper); border:0.125rem solid var(--ink);
+  display:flex; flex-direction:column; align-items:center; gap:0.75rem;
+}
+.keytext{
+  margin:0; font-family:ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size:1.25rem; font-weight:700; letter-spacing:0.05em; text-align:center; word-spacing:0.25em; line-height:1.6;
+}
+.copy{
+  min-height:2.75rem; padding:0.5rem 1.25rem; border:0.125rem solid var(--ink); border-radius:1.5rem;
+  background:none; color:var(--ink); font-family:inherit; font-size:1.0625rem; font-weight:700; cursor:pointer;
+}
+.copy:hover{background:#fff;}
+#copy-status:empty{display:none;}
+.check{display:flex; align-items:center; gap:0.75rem; min-height:2.75rem; margin:0; text-align:left; font-weight:700; cursor:pointer;}
+.check input{width:1.5rem; height:1.5rem; flex-shrink:0; accent-color:var(--button);}
+
+@media (prefers-reduced-motion: no-preference){
+  .screen:not([hidden]){animation:fade 0.25s ease;}
+  @keyframes fade{from{opacity:0;} to{opacity:1;}}
+}
+
+/* ================= HOME (mockup) ================= */
+.home{flex:1; display:flex; flex-direction:column; gap:1.1rem; padding:1rem 1.5rem 7rem;}
+.topbar{display:flex; align-items:center; justify-content:space-between;}
+.iconbtn{width:2.75rem; height:2.75rem; border:none; background:none; color:var(--ink); border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; margin-left:-0.5rem;}
+.wordmark{margin:0; font-family:'Dangrek', system-ui, sans-serif; font-size:1.375rem; letter-spacing:0.03em; color:var(--red);}
+.spacer{width:2.25rem;}
+.home h1{font-size:1.75rem; text-align:center;}
+.quote{margin:-0.75rem 0 0; text-align:center; font-family:'Caveat', cursive; font-weight:600; font-size:1.375rem; color:var(--green);}
+.sechead{display:flex; align-items:center; justify-content:space-between; gap:0.5rem; margin-top:0.25rem;}
+.sechead h2{margin:0; font-family:'Caveat', cursive; font-weight:600; font-size:1.625rem; line-height:1.1;}
+.pill{min-height:2.75rem; padding:0.4rem 1rem; border:0.125rem solid var(--ink); border-radius:1.5rem; background:none; color:var(--ink); font-family:inherit; font-size:1rem; font-weight:700; cursor:pointer;}
+.strips{display:flex; flex-direction:column; gap:0.75rem; filter:drop-shadow(0 0.18rem 0.25rem rgba(52,48,42,0.32));}
+.strip{
+  position:relative; width:100%; border:none; color:var(--ink); cursor:pointer; font-family:inherit;
+  background-color:#FAF4E8;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.42  0 0 0 0 0.32  0 0 0 0 0.22  0 0 0 0.38 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"), linear-gradient(180deg, #FDF9F1 0%, #F5EBDA 100%);
+}
+.strip:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:-0.5rem;}
+.strip.event{padding:0.9rem 1rem 0.9rem 1.1rem; text-align:left; display:block;}
+.strip.event .ev-name{display:block; font-size:1.0625rem; font-weight:700; line-height:1.3;}
+.strip.event .ev-meta{display:block; font-size:1rem; line-height:1.4;}
+.strip.event .ev-tags{display:block; font-size:1rem; line-height:1.4; color:#4A5637; font-weight:700;}
+.strip.nav{min-height:3.75rem; padding:1rem 2.75rem; display:flex; align-items:center; justify-content:center; text-align:center; font-size:1.125rem; font-weight:700;}
+.strip.nav::before{content:""; position:absolute; left:1.1rem; top:50%; transform:translateY(-50%); width:1rem; height:1rem; border-radius:50%; box-shadow:0 0.15rem 0.2rem rgba(0,0,0,0.4); background:radial-gradient(circle at 35% 35%, #8fc98f, #4a7d4a);}
+.strip.nav.pink::before{background:radial-gradient(circle at 35% 35%, #e88f9a, #a83a4a);}
+.strip.nav.blue::before{background:radial-gradient(circle at 35% 35%, #7fb3e0, #2c6ca3);}
+.seeall{align-self:center; margin-top:-0.4rem;}
+.sample{margin:0; text-align:center; font-size:1rem;}
+
+/* ---- the Friend's bar: one-line journal, fixed to the bottom of every page ---- */
+.friendbar-wrap{position:fixed; left:0; right:0; bottom:0; display:flex; justify-content:center; pointer-events:none;
+  background:linear-gradient(180deg, rgba(228,216,195,0) 0%, rgba(226,212,190,0.96) 38%);}
+.friendbar{pointer-events:auto; position:relative; width:100%; max-width:28rem; padding:1.1rem 1.5rem 1.1rem;}
+.friendbar .inner{position:relative; filter:drop-shadow(0 0.25rem 0.35rem rgba(52,48,42,0.3));}
+.friendbar input{
+  display:block; width:100%; min-height:3.5rem; padding:0.5rem 3.6rem 0.5rem 1.3rem; text-align:left;
+  border:none; border-radius:0.7rem; color:var(--ink);
+  background-color:#E6CE9C;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.36  0 0 0 0 0.24  0 0 0 0 0.10  0 0 0 0.62 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"), radial-gradient(ellipse at 50% 45%, rgba(246,230,188,0.85) 0%, rgba(246,230,188,0) 65%), linear-gradient(180deg, #EAD4A4 0%, #DBBE88 100%);
+  box-shadow:inset 0 0 0.9rem rgba(110,72,28,0.4);
+  font-family:'Caveat', cursive; font-weight:600; font-size:1.4rem;
+}
+.friendbar input::placeholder{color:var(--ink); opacity:0.82;}
+.friendbar .inner::before{content:""; position:absolute; inset:0.35rem; z-index:1; pointer-events:none; border:0.09rem dashed rgba(96,62,28,0.7); border-radius:0.45rem;}
+.friendbar .send{position:absolute; right:0.45rem; top:50%; transform:translateY(-50%); z-index:2; width:2.6rem; height:2.6rem; border:none; border-radius:50%; background:var(--button); color:var(--paper); cursor:pointer; display:flex; align-items:center; justify-content:center;}
+.strips .strip:nth-child(1){clip-path:polygon(0.0% 2px, 2.4% 2px, 5.8% 2px, 8.7% 4px, 11.5% 2px, 14.8% 0px, 18.0% 0px, 20.6% 2px, 24.2% 5px, 26.3% 0px, 28.3% 0px, 30.9% 4px, 34.2% 3px, 36.1% 5px, 39.2% 2px, 42.0% 0px, 44.0% 2px, 47.1% 2px, 49.0% 5px, 51.2% 0px, 54.1% 2px, 56.7% 0px, 59.0% 2px, 61.0% 1px, 63.5% 6px, 66.9% 3px, 68.7% 2px, 70.7% 2px, 73.2% 4px, 76.0% 0px, 79.0% 5px, 81.1% 1px, 84.2% 1px, 87.8% 2px, 91.2% 2px, 94.1% 1px, 97.0% 2px, 99.9% 1px, 100.0% 1px, 100.0% calc(100% - 3px), 97.4% calc(100% - 6px), 94.4% calc(100% - 2px), 91.2% calc(100% - 1px), 87.6% calc(100% - 4px), 84.9% calc(100% - 3px), 82.6% calc(100% - 5px), 79.3% calc(100% - 2px), 76.1% calc(100% - 4px), 72.9% calc(100% - 1px), 70.7% calc(100% - 2px), 68.6% calc(100% - 3px), 66.4% calc(100% - 3px), 64.5% calc(100% - 3px), 61.7% calc(100% - 2px), 59.0% calc(100% - 1px), 56.8% calc(100% - 1px), 53.6% calc(100% - 6px), 50.7% calc(100% - 3px), 47.9% calc(100% - 6px), 45.4% calc(100% - 5px), 42.0% calc(100% - 5px), 40.1% calc(100% - 2px), 37.2% calc(100% - 2px), 34.6% calc(100% - 1px), 32.7% calc(100% - 5px), 30.6% calc(100% - 2px), 27.1% calc(100% - 4px), 24.8% calc(100% - 4px), 21.5% calc(100% - 3px), 18.2% calc(100% - 4px), 15.2% calc(100% - 2px), 12.9% calc(100% - 6px), 9.9% calc(100% - 3px), 7.9% calc(100% - 6px), 5.0% calc(100% - 3px), 2.3% calc(100% - 6px), 0.0% calc(100% - 3px), 0.0% calc(100% - 4px));}
+.strips.two .strip:nth-child(1){clip-path:polygon(0.0% 6px, 2.1% 3px, 5.4% 5px, 7.7% 0px, 10.4% 5px, 12.3% 6px, 14.7% 2px, 17.1% 0px, 20.5% 1px, 23.5% 5px, 25.3% 2px, 27.3% 2px, 29.7% 4px, 32.8% 5px, 35.4% 5px, 38.3% 2px, 41.5% 4px, 44.1% 3px, 46.1% 0px, 48.9% 6px, 50.7% 2px, 52.6% 4px, 56.2% 2px, 58.4% 6px, 60.8% 1px, 63.3% 1px, 66.2% 5px, 68.1% 6px, 70.4% 2px, 72.5% 1px, 75.0% 1px, 78.5% 4px, 81.5% 2px, 83.3% 5px, 86.5% 5px, 89.7% 2px, 93.0% 6px, 96.5% 1px, 99.9% 3px, 100.0% 1px, 100.0% calc(100% - 1px), 97.1% calc(100% - 2px), 94.9% calc(100% - 3px), 92.6% calc(100% - 6px), 90.1% calc(100% - 6px), 88.1% calc(100% - 3px), 86.0% calc(100% - 2px), 83.5% calc(100% - 2px), 81.1% calc(100% - 2px), 78.2% calc(100% - 1px), 74.9% calc(100% - 2px), 72.9% calc(100% - 1px), 70.8% calc(100% - 6px), 67.5% calc(100% - 2px), 65.2% calc(100% - 3px), 62.6% calc(100% - 2px), 59.4% calc(100% - 1px), 56.2% calc(100% - 2px), 52.9% calc(100% - 5px), 49.7% calc(100% - 6px), 47.5% calc(100% - 2px), 44.5% calc(100% - 0px), 42.6% calc(100% - 5px), 39.1% calc(100% - 5px), 35.9% calc(100% - 4px), 32.4% calc(100% - 6px), 29.4% calc(100% - 2px), 26.6% calc(100% - 4px), 23.6% calc(100% - 2px), 20.7% calc(100% - 4px), 18.5% calc(100% - 2px), 16.3% calc(100% - 2px), 13.1% calc(100% - 2px), 10.4% calc(100% - 2px), 7.7% calc(100% - 4px), 4.6% calc(100% - 6px), 2.6% calc(100% - 5px), 0.6% calc(100% - 2px), 0.0% calc(100% - 3px));}
+.strips .strip:nth-child(2){clip-path:polygon(0.0% 1px, 1.8% 4px, 4.1% 2px, 7.2% 1px, 10.1% 0px, 11.9% 3px, 14.1% 0px, 17.0% 2px, 19.2% 4px, 22.4% 0px, 25.6% 2px, 28.6% 5px, 30.9% 3px, 34.5% 5px, 36.4% 2px, 38.4% 5px, 41.3% 0px, 44.4% 1px, 48.0% 2px, 49.9% 4px, 53.2% 5px, 56.0% 1px, 57.9% 3px, 61.1% 1px, 64.5% 1px, 66.9% 6px, 69.9% 5px, 72.0% 5px, 74.2% 4px, 77.2% 1px, 80.1% 2px, 82.9% 3px, 85.0% 2px, 87.3% 3px, 90.3% 0px, 92.5% 0px, 95.7% 2px, 98.0% 3px, 100.0% 4px, 100.0% calc(100% - 5px), 97.8% calc(100% - 6px), 95.3% calc(100% - 6px), 93.2% calc(100% - 2px), 91.0% calc(100% - 4px), 87.9% calc(100% - 2px), 84.4% calc(100% - 2px), 82.0% calc(100% - 2px), 79.3% calc(100% - 1px), 76.1% calc(100% - 1px), 74.0% calc(100% - 2px), 70.8% calc(100% - 2px), 67.9% calc(100% - 2px), 65.5% calc(100% - 6px), 62.7% calc(100% - 0px), 59.7% calc(100% - 1px), 56.6% calc(100% - 4px), 53.5% calc(100% - 5px), 51.5% calc(100% - 2px), 49.4% calc(100% - 0px), 45.9% calc(100% - 4px), 42.3% calc(100% - 2px), 39.6% calc(100% - 1px), 36.2% calc(100% - 4px), 32.9% calc(100% - 3px), 30.8% calc(100% - 2px), 28.1% calc(100% - 0px), 25.2% calc(100% - 6px), 23.4% calc(100% - 5px), 20.0% calc(100% - 4px), 17.7% calc(100% - 3px), 14.4% calc(100% - 1px), 12.4% calc(100% - 6px), 9.1% calc(100% - 2px), 7.1% calc(100% - 6px), 3.6% calc(100% - 2px), 1.3% calc(100% - 2px), 0.0% calc(100% - 4px));}
+.strips.two .strip:nth-child(2){clip-path:polygon(0.0% 2px, 1.9% 3px, 5.3% 4px, 8.7% 5px, 10.8% 2px, 12.9% 4px, 16.5% 2px, 19.9% 0px, 22.5% 0px, 25.7% 5px, 29.2% 2px, 32.3% 1px, 34.7% 6px, 37.5% 2px, 41.0% 4px, 44.4% 5px, 47.0% 0px, 49.4% 4px, 52.3% 3px, 55.3% 4px, 57.4% 0px, 60.3% 3px, 62.1% 3px, 64.2% 5px, 66.8% 6px, 70.3% 3px, 72.8% 2px, 75.2% 2px, 78.0% 2px, 80.4% 6px, 82.2% 1px, 84.2% 0px, 87.3% 6px, 89.4% 3px, 92.3% 5px, 94.7% 2px, 98.2% 1px, 100.0% 3px, 100.0% calc(100% - 1px), 96.4% calc(100% - 5px), 92.9% calc(100% - 6px), 89.4% calc(100% - 5px), 86.1% calc(100% - 2px), 82.6% calc(100% - 6px), 79.1% calc(100% - 4px), 76.6% calc(100% - 3px), 73.8% calc(100% - 2px), 71.7% calc(100% - 0px), 68.7% calc(100% - 5px), 65.5% calc(100% - 6px), 63.1% calc(100% - 0px), 61.2% calc(100% - 4px), 59.3% calc(100% - 4px), 56.1% calc(100% - 3px), 53.8% calc(100% - 0px), 51.6% calc(100% - 4px), 49.7% calc(100% - 6px), 46.6% calc(100% - 4px), 43.5% calc(100% - 2px), 41.0% calc(100% - 4px), 38.9% calc(100% - 2px), 36.2% calc(100% - 6px), 34.1% calc(100% - 2px), 31.5% calc(100% - 0px), 29.3% calc(100% - 5px), 27.4% calc(100% - 2px), 24.9% calc(100% - 5px), 21.9% calc(100% - 2px), 18.9% calc(100% - 5px), 16.8% calc(100% - 2px), 14.0% calc(100% - 5px), 11.1% calc(100% - 1px), 7.8% calc(100% - 5px), 4.6% calc(100% - 4px), 1.5% calc(100% - 0px), 0.0% calc(100% - 4px));}
+.strips .strip:nth-child(3){clip-path:polygon(0.0% 0px, 2.3% 2px, 5.8% 5px, 8.9% 1px, 11.5% 6px, 14.4% 2px, 17.2% 2px, 19.7% 0px, 23.0% 1px, 25.5% 1px, 27.6% 6px, 29.6% 2px, 32.5% 4px, 35.3% 2px, 37.3% 0px, 39.4% 0px, 42.7% 4px, 45.0% 1px, 47.7% 1px, 51.3% 0px, 53.3% 6px, 56.5% 5px, 58.9% 6px, 61.0% 1px, 64.2% 0px, 67.6% 4px, 70.0% 2px, 73.1% 1px, 76.6% 1px, 78.9% 5px, 82.0% 0px, 84.7% 2px, 87.6% 1px, 90.0% 1px, 93.4% 2px, 96.2% 4px, 98.2% 2px, 100.0% 1px, 100.0% calc(100% - 2px), 98.2% calc(100% - 1px), 96.2% calc(100% - 0px), 92.6% calc(100% - 5px), 90.6% calc(100% - 6px), 88.3% calc(100% - 6px), 85.0% calc(100% - 2px), 83.0% calc(100% - 0px), 81.1% calc(100% - 3px), 77.7% calc(100% - 2px), 75.6% calc(100% - 2px), 73.3% calc(100% - 2px), 69.9% calc(100% - 5px), 67.4% calc(100% - 0px), 65.2% calc(100% - 2px), 62.0% calc(100% - 3px), 58.9% calc(100% - 0px), 55.9% calc(100% - 4px), 53.7% calc(100% - 3px), 50.5% calc(100% - 2px), 47.3% calc(100% - 2px), 45.1% calc(100% - 6px), 42.4% calc(100% - 1px), 40.5% calc(100% - 1px), 37.7% calc(100% - 4px), 35.5% calc(100% - 6px), 32.3% calc(100% - 2px), 30.0% calc(100% - 1px), 27.0% calc(100% - 1px), 24.2% calc(100% - 2px), 22.0% calc(100% - 2px), 20.0% calc(100% - 2px), 17.5% calc(100% - 5px), 15.2% calc(100% - 2px), 12.4% calc(100% - 2px), 9.4% calc(100% - 3px), 7.1% calc(100% - 1px), 4.8% calc(100% - 4px), 1.5% calc(100% - 1px), 0.0% calc(100% - 3px));}
+.strips.two .strip:nth-child(3){clip-path:polygon(0.0% 6px, 2.6% 4px, 5.3% 1px, 7.8% 1px, 9.7% 3px, 12.0% 4px, 15.3% 0px, 17.5% 2px, 19.9% 4px, 22.8% 0px, 26.4% 2px, 28.6% 2px, 31.2% 5px, 33.8% 3px, 35.8% 0px, 37.7% 5px, 40.6% 1px, 42.4% 2px, 45.3% 2px, 48.7% 0px, 51.1% 5px, 53.0% 2px, 55.0% 1px, 57.1% 3px, 60.0% 2px, 63.2% 6px, 65.3% 0px, 68.6% 3px, 71.1% 5px, 74.1% 2px, 76.4% 1px, 79.9% 2px, 82.0% 5px, 84.0% 4px, 85.9% 3px, 87.7% 2px, 90.7% 2px, 94.1% 4px, 96.1% 6px, 97.9% 5px, 100.0% 4px, 100.0% calc(100% - 0px), 96.8% calc(100% - 2px), 94.2% calc(100% - 1px), 90.6% calc(100% - 6px), 88.2% calc(100% - 2px), 86.0% calc(100% - 6px), 83.7% calc(100% - 5px), 80.4% calc(100% - 1px), 76.9% calc(100% - 2px), 74.6% calc(100% - 2px), 72.1% calc(100% - 0px), 69.3% calc(100% - 4px), 66.7% calc(100% - 6px), 63.4% calc(100% - 5px), 60.8% calc(100% - 6px), 57.3% calc(100% - 6px), 54.7% calc(100% - 2px), 52.1% calc(100% - 6px), 49.2% calc(100% - 3px), 47.0% calc(100% - 4px), 44.5% calc(100% - 1px), 41.3% calc(100% - 1px), 37.8% calc(100% - 2px), 35.9% calc(100% - 5px), 33.3% calc(100% - 2px), 30.4% calc(100% - 0px), 27.6% calc(100% - 1px), 25.1% calc(100% - 2px), 22.8% calc(100% - 5px), 20.6% calc(100% - 1px), 17.1% calc(100% - 0px), 15.0% calc(100% - 5px), 11.7% calc(100% - 3px), 8.2% calc(100% - 2px), 5.6% calc(100% - 2px), 3.1% calc(100% - 6px), 0.8% calc(100% - 3px), 0.0% calc(100% - 4px));}
+.strips .strip:nth-child(4){clip-path:polygon(0.0% 2px, 2.7% 1px, 4.9% 3px, 7.2% 3px, 9.2% 0px, 11.2% 4px, 14.2% 2px, 17.1% 5px, 19.5% 5px, 22.8% 2px, 24.8% 1px, 27.7% 4px, 31.2% 1px, 34.7% 4px, 36.6% 2px, 38.6% 6px, 42.0% 3px, 44.0% 3px, 47.2% 0px, 50.3% 2px, 53.3% 5px, 55.8% 6px, 58.7% 2px, 61.0% 6px, 64.5% 5px, 67.4% 0px, 69.7% 0px, 71.9% 0px, 74.8% 4px, 78.4% 5px, 81.2% 2px, 83.2% 5px, 85.2% 3px, 88.1% 0px, 91.7% 0px, 94.7% 6px, 96.7% 2px, 100.0% 4px, 100.0% calc(100% - 0px), 97.1% calc(100% - 4px), 93.6% calc(100% - 1px), 91.3% calc(100% - 0px), 88.8% calc(100% - 2px), 85.7% calc(100% - 3px), 82.4% calc(100% - 0px), 80.1% calc(100% - 4px), 76.5% calc(100% - 5px), 73.7% calc(100% - 6px), 71.8% calc(100% - 6px), 69.5% calc(100% - 2px), 67.1% calc(100% - 6px), 65.2% calc(100% - 4px), 63.2% calc(100% - 2px), 60.2% calc(100% - 1px), 56.7% calc(100% - 2px), 53.7% calc(100% - 6px), 51.8% calc(100% - 2px), 49.5% calc(100% - 5px), 47.3% calc(100% - 3px), 44.4% calc(100% - 1px), 41.7% calc(100% - 2px), 38.7% calc(100% - 6px), 36.4% calc(100% - 3px), 33.0% calc(100% - 5px), 30.2% calc(100% - 5px), 26.7% calc(100% - 6px), 24.6% calc(100% - 0px), 22.7% calc(100% - 2px), 19.2% calc(100% - 2px), 16.7% calc(100% - 6px), 14.5% calc(100% - 2px), 11.5% calc(100% - 0px), 9.1% calc(100% - 0px), 6.3% calc(100% - 3px), 3.4% calc(100% - 2px), 1.3% calc(100% - 0px), 0.0% calc(100% - 1px));}
+.strips.two .strip:nth-child(4){clip-path:polygon(0.0% 6px, 2.0% 2px, 4.8% 0px, 7.0% 4px, 10.0% 3px, 13.1% 2px, 15.0% 2px, 17.6% 0px, 19.6% 0px, 23.0% 2px, 25.0% 0px, 28.5% 4px, 30.7% 3px, 32.7% 0px, 35.9% 2px, 39.3% 4px, 42.4% 2px, 44.9% 4px, 48.0% 6px, 50.7% 0px, 52.5% 6px, 54.6% 3px, 56.5% 4px, 58.7% 3px, 62.0% 0px, 65.1% 4px, 68.5% 1px, 71.9% 4px, 74.1% 3px, 77.5% 3px, 81.0% 2px, 83.9% 2px, 87.4% 4px, 90.5% 2px, 92.8% 2px, 95.1% 2px, 97.0% 1px, 100.0% 1px, 100.0% calc(100% - 2px), 96.6% calc(100% - 4px), 93.3% calc(100% - 6px), 91.4% calc(100% - 6px), 89.1% calc(100% - 0px), 87.2% calc(100% - 5px), 84.2% calc(100% - 2px), 80.9% calc(100% - 1px), 78.2% calc(100% - 4px), 75.2% calc(100% - 2px), 71.9% calc(100% - 2px), 69.4% calc(100% - 5px), 66.9% calc(100% - 0px), 63.4% calc(100% - 2px), 60.9% calc(100% - 2px), 57.7% calc(100% - 3px), 55.1% calc(100% - 6px), 53.1% calc(100% - 4px), 50.8% calc(100% - 2px), 47.3% calc(100% - 5px), 44.1% calc(100% - 1px), 41.0% calc(100% - 6px), 38.0% calc(100% - 5px), 34.4% calc(100% - 6px), 32.5% calc(100% - 1px), 30.6% calc(100% - 1px), 28.1% calc(100% - 1px), 25.6% calc(100% - 2px), 22.3% calc(100% - 5px), 18.9% calc(100% - 1px), 16.8% calc(100% - 0px), 14.3% calc(100% - 2px), 11.1% calc(100% - 2px), 9.1% calc(100% - 3px), 6.4% calc(100% - 2px), 2.9% calc(100% - 4px), 0.0% calc(100% - 3px));}
+.strips .strip:nth-child(5){clip-path:polygon(0.0% 4px, 2.6% 4px, 4.5% 5px, 6.3% 6px, 8.2% 4px, 11.4% 4px, 14.8% 0px, 18.2% 1px, 20.2% 2px, 22.4% 2px, 24.3% 2px, 26.4% 0px, 29.8% 2px, 32.2% 5px, 35.4% 5px, 37.4% 1px, 39.2% 5px, 41.6% 2px, 44.7% 4px, 47.5% 0px, 50.2% 5px, 53.7% 5px, 55.7% 0px, 58.0% 2px, 60.3% 2px, 62.8% 2px, 64.9% 6px, 67.7% 2px, 69.6% 0px, 72.5% 4px, 74.9% 2px, 77.0% 4px, 78.9% 1px, 80.7% 5px, 83.6% 6px, 86.2% 5px, 88.5% 3px, 91.4% 3px, 94.1% 2px, 97.7% 4px, 100.0% 1px, 100.0% calc(100% - 2px), 97.1% calc(100% - 1px), 93.7% calc(100% - 1px), 90.6% calc(100% - 2px), 87.4% calc(100% - 2px), 85.5% calc(100% - 6px), 82.1% calc(100% - 2px), 79.2% calc(100% - 4px), 76.7% calc(100% - 2px), 73.3% calc(100% - 2px), 70.2% calc(100% - 0px), 68.3% calc(100% - 2px), 66.0% calc(100% - 5px), 63.5% calc(100% - 3px), 60.2% calc(100% - 2px), 56.7% calc(100% - 0px), 53.7% calc(100% - 0px), 50.3% calc(100% - 6px), 47.4% calc(100% - 0px), 45.2% calc(100% - 3px), 41.7% calc(100% - 0px), 39.9% calc(100% - 5px), 37.0% calc(100% - 4px), 33.8% calc(100% - 6px), 30.5% calc(100% - 2px), 27.6% calc(100% - 2px), 24.1% calc(100% - 6px), 20.9% calc(100% - 2px), 18.1% calc(100% - 2px), 15.9% calc(100% - 2px), 13.9% calc(100% - 5px), 10.4% calc(100% - 4px), 8.5% calc(100% - 2px), 6.0% calc(100% - 3px), 4.2% calc(100% - 5px), 1.0% calc(100% - 1px), 0.0% calc(100% - 4px));}
+.strips.two .strip:nth-child(5){clip-path:polygon(0.0% 2px, 2.3% 3px, 4.9% 6px, 7.7% 5px, 11.0% 2px, 14.4% 1px, 17.8% 6px, 20.1% 6px, 23.0% 0px, 25.3% 2px, 28.0% 2px, 31.3% 1px, 33.3% 5px, 35.8% 5px, 38.7% 3px, 41.2% 6px, 43.1% 2px, 46.3% 5px, 48.5% 5px, 51.7% 4px, 53.5% 2px, 55.4% 0px, 57.6% 2px, 60.4% 2px, 63.0% 2px, 66.1% 5px, 68.3% 4px, 71.1% 3px, 73.6% 0px, 75.9% 1px, 78.2% 6px, 81.4% 2px, 84.8% 2px, 86.8% 4px, 90.0% 2px, 92.8% 2px, 95.8% 1px, 99.4% 2px, 100.0% 3px, 100.0% calc(100% - 6px), 97.1% calc(100% - 6px), 94.7% calc(100% - 4px), 91.2% calc(100% - 6px), 87.7% calc(100% - 0px), 84.2% calc(100% - 2px), 81.4% calc(100% - 5px), 78.6% calc(100% - 0px), 75.1% calc(100% - 4px), 72.0% calc(100% - 3px), 70.0% calc(100% - 4px), 67.7% calc(100% - 2px), 65.7% calc(100% - 2px), 62.7% calc(100% - 4px), 59.8% calc(100% - 6px), 56.2% calc(100% - 3px), 54.0% calc(100% - 2px), 50.9% calc(100% - 4px), 48.8% calc(100% - 5px), 47.0% calc(100% - 5px), 44.7% calc(100% - 2px), 41.6% calc(100% - 1px), 38.5% calc(100% - 1px), 36.2% calc(100% - 2px), 33.7% calc(100% - 4px), 30.9% calc(100% - 5px), 28.0% calc(100% - 0px), 25.8% calc(100% - 0px), 23.7% calc(100% - 6px), 21.6% calc(100% - 6px), 19.1% calc(100% - 6px), 16.0% calc(100% - 4px), 12.5% calc(100% - 3px), 10.5% calc(100% - 1px), 7.5% calc(100% - 6px), 4.5% calc(100% - 2px), 1.0% calc(100% - 6px), 0.0% calc(100% - 1px));}
+
+
+/* ================= clickable mockup additions ================= */
+.page{flex:1; display:flex; flex-direction:column; gap:1.1rem; padding:1rem 1.5rem 7rem;}
+.page[hidden]{display:none;}
+.page h1{font-size:1.75rem; text-align:center;}
+#more.page{padding-bottom:2rem;}
+#more h1{font-size:2rem;}
+.strip.nav.red::before{background:radial-gradient(circle at 35% 35%, #f08a8a, #c0392b);}
+.strip.nav.amber::before{background:radial-gradient(circle at 35% 35%, #e0b878, #b0842f);}
+.strips.five{gap:0.875rem;}
+.stub{margin:0; padding:1rem; border-radius:0.75rem; background:rgba(247,242,233,0.7); text-align:center; font-size:1rem;}
+
+/* big journal box (the "more of" page and the Friend's page) */
+.bigbox{position:relative; margin-top:0.75rem; filter:drop-shadow(0 0.25rem 0.35rem rgba(52,48,42,0.3));}
+.bigbox textarea{
+  display:block; width:100%; min-height:8rem; resize:none; padding:1.25rem 3.75rem 1rem 1.4rem;
+  border:none; border-radius:0.7rem; color:var(--ink);
+  background-color:#E6CE9C;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.36  0 0 0 0 0.24  0 0 0 0 0.10  0 0 0 0.62 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"), radial-gradient(ellipse at 50% 45%, rgba(246,230,188,0.85) 0%, rgba(246,230,188,0) 65%), linear-gradient(180deg, #EAD4A4 0%, #DBBE88 100%);
+  box-shadow:inset 0 0 1.2rem rgba(110,72,28,0.4);
+  font-family:'Caveat', cursive; font-weight:600; font-size:1.4rem; line-height:1.6;
+}
+.bigbox textarea::placeholder{color:var(--ink); opacity:0.82;}
+.bigbox::before{content:""; position:absolute; inset:0.45rem; z-index:1; pointer-events:none; border:0.09rem dashed rgba(96,62,28,0.7); border-radius:0.45rem;}
+.bigbox .send{position:absolute; right:0.9rem; bottom:0.9rem; z-index:2; width:2.75rem; height:2.75rem; border:none; border-radius:50%; background:var(--button); color:var(--paper); cursor:pointer; display:flex; align-items:center; justify-content:center;}
+
+/* chat bubbles on the Friend's page */
+.thread{display:flex; flex-direction:column; gap:0.75rem;}
+.bubble{max-width:85%; margin:0; padding:0.75rem 1rem; border-radius:1rem; font-size:1.0625rem;}
+.bubble.friend{align-self:flex-start; background:var(--paper); border-bottom-left-radius:0.25rem;}
+.bubble.me{align-self:flex-end; background:var(--button); color:var(--paper); border-bottom-right-radius:0.25rem;}
+
+/* menu drawer */
+.scrim{position:fixed; inset:0; background:rgba(52,48,42,0.5); z-index:20;}
+.drawer{position:fixed; top:0; bottom:0; left:0; z-index:21; width:min(20rem, 86vw); padding:1.25rem 1.25rem 2rem;
+  background:linear-gradient(160deg, #EFE6D6 0%, #E4D8C3 100%); box-shadow:0.4rem 0 1.2rem rgba(52,48,42,0.35);
+  display:flex; flex-direction:column; gap:1rem; overflow-y:auto;}
+.scrim[hidden], .drawer[hidden]{display:none;}
+.drawer .head{display:flex; align-items:center; justify-content:space-between;}
+body.hide-bar .friendbar-wrap{display:none;}
+.strips.five .strip:nth-child(1){clip-path:polygon(0.0% 6px, 3.4% 6px, 6.0% 3px, 8.1% 6px, 11.0% 2px, 13.0% 4px, 15.1% 0px, 17.9% 2px, 21.5% 2px, 24.4% 1px, 26.3% 3px, 29.7% 0px, 32.9% 5px, 35.5% 3px, 38.2% 4px, 40.9% 1px, 43.5% 4px, 46.1% 1px, 49.1% 5px, 52.3% 4px, 54.2% 1px, 56.7% 4px, 59.2% 0px, 62.5% 0px, 64.7% 0px, 67.3% 2px, 69.9% 3px, 73.1% 4px, 75.5% 4px, 77.9% 2px, 81.1% 1px, 83.1% 1px, 84.9% 6px, 88.2% 2px, 91.2% 3px, 93.8% 3px, 97.4% 2px, 99.9% 2px, 100.0% 3px, 100.0% calc(100% - 3px), 98.2% calc(100% - 4px), 94.6% calc(100% - 0px), 92.4% calc(100% - 2px), 88.8% calc(100% - 1px), 87.0% calc(100% - 2px), 84.8% calc(100% - 4px), 83.0% calc(100% - 5px), 79.7% calc(100% - 2px), 77.7% calc(100% - 1px), 75.6% calc(100% - 3px), 73.7% calc(100% - 5px), 71.3% calc(100% - 6px), 69.2% calc(100% - 6px), 65.9% calc(100% - 2px), 62.6% calc(100% - 2px), 59.6% calc(100% - 4px), 56.2% calc(100% - 3px), 53.1% calc(100% - 2px), 50.0% calc(100% - 3px), 46.9% calc(100% - 2px), 43.5% calc(100% - 1px), 41.0% calc(100% - 1px), 39.0% calc(100% - 4px), 36.8% calc(100% - 2px), 34.5% calc(100% - 6px), 32.2% calc(100% - 2px), 28.7% calc(100% - 1px), 26.7% calc(100% - 6px), 23.9% calc(100% - 1px), 21.6% calc(100% - 3px), 18.4% calc(100% - 1px), 16.1% calc(100% - 6px), 13.9% calc(100% - 0px), 11.8% calc(100% - 5px), 9.0% calc(100% - 2px), 7.0% calc(100% - 2px), 3.6% calc(100% - 5px), 0.7% calc(100% - 2px), 0.0% calc(100% - 1px));}
+.strips.menu .strip:nth-child(1){clip-path:polygon(0.0% 6px, 2.4% 2px, 5.1% 0px, 7.2% 6px, 10.2% 0px, 13.6% 4px, 16.7% 3px, 19.0% 2px, 21.9% 3px, 24.7% 4px, 28.0% 2px, 31.6% 5px, 33.8% 3px, 36.7% 6px, 39.0% 6px, 40.8% 2px, 43.2% 5px, 46.4% 4px, 49.2% 1px, 51.3% 2px, 54.3% 4px, 57.7% 2px, 61.1% 3px, 63.8% 3px, 65.9% 2px, 68.8% 4px, 71.3% 0px, 73.1% 2px, 75.2% 2px, 77.7% 0px, 80.5% 0px, 83.6% 5px, 87.0% 2px, 89.3% 2px, 92.8% 0px, 95.4% 3px, 97.4% 6px, 100.0% 3px, 100.0% calc(100% - 4px), 96.6% calc(100% - 0px), 94.0% calc(100% - 2px), 91.2% calc(100% - 5px), 87.7% calc(100% - 4px), 84.4% calc(100% - 2px), 80.9% calc(100% - 2px), 77.9% calc(100% - 2px), 74.3% calc(100% - 0px), 71.5% calc(100% - 2px), 68.4% calc(100% - 3px), 65.2% calc(100% - 4px), 63.3% calc(100% - 4px), 60.5% calc(100% - 2px), 57.5% calc(100% - 2px), 54.4% calc(100% - 3px), 50.8% calc(100% - 2px), 48.5% calc(100% - 3px), 44.9% calc(100% - 3px), 42.6% calc(100% - 5px), 39.5% calc(100% - 1px), 37.1% calc(100% - 4px), 34.5% calc(100% - 2px), 32.4% calc(100% - 2px), 30.0% calc(100% - 3px), 26.4% calc(100% - 6px), 24.3% calc(100% - 3px), 21.4% calc(100% - 2px), 19.2% calc(100% - 6px), 17.2% calc(100% - 2px), 14.5% calc(100% - 0px), 12.4% calc(100% - 2px), 9.0% calc(100% - 6px), 6.4% calc(100% - 6px), 3.2% calc(100% - 2px), 0.0% calc(100% - 1px));}
+.strips.five .strip:nth-child(2){clip-path:polygon(0.0% 6px, 2.3% 5px, 4.3% 0px, 7.9% 6px, 10.2% 6px, 13.3% 3px, 16.1% 2px, 19.6% 5px, 21.7% 3px, 23.6% 3px, 25.6% 5px, 28.6% 1px, 30.4% 0px, 33.7% 3px, 35.7% 2px, 39.2% 1px, 42.2% 2px, 44.9% 2px, 48.5% 0px, 51.3% 1px, 53.8% 2px, 56.8% 6px, 59.5% 2px, 62.2% 1px, 65.8% 4px, 68.2% 5px, 71.6% 2px, 74.6% 1px, 76.9% 5px, 79.3% 2px, 81.2% 2px, 83.0% 0px, 85.2% 2px, 87.1% 3px, 90.3% 1px, 93.4% 3px, 95.6% 4px, 97.4% 4px, 100.0% 4px, 100.0% calc(100% - 0px), 97.3% calc(100% - 5px), 95.1% calc(100% - 4px), 92.5% calc(100% - 6px), 90.2% calc(100% - 2px), 87.6% calc(100% - 5px), 85.5% calc(100% - 3px), 82.0% calc(100% - 0px), 78.5% calc(100% - 5px), 76.4% calc(100% - 0px), 73.7% calc(100% - 3px), 70.8% calc(100% - 5px), 67.2% calc(100% - 2px), 65.4% calc(100% - 5px), 62.0% calc(100% - 4px), 59.0% calc(100% - 3px), 55.8% calc(100% - 6px), 53.1% calc(100% - 5px), 50.9% calc(100% - 6px), 47.4% calc(100% - 2px), 44.8% calc(100% - 0px), 42.5% calc(100% - 6px), 39.5% calc(100% - 3px), 36.3% calc(100% - 4px), 34.5% calc(100% - 0px), 31.4% calc(100% - 2px), 28.6% calc(100% - 4px), 26.1% calc(100% - 3px), 23.9% calc(100% - 6px), 20.4% calc(100% - 4px), 17.2% calc(100% - 2px), 14.6% calc(100% - 1px), 11.2% calc(100% - 3px), 8.3% calc(100% - 5px), 4.8% calc(100% - 2px), 2.0% calc(100% - 0px), 0.0% calc(100% - 1px));}
+.strips.menu .strip:nth-child(2){clip-path:polygon(0.0% 2px, 3.2% 4px, 6.7% 2px, 10.0% 4px, 12.0% 0px, 14.6% 1px, 16.8% 2px, 18.8% 1px, 21.7% 5px, 24.9% 1px, 27.6% 2px, 30.9% 3px, 33.3% 4px, 35.2% 5px, 38.0% 6px, 40.5% 4px, 43.5% 4px, 45.4% 4px, 47.4% 3px, 49.7% 3px, 52.9% 5px, 55.0% 1px, 57.9% 5px, 61.5% 2px, 64.9% 2px, 68.3% 4px, 70.8% 3px, 73.8% 1px, 76.8% 6px, 79.4% 0px, 81.4% 2px, 84.5% 6px, 86.4% 5px, 88.4% 2px, 91.6% 2px, 94.1% 0px, 97.2% 6px, 99.6% 3px, 100.0% 1px, 100.0% calc(100% - 0px), 97.5% calc(100% - 5px), 95.4% calc(100% - 2px), 92.3% calc(100% - 2px), 89.4% calc(100% - 5px), 86.0% calc(100% - 4px), 83.0% calc(100% - 3px), 80.7% calc(100% - 3px), 77.4% calc(100% - 2px), 73.9% calc(100% - 1px), 71.7% calc(100% - 1px), 68.6% calc(100% - 5px), 65.7% calc(100% - 4px), 62.7% calc(100% - 5px), 60.6% calc(100% - 6px), 58.1% calc(100% - 6px), 54.6% calc(100% - 3px), 52.6% calc(100% - 1px), 49.5% calc(100% - 4px), 47.1% calc(100% - 0px), 44.2% calc(100% - 2px), 40.9% calc(100% - 2px), 38.5% calc(100% - 5px), 35.5% calc(100% - 4px), 32.9% calc(100% - 4px), 29.9% calc(100% - 2px), 27.6% calc(100% - 0px), 25.8% calc(100% - 3px), 23.2% calc(100% - 2px), 21.4% calc(100% - 4px), 18.3% calc(100% - 0px), 15.0% calc(100% - 6px), 12.5% calc(100% - 1px), 10.6% calc(100% - 4px), 8.7% calc(100% - 2px), 5.5% calc(100% - 0px), 3.0% calc(100% - 0px), 0.3% calc(100% - 3px), 0.0% calc(100% - 4px));}
+.strips.five .strip:nth-child(3){clip-path:polygon(0.0% 4px, 2.3% 2px, 5.3% 2px, 8.7% 2px, 10.7% 3px, 13.8% 0px, 16.4% 0px, 20.0% 2px, 22.0% 4px, 25.2% 2px, 28.7% 4px, 31.2% 3px, 33.9% 2px, 36.9% 2px, 39.8% 1px, 42.2% 4px, 45.3% 2px, 47.9% 6px, 50.6% 4px, 52.8% 5px, 55.1% 6px, 57.3% 4px, 59.9% 2px, 62.7% 3px, 65.5% 3px, 68.6% 2px, 70.5% 6px, 73.0% 2px, 76.5% 0px, 78.7% 6px, 81.9% 6px, 84.9% 2px, 88.0% 4px, 91.4% 5px, 93.6% 5px, 96.3% 2px, 99.7% 3px, 100.0% 1px, 100.0% calc(100% - 0px), 97.2% calc(100% - 0px), 94.7% calc(100% - 5px), 92.6% calc(100% - 3px), 90.5% calc(100% - 1px), 87.1% calc(100% - 2px), 85.1% calc(100% - 0px), 81.6% calc(100% - 5px), 78.6% calc(100% - 0px), 76.6% calc(100% - 4px), 74.6% calc(100% - 4px), 71.2% calc(100% - 1px), 67.7% calc(100% - 5px), 64.3% calc(100% - 0px), 62.5% calc(100% - 5px), 60.4% calc(100% - 6px), 58.2% calc(100% - 3px), 55.9% calc(100% - 0px), 53.4% calc(100% - 2px), 50.3% calc(100% - 4px), 47.7% calc(100% - 3px), 45.5% calc(100% - 3px), 43.0% calc(100% - 3px), 40.2% calc(100% - 2px), 38.0% calc(100% - 5px), 35.4% calc(100% - 5px), 32.9% calc(100% - 1px), 31.0% calc(100% - 0px), 28.1% calc(100% - 0px), 25.1% calc(100% - 4px), 23.0% calc(100% - 6px), 19.4% calc(100% - 2px), 17.0% calc(100% - 4px), 14.3% calc(100% - 2px), 12.2% calc(100% - 0px), 10.2% calc(100% - 2px), 8.0% calc(100% - 4px), 5.1% calc(100% - 4px), 3.2% calc(100% - 2px), 1.3% calc(100% - 6px), 0.0% calc(100% - 4px));}
+.strips.menu .strip:nth-child(3){clip-path:polygon(0.0% 6px, 3.3% 6px, 5.3% 2px, 7.1% 3px, 9.3% 4px, 11.2% 0px, 13.8% 5px, 16.1% 3px, 18.8% 3px, 22.0% 2px, 23.9% 0px, 25.8% 6px, 28.2% 2px, 31.0% 5px, 33.6% 5px, 36.2% 2px, 39.7% 2px, 42.6% 2px, 46.1% 2px, 47.9% 6px, 51.1% 6px, 54.1% 1px, 56.7% 2px, 58.8% 3px, 61.1% 4px, 63.0% 1px, 65.1% 2px, 68.0% 1px, 70.1% 6px, 72.4% 2px, 75.1% 5px, 78.0% 3px, 80.8% 4px, 83.7% 0px, 86.4% 6px, 89.3% 1px, 92.8% 6px, 94.8% 6px, 96.9% 6px, 99.1% 1px, 100.0% 4px, 100.0% calc(100% - 0px), 97.4% calc(100% - 2px), 94.6% calc(100% - 6px), 92.1% calc(100% - 4px), 89.6% calc(100% - 5px), 87.1% calc(100% - 3px), 83.8% calc(100% - 1px), 80.3% calc(100% - 1px), 76.8% calc(100% - 0px), 73.4% calc(100% - 0px), 70.7% calc(100% - 1px), 67.6% calc(100% - 0px), 64.8% calc(100% - 3px), 61.3% calc(100% - 2px), 58.0% calc(100% - 1px), 54.8% calc(100% - 4px), 51.3% calc(100% - 4px), 48.7% calc(100% - 2px), 46.5% calc(100% - 6px), 43.2% calc(100% - 3px), 39.6% calc(100% - 5px), 36.5% calc(100% - 5px), 33.2% calc(100% - 6px), 30.6% calc(100% - 5px), 27.2% calc(100% - 0px), 24.1% calc(100% - 5px), 20.5% calc(100% - 6px), 18.0% calc(100% - 4px), 15.3% calc(100% - 2px), 12.9% calc(100% - 2px), 10.6% calc(100% - 3px), 7.3% calc(100% - 4px), 4.3% calc(100% - 2px), 1.0% calc(100% - 5px), 0.0% calc(100% - 3px));}
+.strips.five .strip:nth-child(4){clip-path:polygon(0.0% 1px, 2.9% 3px, 5.2% 4px, 7.5% 1px, 10.5% 4px, 13.1% 2px, 15.7% 1px, 17.9% 5px, 20.4% 4px, 22.8% 2px, 24.9% 4px, 27.0% 1px, 29.0% 5px, 30.9% 4px, 33.0% 2px, 35.6% 6px, 39.0% 1px, 42.4% 1px, 45.2% 5px, 47.3% 1px, 50.5% 6px, 53.2% 3px, 55.5% 3px, 58.2% 4px, 60.9% 1px, 62.9% 1px, 65.2% 1px, 67.0% 2px, 69.0% 1px, 71.6% 2px, 74.4% 6px, 76.7% 6px, 79.3% 1px, 81.6% 2px, 83.8% 6px, 85.7% 2px, 88.4% 4px, 91.2% 0px, 94.5% 2px, 98.0% 2px, 99.8% 5px, 100.0% 3px, 100.0% calc(100% - 5px), 97.7% calc(100% - 3px), 95.8% calc(100% - 6px), 92.5% calc(100% - 1px), 90.0% calc(100% - 0px), 87.9% calc(100% - 0px), 84.3% calc(100% - 4px), 81.6% calc(100% - 5px), 78.0% calc(100% - 1px), 76.1% calc(100% - 2px), 73.0% calc(100% - 0px), 70.7% calc(100% - 4px), 68.6% calc(100% - 3px), 65.7% calc(100% - 5px), 63.4% calc(100% - 5px), 61.5% calc(100% - 2px), 58.8% calc(100% - 3px), 56.4% calc(100% - 2px), 54.1% calc(100% - 2px), 51.3% calc(100% - 5px), 48.7% calc(100% - 0px), 46.4% calc(100% - 2px), 43.8% calc(100% - 5px), 41.8% calc(100% - 1px), 39.8% calc(100% - 0px), 36.7% calc(100% - 2px), 34.6% calc(100% - 6px), 31.9% calc(100% - 2px), 30.1% calc(100% - 1px), 27.8% calc(100% - 5px), 25.0% calc(100% - 2px), 23.0% calc(100% - 3px), 21.0% calc(100% - 2px), 19.0% calc(100% - 3px), 15.4% calc(100% - 5px), 11.8% calc(100% - 0px), 9.0% calc(100% - 6px), 6.7% calc(100% - 6px), 4.3% calc(100% - 1px), 0.9% calc(100% - 0px), 0.0% calc(100% - 4px));}
+.strips.menu .strip:nth-child(4){clip-path:polygon(0.0% 4px, 3.4% 0px, 6.1% 5px, 9.4% 6px, 12.1% 5px, 15.0% 4px, 17.8% 2px, 21.2% 5px, 24.1% 2px, 27.0% 6px, 28.9% 0px, 31.0% 6px, 33.7% 4px, 36.5% 0px, 38.7% 2px, 40.8% 1px, 43.1% 1px, 45.9% 6px, 48.6% 2px, 51.8% 6px, 53.7% 2px, 57.1% 3px, 59.1% 2px, 61.5% 5px, 64.3% 2px, 67.8% 6px, 70.4% 0px, 73.7% 1px, 75.6% 3px, 78.4% 1px, 81.4% 2px, 84.0% 2px, 86.5% 4px, 88.9% 5px, 92.2% 1px, 94.0% 4px, 96.9% 4px, 99.8% 3px, 100.0% 3px, 100.0% calc(100% - 4px), 96.8% calc(100% - 5px), 93.8% calc(100% - 4px), 90.4% calc(100% - 0px), 87.9% calc(100% - 4px), 84.6% calc(100% - 2px), 82.4% calc(100% - 6px), 80.3% calc(100% - 6px), 77.0% calc(100% - 6px), 74.1% calc(100% - 4px), 72.1% calc(100% - 1px), 68.5% calc(100% - 2px), 66.5% calc(100% - 3px), 63.0% calc(100% - 2px), 60.9% calc(100% - 0px), 57.9% calc(100% - 6px), 55.9% calc(100% - 5px), 53.8% calc(100% - 3px), 51.3% calc(100% - 0px), 47.8% calc(100% - 6px), 45.1% calc(100% - 4px), 41.9% calc(100% - 1px), 39.5% calc(100% - 0px), 36.5% calc(100% - 5px), 33.6% calc(100% - 5px), 30.4% calc(100% - 1px), 27.6% calc(100% - 0px), 24.9% calc(100% - 5px), 22.3% calc(100% - 4px), 19.6% calc(100% - 4px), 17.6% calc(100% - 4px), 15.3% calc(100% - 4px), 13.1% calc(100% - 2px), 10.7% calc(100% - 1px), 8.0% calc(100% - 5px), 5.2% calc(100% - 5px), 2.2% calc(100% - 5px), 0.0% calc(100% - 4px));}
+.strips.five .strip:nth-child(5){clip-path:polygon(0.0% 3px, 1.8% 0px, 3.9% 3px, 5.7% 2px, 9.1% 5px, 11.3% 5px, 13.9% 5px, 16.3% 4px, 18.7% 3px, 22.0% 5px, 24.3% 2px, 26.5% 6px, 29.8% 6px, 31.7% 5px, 34.3% 5px, 37.8% 6px, 40.3% 1px, 43.0% 0px, 45.2% 2px, 48.1% 0px, 50.4% 6px, 52.4% 1px, 55.9% 2px, 57.7% 6px, 60.8% 4px, 63.4% 3px, 65.5% 5px, 67.4% 4px, 69.8% 5px, 72.3% 6px, 74.7% 6px, 77.9% 4px, 80.6% 1px, 83.6% 2px, 86.0% 4px, 89.5% 1px, 91.8% 0px, 94.4% 0px, 97.9% 2px, 100.0% 4px, 100.0% calc(100% - 6px), 96.6% calc(100% - 6px), 94.8% calc(100% - 0px), 92.1% calc(100% - 1px), 89.3% calc(100% - 6px), 87.1% calc(100% - 6px), 84.0% calc(100% - 4px), 81.0% calc(100% - 0px), 79.1% calc(100% - 2px), 76.5% calc(100% - 0px), 73.6% calc(100% - 4px), 70.7% calc(100% - 4px), 67.9% calc(100% - 0px), 64.7% calc(100% - 2px), 62.9% calc(100% - 5px), 60.0% calc(100% - 0px), 57.9% calc(100% - 3px), 55.2% calc(100% - 5px), 52.8% calc(100% - 3px), 49.8% calc(100% - 5px), 47.1% calc(100% - 0px), 44.2% calc(100% - 3px), 41.8% calc(100% - 0px), 38.5% calc(100% - 1px), 34.9% calc(100% - 2px), 32.5% calc(100% - 2px), 30.1% calc(100% - 5px), 27.7% calc(100% - 6px), 24.8% calc(100% - 1px), 22.3% calc(100% - 0px), 20.3% calc(100% - 2px), 17.3% calc(100% - 6px), 14.0% calc(100% - 3px), 11.1% calc(100% - 5px), 8.6% calc(100% - 3px), 5.1% calc(100% - 1px), 1.5% calc(100% - 6px), 0.0% calc(100% - 4px));}
+.strips.menu .strip:nth-child(5){clip-path:polygon(0.0% 3px, 3.1% 1px, 5.4% 3px, 7.6% 5px, 10.5% 2px, 13.3% 3px, 16.5% 6px, 19.3% 1px, 21.2% 1px, 23.7% 6px, 26.9% 6px, 30.0% 3px, 32.0% 1px, 34.4% 2px, 36.2% 2px, 38.9% 3px, 40.8% 6px, 43.9% 2px, 45.8% 1px, 48.4% 2px, 50.8% 2px, 54.3% 3px, 56.8% 2px, 60.0% 2px, 62.6% 1px, 64.7% 4px, 67.1% 2px, 70.4% 0px, 72.8% 2px, 74.9% 2px, 76.9% 4px, 79.4% 2px, 82.2% 0px, 84.7% 1px, 88.2% 2px, 90.9% 4px, 93.1% 2px, 96.3% 5px, 99.2% 3px, 100.0% 4px, 100.0% calc(100% - 2px), 97.1% calc(100% - 6px), 94.8% calc(100% - 4px), 92.1% calc(100% - 5px), 88.7% calc(100% - 6px), 86.6% calc(100% - 4px), 84.0% calc(100% - 2px), 81.8% calc(100% - 5px), 79.7% calc(100% - 1px), 76.3% calc(100% - 3px), 73.4% calc(100% - 1px), 71.6% calc(100% - 0px), 68.6% calc(100% - 2px), 65.0% calc(100% - 0px), 63.2% calc(100% - 2px), 60.9% calc(100% - 6px), 59.0% calc(100% - 0px), 55.8% calc(100% - 2px), 52.9% calc(100% - 1px), 49.5% calc(100% - 4px), 47.5% calc(100% - 0px), 44.0% calc(100% - 2px), 41.9% calc(100% - 5px), 38.4% calc(100% - 4px), 36.4% calc(100% - 4px), 34.5% calc(100% - 3px), 32.5% calc(100% - 1px), 29.2% calc(100% - 5px), 27.1% calc(100% - 0px), 25.0% calc(100% - 4px), 23.0% calc(100% - 3px), 21.0% calc(100% - 3px), 17.8% calc(100% - 6px), 14.8% calc(100% - 1px), 12.9% calc(100% - 6px), 10.5% calc(100% - 0px), 7.6% calc(100% - 6px), 5.1% calc(100% - 3px), 2.1% calc(100% - 2px), 0.0% calc(100% - 4px));}
+.strips.five .strip:nth-child(6){clip-path:polygon(0.0% 5px, 2.6% 4px, 5.2% 6px, 7.0% 4px, 9.2% 3px, 11.1% 4px, 14.3% 2px, 17.8% 4px, 19.7% 3px, 23.2% 4px, 25.0% 2px, 28.3% 0px, 30.9% 4px, 34.5% 4px, 36.9% 2px, 40.2% 5px, 42.9% 2px, 46.4% 4px, 49.2% 4px, 52.8% 0px, 55.5% 3px, 58.2% 4px, 60.5% 6px, 63.1% 2px, 66.2% 0px, 68.8% 6px, 70.6% 6px, 73.7% 1px, 76.3% 1px, 79.0% 0px, 82.5% 3px, 86.0% 5px, 87.9% 0px, 90.8% 2px, 93.7% 6px, 96.5% 1px, 98.7% 1px, 100.0% 4px, 100.0% calc(100% - 1px), 97.8% calc(100% - 2px), 94.8% calc(100% - 1px), 91.7% calc(100% - 0px), 88.2% calc(100% - 2px), 86.1% calc(100% - 4px), 83.9% calc(100% - 0px), 81.7% calc(100% - 3px), 78.2% calc(100% - 1px), 75.3% calc(100% - 4px), 72.8% calc(100% - 0px), 70.2% calc(100% - 6px), 67.6% calc(100% - 0px), 65.7% calc(100% - 3px), 63.1% calc(100% - 4px), 59.7% calc(100% - 2px), 57.7% calc(100% - 3px), 55.7% calc(100% - 1px), 53.4% calc(100% - 6px), 50.8% calc(100% - 2px), 48.6% calc(100% - 2px), 45.2% calc(100% - 2px), 42.5% calc(100% - 2px), 40.4% calc(100% - 6px), 37.1% calc(100% - 2px), 34.9% calc(100% - 2px), 31.6% calc(100% - 6px), 29.2% calc(100% - 4px), 25.7% calc(100% - 1px), 22.5% calc(100% - 4px), 19.4% calc(100% - 3px), 16.6% calc(100% - 6px), 14.4% calc(100% - 6px), 11.7% calc(100% - 6px), 8.9% calc(100% - 1px), 5.8% calc(100% - 5px), 3.9% calc(100% - 1px), 0.7% calc(100% - 0px), 0.0% calc(100% - 4px));}
+.strips.menu .strip:nth-child(6){clip-path:polygon(0.0% 0px, 2.8% 5px, 5.9% 1px, 9.0% 4px, 12.3% 2px, 14.3% 1px, 17.9% 2px, 20.5% 3px, 22.7% 0px, 25.9% 2px, 28.4% 1px, 31.0% 1px, 33.4% 6px, 35.4% 6px, 37.9% 2px, 41.0% 3px, 43.2% 0px, 46.4% 4px, 48.8% 5px, 51.3% 2px, 54.2% 2px, 57.0% 4px, 59.1% 6px, 62.1% 6px, 64.7% 1px, 67.8% 2px, 69.8% 2px, 73.3% 3px, 76.0% 0px, 79.6% 0px, 82.8% 0px, 85.2% 3px, 87.8% 0px, 90.5% 2px, 92.9% 2px, 95.5% 3px, 98.3% 2px, 100.0% 4px, 100.0% calc(100% - 2px), 96.8% calc(100% - 0px), 93.7% calc(100% - 4px), 90.9% calc(100% - 1px), 88.5% calc(100% - 0px), 86.2% calc(100% - 5px), 83.0% calc(100% - 6px), 80.7% calc(100% - 4px), 77.9% calc(100% - 6px), 75.5% calc(100% - 2px), 73.6% calc(100% - 1px), 71.5% calc(100% - 1px), 68.0% calc(100% - 2px), 66.1% calc(100% - 4px), 63.0% calc(100% - 2px), 59.8% calc(100% - 2px), 57.2% calc(100% - 4px), 53.8% calc(100% - 3px), 50.5% calc(100% - 4px), 47.5% calc(100% - 2px), 44.8% calc(100% - 4px), 42.3% calc(100% - 3px), 40.1% calc(100% - 5px), 37.0% calc(100% - 5px), 35.1% calc(100% - 0px), 33.2% calc(100% - 1px), 30.6% calc(100% - 4px), 27.9% calc(100% - 5px), 25.8% calc(100% - 2px), 23.7% calc(100% - 3px), 21.7% calc(100% - 5px), 18.7% calc(100% - 1px), 16.8% calc(100% - 2px), 14.6% calc(100% - 5px), 11.8% calc(100% - 2px), 9.1% calc(100% - 3px), 6.4% calc(100% - 2px), 3.6% calc(100% - 1px), 0.3% calc(100% - 3px), 0.0% calc(100% - 4px));}
+
+
+/* map preview on Home */
+.mapcard{position:relative; display:block; width:100%; height:8.5rem; padding:0; border:none; border-radius:0.6rem; overflow:hidden; cursor:pointer; background:#EDE3CF;
+  box-shadow:0 0.2rem 0.5rem rgba(52,48,42,0.28), inset 0 0 0 0.0625rem rgba(138,106,79,0.3);}
+.mapcard svg{display:block; width:100%; height:100%;}
+.mapcard .tap{position:absolute; right:0.6rem; bottom:0.6rem; padding:0.3rem 0.8rem; border-radius:1rem; background:var(--ink); color:var(--paper); font-size:1rem; font-weight:700;}
+
+/* coming-soon bits */
+.soon{position:absolute; right:0.9rem; top:50%; transform:translateY(-50%); padding:0.1rem 0.55rem; border-radius:0.75rem; background:var(--ink); color:var(--paper); font-size:0.875rem; font-weight:700;}
+.strip.nav.has-soon{padding-right:4.25rem;}
+.notice{margin:0; padding:0.9rem 1rem; border-radius:0.75rem; background:var(--ink); color:var(--paper); text-align:center; font-size:1.0625rem; font-weight:700;}
+.strip.nav.off{cursor:default;}
+.strip.nav.off .lbl2{opacity:0.8;}
+.campfire-card{margin:0; padding:1.1rem 1rem; border-radius:0.6rem; background:var(--ink); color:var(--paper); text-align:center;}
+.campfire-card strong{display:block; font-family:'Dangrek', system-ui, sans-serif; font-weight:400; font-size:1.375rem;}
+.campfire-card span{font-family:'Caveat', cursive; font-weight:600; font-size:1.25rem;}
+.strips.rooms .strip:nth-child(1){clip-path:polygon(0.0% 1px, 2.2% 2px, 5.1% 2px, 8.0% 2px, 11.5% 4px, 13.6% 2px, 15.6% 2px, 18.8% 0px, 21.4% 5px, 24.1% 3px, 26.1% 2px, 28.7% 1px, 31.1% 3px, 34.0% 6px, 36.2% 5px, 38.2% 0px, 40.2% 5px, 42.9% 5px, 46.0% 0px, 48.8% 0px, 51.9% 2px, 54.7% 2px, 56.9% 2px, 58.7% 2px, 60.8% 1px, 64.1% 2px, 66.3% 3px, 69.2% 0px, 72.5% 5px, 74.9% 2px, 78.2% 5px, 81.3% 6px, 84.6% 5px, 86.8% 4px, 89.8% 2px, 92.3% 0px, 94.8% 6px, 97.6% 3px, 100.0% 1px, 100.0% calc(100% - 2px), 97.5% calc(100% - 1px), 95.6% calc(100% - 0px), 93.6% calc(100% - 6px), 91.2% calc(100% - 4px), 87.8% calc(100% - 4px), 85.7% calc(100% - 3px), 82.9% calc(100% - 4px), 80.7% calc(100% - 1px), 78.7% calc(100% - 4px), 76.2% calc(100% - 2px), 72.7% calc(100% - 0px), 70.2% calc(100% - 3px), 67.5% calc(100% - 0px), 65.6% calc(100% - 3px), 62.2% calc(100% - 5px), 60.1% calc(100% - 3px), 57.0% calc(100% - 1px), 55.2% calc(100% - 2px), 51.9% calc(100% - 4px), 50.0% calc(100% - 3px), 48.1% calc(100% - 6px), 45.3% calc(100% - 3px), 42.2% calc(100% - 2px), 39.7% calc(100% - 5px), 36.8% calc(100% - 5px), 34.8% calc(100% - 2px), 32.2% calc(100% - 2px), 29.3% calc(100% - 6px), 27.3% calc(100% - 1px), 23.8% calc(100% - 5px), 21.0% calc(100% - 5px), 17.7% calc(100% - 4px), 14.9% calc(100% - 0px), 11.9% calc(100% - 0px), 9.9% calc(100% - 0px), 7.7% calc(100% - 0px), 5.4% calc(100% - 1px), 2.3% calc(100% - 3px), 0.0% calc(100% - 3px));}
+.strips.three .strip:nth-child(1){clip-path:polygon(0.0% 0px, 2.8% 6px, 5.0% 6px, 6.8% 4px, 9.7% 0px, 12.8% 5px, 15.3% 4px, 18.0% 6px, 21.3% 2px, 23.4% 5px, 25.8% 3px, 28.7% 4px, 31.4% 6px, 33.7% 4px, 36.2% 3px, 39.4% 0px, 42.4% 6px, 45.2% 6px, 47.0% 0px, 49.3% 5px, 52.2% 6px, 55.6% 2px, 58.1% 6px, 61.1% 3px, 63.4% 6px, 65.3% 5px, 67.2% 4px, 70.2% 0px, 72.6% 5px, 74.8% 0px, 77.9% 0px, 80.7% 1px, 83.4% 2px, 86.1% 2px, 88.6% 2px, 90.9% 2px, 94.5% 2px, 96.6% 2px, 99.0% 4px, 100.0% 4px, 100.0% calc(100% - 5px), 97.9% calc(100% - 2px), 94.8% calc(100% - 4px), 91.7% calc(100% - 2px), 88.8% calc(100% - 2px), 86.8% calc(100% - 4px), 84.0% calc(100% - 1px), 81.3% calc(100% - 2px), 79.4% calc(100% - 3px), 76.9% calc(100% - 5px), 75.1% calc(100% - 0px), 71.6% calc(100% - 2px), 69.3% calc(100% - 0px), 67.1% calc(100% - 4px), 65.3% calc(100% - 2px), 63.0% calc(100% - 6px), 59.6% calc(100% - 4px), 57.7% calc(100% - 2px), 55.0% calc(100% - 3px), 52.5% calc(100% - 2px), 49.8% calc(100% - 1px), 47.5% calc(100% - 2px), 45.6% calc(100% - 4px), 42.5% calc(100% - 1px), 40.1% calc(100% - 4px), 36.5% calc(100% - 4px), 34.5% calc(100% - 2px), 31.7% calc(100% - 2px), 29.4% calc(100% - 2px), 27.5% calc(100% - 2px), 25.4% calc(100% - 6px), 23.6% calc(100% - 2px), 20.3% calc(100% - 5px), 16.8% calc(100% - 3px), 14.6% calc(100% - 1px), 12.5% calc(100% - 2px), 10.4% calc(100% - 4px), 7.0% calc(100% - 2px), 5.2% calc(100% - 2px), 3.2% calc(100% - 2px), 0.0% calc(100% - 1px));}
+.strips.rooms .strip:nth-child(2){clip-path:polygon(0.0% 3px, 2.9% 4px, 6.3% 1px, 9.4% 3px, 12.0% 2px, 14.0% 6px, 17.1% 3px, 19.9% 2px, 23.0% 2px, 26.2% 4px, 29.4% 6px, 31.4% 1px, 34.1% 6px, 37.0% 6px, 40.5% 5px, 43.9% 0px, 46.7% 5px, 49.2% 2px, 52.2% 2px, 54.2% 1px, 57.7% 0px, 59.5% 6px, 62.1% 4px, 64.5% 3px, 66.4% 3px, 69.3% 6px, 71.3% 5px, 74.1% 1px, 77.4% 0px, 80.0% 1px, 83.2% 1px, 86.4% 4px, 89.6% 3px, 92.9% 2px, 96.2% 3px, 98.4% 2px, 100.0% 3px, 100.0% calc(100% - 5px), 97.3% calc(100% - 2px), 94.8% calc(100% - 5px), 92.9% calc(100% - 2px), 89.3% calc(100% - 1px), 86.6% calc(100% - 2px), 83.7% calc(100% - 2px), 80.3% calc(100% - 6px), 76.8% calc(100% - 2px), 74.7% calc(100% - 2px), 72.7% calc(100% - 1px), 70.2% calc(100% - 2px), 68.3% calc(100% - 6px), 65.3% calc(100% - 2px), 62.0% calc(100% - 5px), 58.7% calc(100% - 1px), 56.3% calc(100% - 1px), 53.3% calc(100% - 1px), 50.7% calc(100% - 4px), 48.5% calc(100% - 0px), 46.6% calc(100% - 5px), 44.7% calc(100% - 2px), 41.6% calc(100% - 5px), 38.4% calc(100% - 1px), 35.5% calc(100% - 6px), 32.9% calc(100% - 4px), 31.0% calc(100% - 5px), 28.8% calc(100% - 6px), 25.8% calc(100% - 3px), 23.8% calc(100% - 0px), 20.4% calc(100% - 1px), 18.3% calc(100% - 5px), 15.0% calc(100% - 3px), 12.6% calc(100% - 4px), 10.3% calc(100% - 0px), 8.0% calc(100% - 5px), 5.5% calc(100% - 5px), 2.4% calc(100% - 3px), 0.1% calc(100% - 5px), 0.0% calc(100% - 3px));}
+.strips.three .strip:nth-child(2){clip-path:polygon(0.0% 6px, 2.1% 4px, 4.5% 4px, 6.4% 4px, 8.5% 3px, 11.9% 0px, 14.5% 1px, 17.6% 5px, 19.5% 1px, 22.2% 1px, 24.5% 0px, 27.7% 2px, 30.9% 3px, 34.0% 5px, 37.4% 1px, 39.7% 4px, 42.8% 0px, 46.4% 3px, 49.1% 5px, 52.2% 5px, 55.6% 2px, 57.9% 2px, 60.1% 3px, 62.3% 4px, 65.9% 0px, 69.1% 3px, 71.3% 4px, 73.3% 1px, 76.0% 3px, 78.4% 2px, 81.6% 1px, 84.8% 2px, 87.7% 2px, 91.2% 6px, 94.8% 0px, 97.8% 1px, 100.0% 1px, 100.0% calc(100% - 2px), 96.9% calc(100% - 1px), 95.0% calc(100% - 1px), 92.4% calc(100% - 3px), 89.1% calc(100% - 5px), 87.0% calc(100% - 6px), 84.3% calc(100% - 2px), 82.5% calc(100% - 5px), 80.3% calc(100% - 3px), 77.4% calc(100% - 4px), 73.9% calc(100% - 4px), 71.0% calc(100% - 3px), 68.0% calc(100% - 4px), 65.5% calc(100% - 6px), 62.0% calc(100% - 6px), 58.9% calc(100% - 0px), 57.0% calc(100% - 3px), 54.0% calc(100% - 6px), 50.7% calc(100% - 1px), 48.3% calc(100% - 2px), 46.3% calc(100% - 4px), 44.4% calc(100% - 2px), 42.2% calc(100% - 2px), 38.8% calc(100% - 2px), 36.4% calc(100% - 3px), 32.9% calc(100% - 3px), 29.5% calc(100% - 3px), 26.8% calc(100% - 2px), 23.6% calc(100% - 6px), 20.1% calc(100% - 2px), 18.0% calc(100% - 5px), 14.5% calc(100% - 6px), 12.5% calc(100% - 2px), 10.1% calc(100% - 0px), 7.7% calc(100% - 6px), 4.2% calc(100% - 0px), 0.9% calc(100% - 2px), 0.0% calc(100% - 3px));}
+.strips.rooms .strip:nth-child(3){clip-path:polygon(0.0% 0px, 2.3% 2px, 4.6% 0px, 7.0% 5px, 9.5% 0px, 11.5% 5px, 14.4% 3px, 16.4% 2px, 19.6% 2px, 21.6% 5px, 24.7% 1px, 28.1% 1px, 31.1% 2px, 34.3% 0px, 36.7% 2px, 39.5% 4px, 42.1% 0px, 45.3% 5px, 48.1% 6px, 50.2% 5px, 52.1% 2px, 55.1% 6px, 57.8% 2px, 60.3% 0px, 63.6% 2px, 66.7% 1px, 70.2% 4px, 72.3% 5px, 75.1% 1px, 78.2% 2px, 81.0% 5px, 82.8% 1px, 86.1% 5px, 88.0% 5px, 91.6% 2px, 94.3% 0px, 97.3% 6px, 100.0% 4px, 100.0% calc(100% - 3px), 97.2% calc(100% - 2px), 95.1% calc(100% - 6px), 92.7% calc(100% - 6px), 90.8% calc(100% - 2px), 88.2% calc(100% - 0px), 85.9% calc(100% - 5px), 82.9% calc(100% - 2px), 79.9% calc(100% - 0px), 77.9% calc(100% - 1px), 75.2% calc(100% - 1px), 73.3% calc(100% - 0px), 70.0% calc(100% - 2px), 68.1% calc(100% - 2px), 66.2% calc(100% - 5px), 64.0% calc(100% - 6px), 62.1% calc(100% - 5px), 59.6% calc(100% - 0px), 56.6% calc(100% - 2px), 53.2% calc(100% - 2px), 51.3% calc(100% - 2px), 48.8% calc(100% - 3px), 45.7% calc(100% - 0px), 42.5% calc(100% - 2px), 39.8% calc(100% - 2px), 36.3% calc(100% - 4px), 33.1% calc(100% - 2px), 30.7% calc(100% - 5px), 27.9% calc(100% - 2px), 24.7% calc(100% - 2px), 22.1% calc(100% - 2px), 19.5% calc(100% - 0px), 17.1% calc(100% - 6px), 14.7% calc(100% - 0px), 12.6% calc(100% - 5px), 9.3% calc(100% - 2px), 6.8% calc(100% - 1px), 4.1% calc(100% - 5px), 1.9% calc(100% - 5px), 0.0% calc(100% - 4px));}
+.strips.three .strip:nth-child(3){clip-path:polygon(0.0% 2px, 3.3% 0px, 5.2% 2px, 7.4% 2px, 10.1% 2px, 13.3% 4px, 16.6% 1px, 18.9% 6px, 22.4% 1px, 25.3% 4px, 28.9% 4px, 31.3% 2px, 33.9% 1px, 36.1% 5px, 39.2% 6px, 42.5% 3px, 45.6% 6px, 49.1% 3px, 51.9% 5px, 54.2% 2px, 56.6% 2px, 59.4% 1px, 62.9% 2px, 65.5% 0px, 67.6% 6px, 69.6% 5px, 71.5% 0px, 74.9% 6px, 77.6% 6px, 80.4% 3px, 82.5% 0px, 85.7% 6px, 88.4% 0px, 91.5% 1px, 94.7% 3px, 97.4% 2px, 99.8% 2px, 100.0% 1px, 100.0% calc(100% - 1px), 97.4% calc(100% - 2px), 95.3% calc(100% - 4px), 92.5% calc(100% - 1px), 89.6% calc(100% - 4px), 87.4% calc(100% - 5px), 84.1% calc(100% - 5px), 81.6% calc(100% - 5px), 79.3% calc(100% - 0px), 75.7% calc(100% - 5px), 73.6% calc(100% - 2px), 71.1% calc(100% - 6px), 68.8% calc(100% - 4px), 66.6% calc(100% - 5px), 64.6% calc(100% - 2px), 62.5% calc(100% - 1px), 59.1% calc(100% - 1px), 56.4% calc(100% - 3px), 53.5% calc(100% - 4px), 50.9% calc(100% - 5px), 48.9% calc(100% - 5px), 47.1% calc(100% - 2px), 44.4% calc(100% - 2px), 42.0% calc(100% - 5px), 39.3% calc(100% - 4px), 36.7% calc(100% - 3px), 34.0% calc(100% - 2px), 32.0% calc(100% - 5px), 29.0% calc(100% - 1px), 27.2% calc(100% - 4px), 23.7% calc(100% - 0px), 20.9% calc(100% - 2px), 18.9% calc(100% - 2px), 15.4% calc(100% - 2px), 12.7% calc(100% - 2px), 9.8% calc(100% - 0px), 7.7% calc(100% - 6px), 4.7% calc(100% - 3px), 2.2% calc(100% - 3px), 0.2% calc(100% - 2px), 0.0% calc(100% - 1px));}
+.strips.rooms .strip:nth-child(4){clip-path:polygon(0.0% 4px, 2.8% 2px, 6.3% 0px, 8.8% 5px, 10.7% 2px, 13.2% 4px, 16.5% 0px, 19.3% 2px, 21.1% 3px, 23.1% 5px, 25.2% 2px, 27.4% 5px, 30.2% 2px, 32.3% 6px, 35.7% 1px, 38.2% 6px, 41.7% 1px, 44.6% 6px, 46.5% 2px, 49.7% 2px, 52.4% 0px, 55.6% 6px, 58.5% 5px, 61.9% 6px, 65.4% 2px, 67.3% 0px, 70.6% 0px, 72.8% 1px, 75.8% 6px, 79.0% 6px, 81.0% 6px, 83.9% 0px, 86.6% 2px, 89.6% 3px, 91.5% 5px, 94.2% 5px, 96.8% 2px, 100.0% 4px, 100.0% calc(100% - 5px), 97.5% calc(100% - 0px), 94.2% calc(100% - 4px), 91.7% calc(100% - 1px), 89.2% calc(100% - 3px), 86.7% calc(100% - 3px), 83.5% calc(100% - 1px), 81.6% calc(100% - 2px), 78.5% calc(100% - 1px), 75.7% calc(100% - 1px), 73.5% calc(100% - 2px), 71.6% calc(100% - 2px), 69.0% calc(100% - 6px), 65.5% calc(100% - 0px), 62.5% calc(100% - 1px), 59.9% calc(100% - 1px), 58.0% calc(100% - 2px), 55.4% calc(100% - 5px), 53.2% calc(100% - 2px), 50.0% calc(100% - 3px), 46.5% calc(100% - 0px), 43.9% calc(100% - 5px), 41.7% calc(100% - 6px), 38.9% calc(100% - 2px), 35.5% calc(100% - 5px), 32.2% calc(100% - 1px), 30.2% calc(100% - 1px), 27.3% calc(100% - 5px), 25.0% calc(100% - 6px), 22.9% calc(100% - 0px), 19.9% calc(100% - 6px), 17.4% calc(100% - 2px), 14.0% calc(100% - 5px), 12.1% calc(100% - 6px), 10.2% calc(100% - 4px), 7.2% calc(100% - 4px), 3.6% calc(100% - 6px), 1.6% calc(100% - 4px), 0.0% calc(100% - 3px));}
+.strips.three .strip:nth-child(4){clip-path:polygon(0.0% 6px, 1.9% 1px, 5.4% 2px, 8.6% 1px, 11.6% 6px, 14.5% 6px, 17.5% 3px, 20.1% 6px, 22.1% 3px, 25.5% 4px, 27.7% 4px, 29.6% 1px, 32.4% 3px, 35.3% 2px, 38.5% 6px, 41.0% 3px, 44.2% 2px, 46.5% 2px, 48.8% 6px, 51.3% 0px, 53.7% 4px, 56.5% 3px, 59.6% 6px, 61.4% 2px, 63.5% 2px, 66.7% 3px, 68.8% 6px, 70.7% 2px, 74.0% 6px, 76.7% 1px, 79.8% 0px, 82.2% 6px, 85.4% 0px, 88.7% 4px, 91.7% 3px, 95.2% 5px, 97.9% 0px, 100.0% 3px, 100.0% calc(100% - 1px), 98.2% calc(100% - 5px), 95.3% calc(100% - 6px), 92.5% calc(100% - 1px), 89.8% calc(100% - 2px), 87.5% calc(100% - 2px), 85.4% calc(100% - 0px), 82.1% calc(100% - 1px), 79.8% calc(100% - 2px), 77.9% calc(100% - 4px), 75.9% calc(100% - 6px), 73.6% calc(100% - 2px), 71.8% calc(100% - 2px), 69.7% calc(100% - 5px), 67.8% calc(100% - 3px), 65.1% calc(100% - 5px), 61.8% calc(100% - 5px), 59.0% calc(100% - 3px), 56.1% calc(100% - 3px), 53.8% calc(100% - 3px), 51.8% calc(100% - 1px), 49.3% calc(100% - 5px), 46.3% calc(100% - 4px), 43.0% calc(100% - 0px), 40.4% calc(100% - 5px), 37.9% calc(100% - 3px), 36.1% calc(100% - 0px), 33.8% calc(100% - 5px), 31.0% calc(100% - 2px), 29.0% calc(100% - 3px), 26.2% calc(100% - 3px), 22.9% calc(100% - 2px), 19.6% calc(100% - 3px), 17.5% calc(100% - 2px), 15.3% calc(100% - 1px), 12.3% calc(100% - 5px), 8.8% calc(100% - 1px), 7.0% calc(100% - 0px), 4.8% calc(100% - 4px), 2.0% calc(100% - 2px), 0.0% calc(100% - 4px));}
+.strips.rooms .strip:nth-child(5){clip-path:polygon(0.0% 3px, 2.2% 4px, 5.0% 2px, 7.5% 4px, 10.4% 0px, 12.3% 2px, 14.9% 2px, 17.9% 4px, 20.2% 6px, 23.6% 6px, 27.1% 0px, 29.4% 2px, 31.3% 2px, 34.6% 1px, 36.5% 1px, 39.0% 0px, 41.6% 1px, 45.2% 5px, 48.0% 2px, 51.2% 0px, 53.8% 3px, 56.9% 6px, 60.1% 3px, 62.6% 4px, 65.6% 6px, 68.4% 4px, 71.1% 1px, 73.1% 2px, 75.4% 6px, 78.3% 2px, 80.9% 2px, 83.0% 4px, 85.0% 3px, 87.9% 5px, 91.4% 2px, 93.2% 3px, 96.0% 3px, 99.1% 1px, 100.0% 4px, 100.0% calc(100% - 3px), 97.7% calc(100% - 4px), 95.5% calc(100% - 5px), 92.3% calc(100% - 6px), 88.8% calc(100% - 2px), 86.6% calc(100% - 3px), 84.0% calc(100% - 4px), 80.5% calc(100% - 3px), 76.9% calc(100% - 0px), 73.4% calc(100% - 6px), 70.8% calc(100% - 2px), 67.9% calc(100% - 5px), 65.7% calc(100% - 2px), 62.5% calc(100% - 6px), 59.9% calc(100% - 0px), 56.5% calc(100% - 6px), 54.0% calc(100% - 2px), 51.5% calc(100% - 2px), 48.1% calc(100% - 1px), 44.9% calc(100% - 2px), 41.6% calc(100% - 0px), 38.3% calc(100% - 0px), 35.4% calc(100% - 5px), 32.7% calc(100% - 0px), 29.3% calc(100% - 0px), 27.3% calc(100% - 4px), 24.7% calc(100% - 3px), 22.1% calc(100% - 1px), 19.5% calc(100% - 0px), 16.3% calc(100% - 3px), 14.3% calc(100% - 4px), 11.4% calc(100% - 6px), 7.9% calc(100% - 3px), 5.3% calc(100% - 6px), 2.0% calc(100% - 2px), 0.0% calc(100% - 1px));}
+.strips.three .strip:nth-child(5){clip-path:polygon(0.0% 2px, 3.4% 0px, 6.0% 5px, 9.2% 6px, 12.0% 4px, 14.0% 2px, 15.9% 5px, 19.0% 0px, 21.9% 4px, 24.1% 2px, 27.3% 0px, 30.0% 0px, 33.4% 2px, 37.0% 3px, 38.9% 2px, 41.5% 4px, 44.5% 2px, 46.9% 0px, 49.0% 4px, 51.6% 4px, 53.8% 4px, 56.6% 0px, 59.8% 2px, 62.8% 1px, 65.0% 2px, 68.4% 2px, 71.1% 4px, 74.1% 2px, 76.8% 5px, 79.7% 1px, 83.3% 3px, 85.1% 0px, 86.9% 0px, 90.5% 3px, 93.0% 1px, 95.9% 1px, 98.8% 5px, 100.0% 1px, 100.0% calc(100% - 6px), 96.5% calc(100% - 1px), 93.0% calc(100% - 1px), 90.5% calc(100% - 2px), 87.9% calc(100% - 4px), 86.1% calc(100% - 5px), 83.3% calc(100% - 2px), 80.0% calc(100% - 6px), 77.2% calc(100% - 6px), 74.4% calc(100% - 0px), 72.5% calc(100% - 5px), 69.5% calc(100% - 4px), 66.3% calc(100% - 0px), 63.7% calc(100% - 3px), 61.1% calc(100% - 1px), 58.7% calc(100% - 1px), 55.4% calc(100% - 1px), 53.2% calc(100% - 3px), 50.9% calc(100% - 5px), 48.1% calc(100% - 5px), 46.1% calc(100% - 2px), 43.5% calc(100% - 3px), 40.8% calc(100% - 5px), 37.8% calc(100% - 0px), 34.6% calc(100% - 2px), 32.4% calc(100% - 2px), 29.8% calc(100% - 3px), 26.7% calc(100% - 0px), 23.4% calc(100% - 5px), 20.5% calc(100% - 3px), 17.3% calc(100% - 0px), 14.4% calc(100% - 1px), 12.4% calc(100% - 0px), 8.9% calc(100% - 4px), 5.5% calc(100% - 1px), 2.0% calc(100% - 2px), 0.0% calc(100% - 4px));}
+.strips.rooms .strip:nth-child(6){clip-path:polygon(0.0% 0px, 2.8% 6px, 5.1% 2px, 7.7% 6px, 9.9% 2px, 13.4% 6px, 15.4% 4px, 18.1% 5px, 20.3% 6px, 22.8% 2px, 25.3% 4px, 28.0% 0px, 31.2% 1px, 33.5% 2px, 35.8% 3px, 38.3% 3px, 41.8% 0px, 44.0% 2px, 46.2% 0px, 49.0% 2px, 51.9% 2px, 54.5% 0px, 57.9% 5px, 61.0% 1px, 63.1% 5px, 65.8% 2px, 68.9% 4px, 72.1% 0px, 74.5% 0px, 77.2% 2px, 79.9% 2px, 83.2% 0px, 86.0% 1px, 89.2% 2px, 91.5% 1px, 94.2% 6px, 97.5% 1px, 100.0% 3px, 100.0% calc(100% - 2px), 96.9% calc(100% - 3px), 93.9% calc(100% - 2px), 91.4% calc(100% - 3px), 87.9% calc(100% - 6px), 86.1% calc(100% - 5px), 83.3% calc(100% - 5px), 80.2% calc(100% - 4px), 77.7% calc(100% - 1px), 74.3% calc(100% - 3px), 72.2% calc(100% - 2px), 69.3% calc(100% - 5px), 66.5% calc(100% - 2px), 63.3% calc(100% - 1px), 60.9% calc(100% - 2px), 58.2% calc(100% - 1px), 56.3% calc(100% - 2px), 54.0% calc(100% - 1px), 51.5% calc(100% - 3px), 48.5% calc(100% - 5px), 46.2% calc(100% - 0px), 42.9% calc(100% - 0px), 40.8% calc(100% - 3px), 38.1% calc(100% - 1px), 35.6% calc(100% - 6px), 33.1% calc(100% - 3px), 30.6% calc(100% - 0px), 28.5% calc(100% - 5px), 26.4% calc(100% - 0px), 23.4% calc(100% - 3px), 20.9% calc(100% - 1px), 17.6% calc(100% - 2px), 14.7% calc(100% - 0px), 12.3% calc(100% - 6px), 9.6% calc(100% - 0px), 6.4% calc(100% - 2px), 4.3% calc(100% - 2px), 2.1% calc(100% - 3px), 0.0% calc(100% - 4px));}
+.strips.three .strip:nth-child(6){clip-path:polygon(0.0% 2px, 2.1% 5px, 5.2% 1px, 7.3% 4px, 10.7% 5px, 14.0% 3px, 17.6% 2px, 19.9% 2px, 22.0% 4px, 25.5% 1px, 28.9% 0px, 32.3% 6px, 35.9% 2px, 39.4% 6px, 42.6% 3px, 45.2% 3px, 48.7% 2px, 51.2% 5px, 53.8% 6px, 57.2% 6px, 60.0% 2px, 62.4% 1px, 64.7% 0px, 66.8% 6px, 70.1% 6px, 72.1% 2px, 74.5% 2px, 77.7% 2px, 80.0% 1px, 82.1% 6px, 85.4% 4px, 88.1% 5px, 90.9% 6px, 92.9% 4px, 96.2% 6px, 98.7% 6px, 100.0% 3px, 100.0% calc(100% - 6px), 96.5% calc(100% - 4px), 94.3% calc(100% - 2px), 90.8% calc(100% - 1px), 88.4% calc(100% - 3px), 85.6% calc(100% - 6px), 82.2% calc(100% - 3px), 79.7% calc(100% - 4px), 77.8% calc(100% - 6px), 75.3% calc(100% - 3px), 73.3% calc(100% - 2px), 70.1% calc(100% - 0px), 66.9% calc(100% - 0px), 65.1% calc(100% - 6px), 61.8% calc(100% - 6px), 60.0% calc(100% - 2px), 57.2% calc(100% - 1px), 55.0% calc(100% - 2px), 52.6% calc(100% - 0px), 50.7% calc(100% - 5px), 48.9% calc(100% - 0px), 47.1% calc(100% - 1px), 44.9% calc(100% - 2px), 42.0% calc(100% - 3px), 38.5% calc(100% - 6px), 35.6% calc(100% - 6px), 33.7% calc(100% - 1px), 31.4% calc(100% - 6px), 29.2% calc(100% - 6px), 26.7% calc(100% - 3px), 24.2% calc(100% - 6px), 21.5% calc(100% - 6px), 19.3% calc(100% - 5px), 17.2% calc(100% - 2px), 14.4% calc(100% - 4px), 12.6% calc(100% - 0px), 10.7% calc(100% - 4px), 7.9% calc(100% - 2px), 4.7% calc(100% - 0px), 2.5% calc(100% - 6px), 0.0% calc(100% - 4px));}
+
+/* ================= HOME HUB (preview) ================= */
+.hub{flex:1; display:flex; flex-direction:column; gap:1.1rem; padding:1rem 1.5rem 7.5rem;}
+.hub h1{font-size:1.9rem; text-align:center;}
+.hubstrips{display:flex; flex-direction:column; gap:1rem; filter:drop-shadow(0 0.18rem 0.25rem rgba(52,48,42,0.32));}
+.hubstrip{position:relative; width:100%; min-height:5.25rem; padding:0.9rem 1rem 0.9rem 3rem; border:none; cursor:pointer; text-align:left;
+  color:var(--ink); font-family:inherit; display:flex; flex-direction:column; justify-content:center; gap:0.1rem;background-color:#FAF4E8;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.42  0 0 0 0 0.32  0 0 0 0 0.22  0 0 0 0.38 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"), linear-gradient(180deg, #FDF9F1 0%, #F5EBDA 100%);
+}
+.hubstrip::before{content:""; position:absolute; left:1.1rem; top:50%; transform:translateY(-50%); width:1.05rem; height:1.05rem; border-radius:50%; box-shadow:0 0.15rem 0.2rem rgba(0,0,0,0.4); background:radial-gradient(circle at 35% 35%, #e0b878, #b0842f);}
+.hubstrip.green::before{background:radial-gradient(circle at 35% 35%, #8fc98f, #4a7d4a);}
+.hubstrip.blue::before{background:radial-gradient(circle at 35% 35%, #7fb3e0, #2c6ca3);}
+.hubstrip.pink::before{background:radial-gradient(circle at 35% 35%, #e88f9a, #a83a4a);}
+.hubstrip .t{font-size:1.25rem; font-weight:700; line-height:1.2;}
+.hubstrip .q{font-family:'Caveat', cursive; font-weight:600; font-size:1.3rem; line-height:1.15; color:#4A5637;}
+.hubstrip .soon{position:absolute; right:0.9rem; top:0.9rem; transform:none;}
+.hubstrip:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:-0.5rem;}
+.hubnote{margin:0; text-align:center; font-size:1rem;}
+#hub-note:empty{display:none;}
+.hubstrips > .stripwrap:nth-child(1) > .hubstrip{clip-path:polygon(0.0% 2px, 2.9% 6px, 5.7% 3px, 9.2% 4px, 11.2% 3px, 14.0% 2px, 15.9% 6px, 19.5% 4px, 21.4% 2px, 23.7% 5px, 27.2% 3px, 30.2% 6px, 33.6% 0px, 36.8% 0px, 40.2% 1px, 43.4% 4px, 45.6% 5px, 47.7% 0px, 51.1% 5px, 52.9% 5px, 55.0% 1px, 56.9% 4px, 60.0% 2px, 63.2% 0px, 66.6% 1px, 68.9% 2px, 72.0% 4px, 74.9% 4px, 77.6% 2px, 80.0% 2px, 83.4% 2px, 86.7% 2px, 90.2% 1px, 92.8% 1px, 94.8% 3px, 96.7% 4px, 99.9% 4px, 100.0% 4px, 100.0% calc(100% - 2px), 97.2% calc(100% - 2px), 94.1% calc(100% - 2px), 91.8% calc(100% - 2px), 89.3% calc(100% - 2px), 87.0% calc(100% - 2px), 84.4% calc(100% - 3px), 81.9% calc(100% - 1px), 78.9% calc(100% - 0px), 76.9% calc(100% - 0px), 74.0% calc(100% - 3px), 71.2% calc(100% - 2px), 68.5% calc(100% - 5px), 66.0% calc(100% - 5px), 63.3% calc(100% - 2px), 60.6% calc(100% - 5px), 57.9% calc(100% - 2px), 54.7% calc(100% - 1px), 52.0% calc(100% - 2px), 50.1% calc(100% - 1px), 47.3% calc(100% - 2px), 45.0% calc(100% - 1px), 42.3% calc(100% - 0px), 39.1% calc(100% - 4px), 37.1% calc(100% - 6px), 33.7% calc(100% - 2px), 31.3% calc(100% - 0px), 28.8% calc(100% - 3px), 25.7% calc(100% - 5px), 23.6% calc(100% - 2px), 20.5% calc(100% - 4px), 18.6% calc(100% - 4px), 15.3% calc(100% - 5px), 13.0% calc(100% - 2px), 11.1% calc(100% - 3px), 8.4% calc(100% - 6px), 6.5% calc(100% - 6px), 3.1% calc(100% - 2px), 0.8% calc(100% - 3px), 0.0% calc(100% - 4px));}
+.hubstrips > .stripwrap:nth-child(2) > .hubstrip{clip-path:polygon(0.0% 2px, 2.7% 3px, 5.9% 2px, 8.4% 2px, 10.8% 1px, 13.8% 0px, 16.8% 2px, 19.5% 0px, 22.5% 1px, 25.9% 2px, 29.2% 6px, 31.5% 6px, 34.0% 4px, 37.1% 1px, 39.0% 4px, 41.2% 4px, 44.3% 4px, 47.1% 2px, 50.1% 3px, 52.1% 3px, 53.9% 6px, 56.5% 1px, 59.2% 6px, 61.3% 0px, 64.0% 2px, 67.2% 4px, 69.2% 2px, 72.7% 2px, 74.9% 0px, 77.9% 6px, 79.8% 2px, 82.1% 5px, 85.0% 4px, 87.6% 6px, 89.5% 2px, 91.8% 4px, 94.4% 2px, 97.0% 3px, 99.6% 5px, 100.0% 1px, 100.0% calc(100% - 5px), 96.5% calc(100% - 2px), 93.8% calc(100% - 0px), 90.8% calc(100% - 2px), 88.6% calc(100% - 5px), 85.1% calc(100% - 6px), 82.9% calc(100% - 2px), 81.0% calc(100% - 1px), 77.9% calc(100% - 2px), 75.9% calc(100% - 0px), 74.0% calc(100% - 2px), 71.0% calc(100% - 4px), 68.2% calc(100% - 0px), 66.0% calc(100% - 2px), 63.3% calc(100% - 6px), 60.5% calc(100% - 3px), 58.0% calc(100% - 2px), 54.7% calc(100% - 6px), 51.2% calc(100% - 6px), 49.2% calc(100% - 4px), 46.6% calc(100% - 4px), 44.2% calc(100% - 0px), 41.2% calc(100% - 5px), 39.3% calc(100% - 2px), 36.2% calc(100% - 4px), 33.8% calc(100% - 6px), 31.9% calc(100% - 2px), 29.1% calc(100% - 2px), 25.8% calc(100% - 2px), 22.7% calc(100% - 2px), 19.5% calc(100% - 6px), 16.6% calc(100% - 2px), 14.5% calc(100% - 2px), 11.8% calc(100% - 4px), 8.4% calc(100% - 3px), 5.6% calc(100% - 2px), 2.4% calc(100% - 5px), 0.3% calc(100% - 4px), 0.0% calc(100% - 1px));}
+.hubstrips > .stripwrap:nth-child(3) > .hubstrip{clip-path:polygon(0.0% 0px, 2.2% 3px, 4.2% 4px, 7.0% 2px, 9.1% 6px, 12.3% 1px, 14.6% 0px, 17.5% 1px, 20.5% 2px, 23.2% 0px, 26.5% 2px, 28.8% 0px, 31.0% 5px, 33.1% 3px, 35.9% 1px, 39.0% 4px, 41.7% 3px, 45.3% 0px, 48.7% 4px, 52.0% 2px, 55.2% 5px, 57.1% 6px, 59.2% 2px, 62.6% 2px, 65.3% 2px, 68.8% 2px, 70.6% 3px, 74.1% 1px, 77.2% 0px, 79.2% 2px, 81.3% 3px, 84.3% 0px, 87.2% 0px, 89.5% 0px, 91.4% 4px, 93.5% 2px, 96.5% 0px, 99.2% 2px, 100.0% 4px, 100.0% calc(100% - 1px), 98.1% calc(100% - 2px), 96.0% calc(100% - 6px), 93.0% calc(100% - 2px), 89.6% calc(100% - 0px), 87.0% calc(100% - 6px), 84.4% calc(100% - 4px), 81.0% calc(100% - 2px), 79.1% calc(100% - 6px), 75.7% calc(100% - 2px), 72.2% calc(100% - 6px), 69.5% calc(100% - 1px), 67.2% calc(100% - 2px), 65.1% calc(100% - 5px), 61.8% calc(100% - 5px), 58.9% calc(100% - 3px), 55.3% calc(100% - 6px), 52.0% calc(100% - 4px), 50.2% calc(100% - 4px), 48.0% calc(100% - 4px), 45.2% calc(100% - 5px), 43.0% calc(100% - 0px), 40.9% calc(100% - 1px), 37.6% calc(100% - 4px), 34.7% calc(100% - 2px), 32.2% calc(100% - 3px), 28.9% calc(100% - 0px), 26.5% calc(100% - 2px), 23.1% calc(100% - 2px), 20.6% calc(100% - 1px), 18.5% calc(100% - 6px), 15.4% calc(100% - 4px), 12.7% calc(100% - 5px), 9.6% calc(100% - 2px), 6.3% calc(100% - 5px), 3.5% calc(100% - 2px), 1.6% calc(100% - 0px), 0.0% calc(100% - 3px));}
+.hubstrips > .stripwrap:nth-child(4) > .hubstrip{clip-path:polygon(0.0% 2px, 2.2% 6px, 4.1% 4px, 6.3% 3px, 9.9% 0px, 11.8% 4px, 15.3% 1px, 17.6% 2px, 19.7% 2px, 22.4% 5px, 25.9% 3px, 28.2% 6px, 30.6% 2px, 32.9% 5px, 35.6% 6px, 38.9% 1px, 41.3% 3px, 43.6% 4px, 47.2% 2px, 49.1% 1px, 50.9% 4px, 53.5% 0px, 56.0% 5px, 58.3% 2px, 61.5% 2px, 63.8% 1px, 67.3% 0px, 69.5% 3px, 71.4% 2px, 74.7% 6px, 77.4% 0px, 79.2% 6px, 81.8% 2px, 83.6% 6px, 86.4% 4px, 89.2% 2px, 91.1% 1px, 93.3% 2px, 96.2% 3px, 99.6% 0px, 100.0% 1px, 100.0% calc(100% - 4px), 97.0% calc(100% - 4px), 94.7% calc(100% - 1px), 92.2% calc(100% - 1px), 89.0% calc(100% - 3px), 86.9% calc(100% - 0px), 84.4% calc(100% - 4px), 81.5% calc(100% - 0px), 79.5% calc(100% - 2px), 76.7% calc(100% - 2px), 73.5% calc(100% - 2px), 71.2% calc(100% - 1px), 68.0% calc(100% - 4px), 65.9% calc(100% - 2px), 63.2% calc(100% - 6px), 60.2% calc(100% - 2px), 57.4% calc(100% - 6px), 55.5% calc(100% - 6px), 52.1% calc(100% - 3px), 48.8% calc(100% - 0px), 45.6% calc(100% - 6px), 43.3% calc(100% - 2px), 41.0% calc(100% - 3px), 37.4% calc(100% - 3px), 35.6% calc(100% - 2px), 32.0% calc(100% - 3px), 29.7% calc(100% - 2px), 27.8% calc(100% - 1px), 25.9% calc(100% - 6px), 23.9% calc(100% - 2px), 20.5% calc(100% - 1px), 17.2% calc(100% - 6px), 15.2% calc(100% - 3px), 12.8% calc(100% - 2px), 9.5% calc(100% - 5px), 6.0% calc(100% - 2px), 3.4% calc(100% - 4px), 0.0% calc(100% - 5px), 0.0% calc(100% - 3px));}
+
+/* daily quote, pinned at the top of Home */
+.daily{position:relative; margin:0.4rem 0 0; padding:1.2rem 1.1rem 1rem; border-radius:0.3rem; text-align:center;
+  background:var(--paper); box-shadow:0 0.2rem 0.5rem rgba(52,48,42,0.28);}
+.daily::before{content:""; position:absolute; left:50%; top:-0.4rem; transform:translateX(-50%); width:1rem; height:1rem; border-radius:50%;
+  box-shadow:0 0.15rem 0.2rem rgba(0,0,0,0.4); background:radial-gradient(circle at 35% 35%, #f08a8a, #c0392b);}
+.daily .lbl{display:block; margin-bottom:0.2rem; font-size:1rem; font-weight:700;}
+.daily .words{display:block; font-family:'Caveat', cursive; font-weight:600; font-size:1.6rem; line-height:1.2; color:#4A5637;}
+.hub h1{font-size:1.6rem;}
+.hubstrip{min-height:4.25rem; padding:0.9rem 2.9rem; align-items:center; text-align:center;}
+.hubstrip .soon{top:50%; transform:translateY(-50%);}
+.daily .by{display:block; margin-top:0.35rem; font-size:1rem; font-weight:700;}
+.daily .by::before{content:"\2014\00a0";}
+.daily .words{font-size:1.5rem;}
+
+/* ===== profile circle + greeting ===== */
+.avatarbtn{width:2.9rem; height:2.9rem; padding:0; border:0.15rem solid var(--paper); border-radius:50%; cursor:pointer; overflow:hidden; background:none;
+  box-shadow:0 0.15rem 0.35rem rgba(52,48,42,0.35); margin-right:-0.25rem;}
+.avatarbtn svg, .avatar-big svg, .avopt svg{display:block; width:100%; height:100%;}
+.avatarbtn:focus-visible, .avopt:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0.15rem;}
+.hello{margin:-0.35rem 0 0; font-family:'Caveat', cursive; font-weight:600; font-size:1.6rem; line-height:1.1; text-align:center;}
+.daily.long .words{font-size:1.3rem;}
+.previewlink{align-self:center; margin:-0.6rem 0 0; padding:0.35rem 0.6rem; min-height:2.75rem; border:none; background:none; color:var(--ink); font-family:inherit; font-size:1rem; text-decoration:underline; cursor:pointer;}
+
+/* ===== You page ===== */
+.you{flex:1; display:flex; flex-direction:column; gap:1.1rem; padding:1rem 1.5rem 7.5rem;}
+.you[hidden], .hub[hidden]{display:none;}
+.you .topbar .title{margin:0; font-family:'Dangrek', system-ui, sans-serif; font-size:1.375rem; color:var(--ink);}
+.youcard{display:flex; flex-direction:column; align-items:center; gap:0.5rem; text-align:center;}
+.avatar-big{width:6.5rem; height:6.5rem; border-radius:50%; overflow:hidden; border:0.2rem solid var(--paper); box-shadow:0 0.2rem 0.5rem rgba(52,48,42,0.3);}
+.youcard .name{margin:0; font-family:'Caveat', cursive; font-weight:600; font-size:2rem; line-height:1;}
+.linkbtn{min-height:2.75rem; padding:0.4rem 0.8rem; border:none; background:none; color:var(--ink); font-family:inherit; font-size:1rem; font-weight:700; text-decoration:underline; cursor:pointer;}
+.avpicker{display:flex; flex-direction:column; gap:0.6rem; padding:1rem; border-radius:0.6rem; background:rgba(247,242,233,0.75);}
+.avpicker[hidden]{display:none;}
+.avpicker h2{margin:0; font-size:1.125rem;}
+.avgrid{display:grid; grid-template-columns:repeat(3, 1fr); gap:0.75rem; justify-items:center;}
+.avopt{width:4rem; height:4rem; padding:0; border:0.2rem solid transparent; border-radius:50%; overflow:hidden; cursor:pointer; background:none;}
+.avopt[aria-pressed="true"]{border-color:var(--ink);}
+.avpicker .small{margin:0; font-size:1rem;}
+.yousec{display:flex; flex-direction:column; gap:0.7rem;}
+.yousec h2{margin:0.4rem 0 0; font-family:'Caveat', cursive; font-weight:600; font-size:1.75rem; line-height:1.1;}
+.entry{position:relative; margin:0; padding:0.9rem 1rem 0.9rem 1.1rem; border-radius:0.35rem; background:#E6CE9C;
+  box-shadow:inset 0 0 0.9rem rgba(110,72,28,0.3), 0 0.15rem 0.3rem rgba(52,48,42,0.25);}
+.entry .when{display:block; font-size:1rem; font-weight:700;}
+.entry .txt{display:block; font-family:'Caveat', cursive; font-weight:600; font-size:1.35rem; line-height:1.25;}
+.samplenote{margin:0; font-size:1rem; text-align:center;}
+.btnrow{display:flex; flex-wrap:wrap; gap:0.6rem; justify-content:center;}
+.btn{min-height:2.75rem; padding:0.55rem 1.1rem; border:none; border-radius:1.5rem; background:var(--button); color:var(--paper); font-family:inherit; font-size:1rem; font-weight:700; cursor:pointer;}
+.btn:active{background:var(--button-press);}
+.btn.ghost{background:none; color:var(--ink); border:0.125rem solid var(--ink);}
+.btn:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0.15rem;}
+.soonbox{margin:0; padding:0.9rem 1rem; border-radius:0.6rem; background:rgba(247,242,233,0.75); text-align:center; font-size:1rem;}
+.soonbox strong{display:block; font-size:1.0625rem;}
+.sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
+
+/* ===== tweaks: subtler send arrow, bigger profile circle ===== */
+.friendbar .send{width:2.75rem; height:2.75rem; right:0.35rem; background:none; color:var(--button);}
+.friendbar .send .dot{width:2rem; height:2rem; border-radius:50%; display:flex; align-items:center; justify-content:center; border:0.125rem solid var(--button);}
+.friendbar .send:active .dot{background:var(--button); color:var(--paper);}
+.friendbar .send:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0;}
+.friendbar input{padding-right:3.2rem;}
+.avatarbtn{width:3.5rem; height:3.5rem;}
+
+/* ===== Pulse button in the bar ===== */
+.barrow{display:flex; align-items:center; gap:0.6rem;}
+.barrow .inner{flex:1; min-width:0;}
+.pulsebtn{flex:0 0 auto; width:3.5rem; height:3.5rem; border:none; border-radius:50%; cursor:pointer; background:var(--red); color:var(--paper);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.05rem; font-family:inherit; font-size:0.8rem; font-weight:700; line-height:1;
+  box-shadow:0 0.2rem 0.45rem rgba(52,48,42,0.35);}
+.pulsebtn:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0.2rem;}
+@media (prefers-reduced-motion: no-preference){
+  .pulsebtn{animation:beat 2.4s ease-in-out 1s 2;}
+  @keyframes beat{0%,100%{transform:scale(1);} 12%{transform:scale(1.08);} 24%{transform:scale(1);} 36%{transform:scale(1.05);} 48%{transform:scale(1);}}
+}
+
+/* ===== Pulse check-in sheet ===== */
+.sheet-scrim{position:fixed; inset:0; z-index:30; background:rgba(52,48,42,0.5); display:flex; align-items:flex-end; justify-content:center;}
+.sheet-scrim[hidden]{display:none;}
+.sheet{width:100%; max-width:28rem; max-height:92vh; overflow-y:auto; padding:1.25rem 1.5rem 1.75rem; border-radius:1.1rem 1.1rem 0 0;
+  background:linear-gradient(160deg, #EFE6D6 0%, #E4D8C3 100%); box-shadow:0 -0.3rem 1.2rem rgba(52,48,42,0.3);
+  display:flex; flex-direction:column; gap:1rem;}
+.sheet .shead{display:flex; align-items:center; justify-content:space-between;}
+.sheet .shead p{margin:0; font-size:1rem; font-weight:700;}
+.sheet h2{margin:0; font-family:'Caveat', cursive; font-weight:600; font-size:2rem; line-height:1.1; text-align:center;}
+.sheet .sub{margin:-0.5rem 0 0; text-align:center; font-size:1rem;}
+.step[hidden]{display:none;}
+.step{display:flex; flex-direction:column; gap:0.75rem;}
+.choice2{min-height:3.25rem; padding:0.7rem 1rem; border:none; border-radius:0.6rem; background:var(--paper); color:var(--ink);
+  font-family:inherit; font-size:1.0625rem; font-weight:700; cursor:pointer; box-shadow:0 0.15rem 0.3rem rgba(52,48,42,0.2);}
+.choice2:active, .choice2[aria-pressed="true"]{background:var(--ink); color:var(--paper);}
+.choice2:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0.15rem;}
+.scale{display:grid; grid-template-columns:repeat(5, 1fr); gap:0.5rem;}
+.scale .choice2{padding:0.6rem 0; font-size:1.25rem;}
+.scale-ends{display:flex; justify-content:space-between; margin-top:-0.4rem; font-size:1rem;}
+.crisis{margin:0.25rem 0 0; text-align:center; font-size:1rem;}
+.crisis a{color:var(--ink); font-weight:700;}
+.done-msg{margin:0; text-align:center; font-family:'Caveat', cursive; font-weight:600; font-size:1.6rem; line-height:1.2;}
+.sheet .note{margin:0; text-align:center; font-size:1rem;}
+
+/* ===== round 3: Pulse inside the bar, plain caret ===== */
+.friendbar .send{background:none; color:#5A3A1E; width:2.75rem; height:2.75rem; right:0.3rem;}
+.friendbar .send:active{color:#3A2410;}
+.friendbar .pulsebtn{position:absolute; left:0.3rem; top:50%; transform:translateY(-50%); z-index:2; width:2.75rem; height:2.75rem;
+  border:none; border-radius:50%; background:none; color:#5A3A1E; box-shadow:none; animation:none; display:flex; align-items:center; justify-content:center; cursor:pointer;}
+.friendbar .pulsebtn:active{color:#3A2410;}
+.friendbar .pulsebtn::after{content:""; position:absolute; right:-0.2rem; top:25%; bottom:25%; width:0.09rem; background:rgba(90,58,30,0.45);}
+.friendbar .pulsebtn:focus-visible, .friendbar .send:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0;}
+.friendbar input{padding-left:3.6rem; padding-right:3.1rem;}
+
+/* ===== grounding (5-4-3-2-1) ===== */
+.bignum{margin:0; text-align:center; font-family:'Dangrek', system-ui, sans-serif; font-size:3.5rem; line-height:1; color:var(--button);}
+.gdots{display:flex; justify-content:center; gap:0.75rem; flex-wrap:wrap; margin:0.25rem 0;}
+.gdot{width:2.75rem; height:2.75rem; border-radius:50%; border:0.15rem dashed #5A3A1E; background:rgba(247,242,233,0.6); cursor:pointer; padding:0;}
+.gdot[aria-pressed="true"]{border-style:solid; background:radial-gradient(circle at 35% 35%, #e0b878, #b0842f); border-color:#8a6222;}
+.gdot:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0.15rem;}
+.nextbtn{background:var(--button); color:var(--paper);}
+.ghost2{background:none; box-shadow:none; border:0.125rem solid var(--ink);}
+.friendbar .pulsebtn .ring{position:absolute; inset:0.35rem; border-radius:50%; border:0.12rem solid #5A3A1E; opacity:0; pointer-events:none;}
+@media (prefers-reduced-motion: no-preference){
+  .friendbar .pulsebtn.beat .ring{animation:ring 0.9s ease-out 2;}
+  @keyframes ring{0%{opacity:0.7; transform:scale(0.6);} 100%{opacity:0; transform:scale(1.5);}}
+  .gdot[aria-pressed="true"]{animation:pop 0.25s ease-out;}
+  @keyframes pop{50%{transform:scale(1.15);}}
+}
+
+/* ===== Bestie page ===== */
+.bestie-pad{padding-bottom:9rem;}
+.beatpoint{position:fixed; bottom:5.6rem; left:50%; margin-left:-12.4rem; z-index:5; pointer-events:none;}
+@media (max-width:28rem){ .beatpoint{left:1.6rem; margin-left:0;} }
+.bubble.friend{box-shadow:0 0.12rem 0.25rem rgba(52,48,42,0.18);}
+
+/* ===== Pulse card as torn paper ===== */
+.sheet-scrim{align-items:flex-end;}
+.sheet{border-radius:0; padding:2.4rem 1.6rem 2rem; background-color:#FAF4E8; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.42  0 0 0 0 0.32  0 0 0 0 0.22  0 0 0 0.38 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"), linear-gradient(180deg, #FDF9F1 0%, #F5EBDA 100%);
+  clip-path:polygon(0.0% 9px, 3.2% 14px, 5.6% 10px, 8.7% 5px, 10.7% 10px, 13.1% 11px, 16.2% 3px, 18.6% 4px, 20.3% 14px, 23.5% 12px, 25.2% 8px, 28.5% 12px, 31.5% 12px, 33.3% 2px, 36.4% 3px, 38.2% 5px, 41.3% 11px, 43.0% 9px, 45.2% 11px, 48.3% 10px, 50.3% 6px, 52.8% 12px, 54.6% 12px, 56.7% 10px, 60.1% 3px, 62.9% 7px, 65.9% 10px, 68.0% 3px, 70.6% 3px, 73.0% 6px, 75.2% 2px, 78.4% 2px, 80.4% 2px, 82.8% 13px, 85.1% 3px, 87.7% 5px, 90.7% 6px, 92.9% 6px, 95.1% 8px, 98.1% 3px, 100.0% 13px, 100% 6px, 100% 100%, 0% 100%); box-shadow:none; filter:none;}
+.sheet-wrap{width:100%; max-width:28rem; filter:drop-shadow(0 -0.25rem 0.6rem rgba(52,48,42,0.35));}
+.sheet .shead{justify-content:flex-end; margin:-1rem -0.5rem -0.5rem 0;}
+.sheet .shead p{display:none;}
+.beat-title{margin:0.5rem 0 0.25rem; font-family:'Caveat', cursive; font-weight:600; font-size:2.6rem; line-height:1.05; text-align:center;}
+.startbtn{align-self:center; min-width:12rem; min-height:3.5rem; padding:0.75rem 2.25rem; border:none; border-radius:2rem; cursor:pointer;
+  background:linear-gradient(160deg, #E8A95E 0%, #C9733D 100%); color:#FFF8EC;
+  font-family:'Caveat', cursive; font-weight:600; font-size:1.9rem; line-height:1;
+  box-shadow:0 0.3rem 0.8rem rgba(201,115,61,0.45), inset 0 0.1rem 0 rgba(255,255,255,0.35);
+  display:inline-flex; align-items:center; justify-content:center; gap:0.5rem;}
+.startbtn:active{transform:translateY(0.06rem); box-shadow:0 0.15rem 0.4rem rgba(201,115,61,0.45);}
+.startbtn:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0.25rem;}
+.startbtn svg{width:1.3rem; height:1rem;}
+@media (prefers-reduced-motion: no-preference){
+  .startbtn{animation:glow 2.8s ease-in-out infinite;}
+  @keyframes glow{0%,100%{box-shadow:0 0.3rem 0.8rem rgba(201,115,61,0.40), inset 0 0.1rem 0 rgba(255,255,255,0.35);} 50%{box-shadow:0 0.35rem 1.4rem rgba(232,169,94,0.75), inset 0 0.1rem 0 rgba(255,255,255,0.35);}}
+}
+.step[data-step="intro"]{gap:1.4rem; padding:0.5rem 0 1rem;}
+
+/* ===== round 2: torn on all sides, olive green ===== */
+.sheet-scrim{align-items:center; padding:1rem;}
+.sheet-wrap{max-width:26rem; filter:drop-shadow(0 0.35rem 0.8rem rgba(52,48,42,0.4));}
+.sheet{clip-path:polygon(0.0% 6px, 1.8% 4px, 3.8% 6px, 6.2% 4px, 9.1% 8px, 11.1% 3px, 13.1% 5px, 15.3% 6px, 18.3% 5px, 20.3% 6px, 23.3% 10px, 26.2% 7px, 28.2% 8px, 30.9% 6px, 33.4% 4px, 35.8% 2px, 39.2% 5px, 41.2% 3px, 43.0% 8px, 46.3% 10px, 48.8% 9px, 50.9% 5px, 53.2% 2px, 55.6% 3px, 58.9% 4px, 61.1% 1px, 63.2% 6px, 65.9% 6px, 68.6% 2px, 71.9% 7px, 75.1% 5px, 77.5% 5px, 79.6% 4px, 82.7% 2px, 86.1% 7px, 87.9% 4px, 90.9% 6px, 94.1% 8px, 97.0% 7px, 99.1% 2px, 100.0% 7px, calc(100% - 7px) 0.0%, calc(100% - 6px) 6.1%, calc(100% - 5px) 10.9%, calc(100% - 6px) 17.6%, calc(100% - 4px) 23.5%, calc(100% - 7px) 30.4%, calc(100% - 7px) 35.0%, calc(100% - 2px) 39.4%, calc(100% - 3px) 46.4%, calc(100% - 4px) 50.9%, calc(100% - 7px) 55.0%, calc(100% - 7px) 60.9%, calc(100% - 4px) 66.4%, calc(100% - 3px) 73.0%, calc(100% - 2px) 79.9%, calc(100% - 1px) 85.4%, calc(100% - 1px) 91.2%, calc(100% - 4px) 97.8%, calc(100% - 5px) 100.0%, 100.0% calc(100% - 5px), 98.6% calc(100% - 1px), 95.9% calc(100% - 1px), 93.0% calc(100% - 6px), 90.5% calc(100% - 10px), 88.2% calc(100% - 5px), 85.8% calc(100% - 5px), 83.8% calc(100% - 9px), 81.3% calc(100% - 4px), 79.3% calc(100% - 7px), 76.2% calc(100% - 6px), 74.1% calc(100% - 4px), 71.4% calc(100% - 7px), 68.5% calc(100% - 2px), 65.1% calc(100% - 7px), 62.2% calc(100% - 7px), 59.1% calc(100% - 4px), 57.1% calc(100% - 4px), 55.1% calc(100% - 4px), 52.5% calc(100% - 6px), 49.6% calc(100% - 6px), 47.1% calc(100% - 5px), 44.1% calc(100% - 6px), 41.5% calc(100% - 2px), 39.0% calc(100% - 4px), 35.9% calc(100% - 2px), 33.2% calc(100% - 4px), 30.3% calc(100% - 9px), 27.8% calc(100% - 8px), 25.7% calc(100% - 8px), 23.4% calc(100% - 8px), 20.3% calc(100% - 5px), 18.2% calc(100% - 3px), 16.1% calc(100% - 7px), 13.3% calc(100% - 2px), 11.4% calc(100% - 2px), 8.2% calc(100% - 7px), 6.2% calc(100% - 3px), 4.3% calc(100% - 5px), 2.3% calc(100% - 8px), 0.0% calc(100% - 3px), 4px 100.0%, 3px 95.5%, 6px 91.4%, 4px 85.3%, 5px 79.3%, 7px 72.7%, 3px 66.4%, 3px 60.5%, 7px 56.1%, 4px 51.4%, 4px 44.5%, 6px 37.8%, 2px 32.9%, 5px 28.1%, 2px 21.4%, 7px 16.6%, 4px 11.8%, 1px 6.9%, 6px 0.0%); padding:2.2rem 1.7rem 2.2rem; max-height:88vh;}
+.sheet .shead{margin:-0.6rem -0.4rem -0.6rem 0;}
+.startbtn{background:linear-gradient(160deg, #8A9A62 0%, #4F5C3A 100%); color:#FBF6EA;
+  box-shadow:0 0.3rem 0.8rem rgba(79,92,58,0.45), inset 0 0.1rem 0 rgba(255,255,255,0.3);}
+.startbtn:active{box-shadow:0 0.15rem 0.4rem rgba(79,92,58,0.45);}
+@media (prefers-reduced-motion: no-preference){
+  .startbtn{animation:glow2 2.8s ease-in-out infinite;}
+  @keyframes glow2{0%,100%{box-shadow:0 0.3rem 0.8rem rgba(79,92,58,0.40), inset 0 0.1rem 0 rgba(255,255,255,0.3);} 50%{box-shadow:0 0.35rem 1.4rem rgba(138,154,98,0.8), inset 0 0.1rem 0 rgba(255,255,255,0.3);}}
+}
+.sheet .nextbtn{background:#5E6B44; color:#FBF6EA;}
+.sheet .bignum{color:#4F5C3A;}
+.done-msg{font-size:1.4rem; line-height:1.25;}
+.step[data-step="end"] .done-msg{font-family:'Nunito', system-ui, sans-serif; font-weight:400; font-size:1.125rem; line-height:1.55;}
+.step[data-step="end"] .ask{margin:1.1rem 0 0.3rem; color:var(--red); font-weight:700; font-size:1.125rem;}
+.talkbtn{gap:0; white-space:pre; font-family:'Nunito', system-ui, sans-serif; font-weight:700; font-size:1.125rem; min-width:13rem; animation:none !important;}
+.notnow{align-self:center; margin-top:-0.3rem; font-weight:600;}
+.nextpill{font-family:'Nunito', system-ui, sans-serif; font-weight:700; font-size:1.125rem; min-width:11rem; animation:none !important;}
+
+/* ===== ☰ menu ===== */
+.menudrawer{display:flex; flex-direction:column; gap:0.5rem; padding-bottom:1.25rem;}
+.menudrawer[hidden]{display:none;}
+.menulist{list-style:none; margin:0.5rem 0 0; padding:0; display:flex; flex-direction:column;}
+.menulist button{width:100%; min-height:3rem; padding:0.6rem 0.25rem; border:none; border-bottom:0.0625rem solid rgba(52,48,42,0.15); background:none; color:var(--ink);
+  font-family:inherit; font-size:1.125rem; font-weight:700; text-align:left; cursor:pointer; display:flex; align-items:center; gap:0.6rem;}
+.menulist li:last-child button{border-bottom:none;}
+.menulist button:focus-visible, .helplink:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0.1rem;}
+.soon.soonin{position:static; transform:none;}
+.menunote{margin:0; min-height:1.5rem; font-size:1rem;}
+.helplink{margin-top:auto; align-self:flex-start; min-height:2.75rem; padding:0.5rem 0.25rem; border:none; background:none; cursor:pointer;
+  color:var(--red); font-family:inherit; font-size:1.125rem; font-weight:700;}
+/* ===== Help if Needed page ===== */
+.help-title{color:var(--red) !important;}
+.helpcard{display:flex; flex-direction:column; gap:0.4rem; padding:1rem 1.1rem; border-radius:0.6rem; background:rgba(247,242,233,0.8); box-shadow:0 0.12rem 0.3rem rgba(52,48,42,0.15);}
+.helpcard h2{margin:0; font-size:1.125rem;}
+.helpcard p{margin:0; font-size:1.0625rem;}
+.helpcard .btnrow{justify-content:flex-start; margin-top:0.3rem;}
+a.btn{display:inline-flex; align-items:center; text-decoration:none;}
+a.btn.ghost{color:var(--ink);}
+
+/* ===== Dashboard (Astride & Bestie) ===== */
+.dash{gap:1rem;}
+.avatarbtn.small{width:2.9rem; height:2.9rem; margin-right:-0.25rem;}
+.tiles{display:grid; grid-template-columns:1fr 1fr; gap:0.9rem;}
+.tile{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.4rem; min-height:7.5rem; padding:1rem 0.5rem; border:none; border-radius:0.9rem; cursor:pointer;
+  background:var(--paper); color:var(--ink); box-shadow:0 0.2rem 0.5rem rgba(52,48,42,0.22); font-family:inherit;}
+.tile .tico{width:3.2rem; height:3.2rem; color:#4F5C3A;} .tile .tico svg{width:100%; height:100%;}
+.tile .tlabel{font-size:1.125rem; font-weight:700;}
+.tile:active{transform:translateY(0.06rem);}
+.tile:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0.15rem;}
+.companion-card{display:flex; flex-direction:column; gap:0.9rem; padding:1rem 1rem 1.2rem; border-radius:0.9rem; background:rgba(247,242,233,0.55); box-shadow:inset 0 0 0 0.0625rem rgba(52,48,42,0.08); min-height:24rem;}
+.chead{display:flex; align-items:center; gap:0.8rem;}
+.friendpic{flex:0 0 auto; width:4.25rem; height:4.25rem; padding:0; border:0.18rem solid var(--paper); border-radius:50%; overflow:hidden; cursor:pointer; box-shadow:0 0.15rem 0.35rem rgba(52,48,42,0.3); background:none;}
+.friendpic svg{display:block; width:100%; height:100%;}
+.friendpic:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0.15rem;}
+.cname{margin:0; font-size:1.25rem; font-weight:700; line-height:1.2;}
+.cstatus{margin:0; font-size:1rem; color:#4F5C3A;}
+.fchips{display:flex; flex-wrap:wrap; gap:0.5rem;}
+.fchip{min-height:2.75rem; padding:0.45rem 0.9rem; border:0.125rem solid #5E6B44; border-radius:1.4rem; background:var(--paper); color:var(--ink); font-family:inherit; font-size:1rem; font-weight:700; cursor:pointer;}
+.fchip.pos{border-color:#B0842F;}
+.fchip.other{border-style:dashed;}
+.fchip[aria-pressed="true"]{background:#5E6B44; color:#FBF6EA; border-color:#5E6B44;}
+.fchip:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0.15rem;}
+.flabel2{margin:0.4rem 0 0; font-weight:700; font-size:1.0625rem;}
+.jnote{display:block; width:100%; min-height:6rem; resize:vertical; padding:0.9rem 1rem; border:none; border-radius:0.6rem; color:var(--ink);
+  background:#E6CE9C; box-shadow:inset 0 0 0.9rem rgba(110,72,28,0.35); font-family:inherit; font-size:1.0625rem;}
+.jentries{display:flex; flex-direction:column; gap:0.6rem; max-height:14rem; overflow-y:auto;}
+.jempty{margin:0; text-align:center; font-size:1rem; opacity:0.85;}
+.jentry{margin:0; padding:0.7rem 0.9rem; border-radius:0.5rem; background:rgba(230,206,156,0.6);}
+.jentry .when{display:block; font-size:0.9375rem; font-weight:700;}
+.cuetime{min-height:3rem; padding:0.5rem 0.9rem; border:0.125rem solid var(--ink); border-radius:0.6rem; background:var(--paper); color:var(--ink); font-family:inherit; font-size:1.125rem;}
+.cueadd{display:flex; gap:0.5rem;}
+.cueadd input{flex:1; min-height:2.9rem; padding:0.4rem 0.9rem; border:0.125rem solid var(--ink); border-radius:1.4rem; background:var(--paper); font-family:inherit; font-size:1rem;}
+.cueadd button{width:2.9rem; height:2.9rem; border:none; border-radius:50%; background:#5E6B44; color:#FBF6EA; font-size:1.5rem; font-weight:700; cursor:pointer;}
+.cuemsg{margin:0; text-align:center; font-size:1rem; font-weight:700;}
+.cuelist{list-style:none; margin:0.4rem 0 0; padding:0; display:flex; flex-direction:column; gap:0.5rem;}
+.cuelist li{display:flex; align-items:center; gap:0.6rem; padding:0.5rem 0.4rem 0.5rem 0.9rem; border-radius:0.6rem; background:var(--paper);}
+.cuelist .ct{font-weight:700;} .cuelist .cl{flex:1;}
+.cuelist button{width:2.75rem; height:2.75rem; border:none; background:none; font-size:1.4rem; cursor:pointer; color:var(--ink);}
+#pick-grid{display:grid; grid-template-columns:repeat(4, 1fr); gap:0.6rem; justify-items:center; max-height:52vh; overflow-y:auto; padding:0.25rem;}
+#pick-grid .avopt{width:3.6rem; height:3.6rem;}
+body.on-dash .friendbar input::placeholder{opacity:0.82;}
+body.on-dash .friendbar .inner input{min-height:5rem;}
+
+/* ===== Dashboard v2: mood section, companion output, input box ===== */
+body.on-dash .friendbar-wrap{display:none;}
+.dash{padding-bottom:2rem;}
+.tile{min-height:6rem;}
+.tile .tico{width:2.6rem; height:2.6rem;}
+.mood{display:flex; flex-direction:column; gap:0.7rem; padding:1rem; border-radius:0.9rem; background:var(--paper); box-shadow:0 0.15rem 0.4rem rgba(52,48,42,0.18);}
+.mood h2{margin:0; font-size:1.2rem; font-weight:700; line-height:1.3;}
+.mood .fchip{border-color:#5E6B44;}
+.talk{display:flex; flex-direction:column; gap:0.75rem;}
+.chead .cname{font-size:1.25rem;}
+.outbox{min-height:18rem; max-height:52vh; overflow-y:auto; padding:1rem; border-radius:0.9rem; background:var(--paper);
+  box-shadow:inset 0 0 0 0.0625rem rgba(52,48,42,0.1), 0 0.15rem 0.4rem rgba(52,48,42,0.15); display:flex; flex-direction:column; gap:0.6rem;}
+.outbox:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0.15rem;}
+.outempty{margin:auto; text-align:center; font-size:1rem; opacity:0.75;}
+.outbox .bubble{max-width:88%;}
+.outbox .bubble.friend{background:#EFE6D6; box-shadow:none;}
+.outbox .bubble.me{background:#5E6B44; color:#FBF6EA;}
+.inbox{position:relative; border-radius:0.9rem; background:#E6CE9C; box-shadow:inset 0 0 0.9rem rgba(110,72,28,0.35), 0 0.15rem 0.35rem rgba(52,48,42,0.2);}
+.inbox::before{content:""; position:absolute; inset:0.4rem; border:0.09rem dashed rgba(96,62,28,0.6); border-radius:0.6rem; pointer-events:none;}
+.inbox textarea{display:block; width:100%; min-height:7.5rem; resize:none; padding:1rem 1.1rem 3.2rem; border:none; background:none; color:var(--ink); font-family:inherit; font-size:1.0625rem; line-height:1.5;}
+.inbox textarea::placeholder{color:var(--ink); opacity:0.7;}
+.inbox textarea:focus{outline:none;}
+.inbox:focus-within{box-shadow:inset 0 0 0.9rem rgba(110,72,28,0.35), 0 0 0 0.1875rem var(--slate);}
+.inbar{position:absolute; left:0.5rem; right:0.5rem; bottom:0.45rem; display:flex; justify-content:space-between; align-items:center;}
+.inpulse, .insend{width:2.75rem; height:2.75rem; border:none; background:none; color:#5A3A1E; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center;}
+.inpulse:focus-visible, .insend:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0;}
+
+/* ===== Dashboard v3: one big Bestie box with notebook tabs ===== */
+.dash{padding-bottom:1.25rem; min-height:100dvh;}
+.moodrow{display:flex; flex-direction:column; gap:0.5rem;}
+.moodrow h2{margin:0; font-size:1.0625rem; font-weight:700;}
+.scrollrow{flex-wrap:nowrap; overflow-x:auto; padding:0.15rem 0.1rem 0.4rem; scrollbar-width:none; -webkit-overflow-scrolling:touch;}
+.scrollrow::-webkit-scrollbar{display:none;}
+.scrollrow .fchip{flex:0 0 auto; white-space:nowrap;}
+.bigbox2{flex:1; display:flex; flex-direction:column; min-height:30rem;}
+.tabs{display:flex; gap:0.3rem; padding:0 0.6rem; position:relative; z-index:1;}
+.tab{min-height:2.75rem; padding:0.5rem 0.95rem 0.6rem; border:none; border-radius:0.7rem 0.7rem 0 0; cursor:pointer;
+  background:#E2D4BB; color:var(--ink); font-family:inherit; font-size:1rem; font-weight:700; box-shadow:inset 0 -0.15rem 0.3rem rgba(52,48,42,0.08);}
+.tab[aria-selected="true"]{background:var(--paper); box-shadow:0 -0.12rem 0.3rem rgba(52,48,42,0.12);}
+.tab:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:-0.2rem;}
+.boxpaper{flex:1; display:flex; flex-direction:column; margin-top:-0.05rem; padding:1rem; border-radius:0.9rem; background:var(--paper); box-shadow:0 0.2rem 0.6rem rgba(52,48,42,0.2);}
+.panel{flex:1; display:flex; flex-direction:column; gap:0.75rem;}
+.panel[hidden]{display:none;}
+.ptitle{margin:0; font-size:1.25rem; font-weight:700;}
+.panel .sub{margin:0; text-align:left;}
+#panel-talk .outbox{flex:1; min-height:16rem; max-height:none; padding:0.25rem 0.1rem; background:none; box-shadow:none;}
+#panel-talk .chead{padding-bottom:0.75rem; border-bottom:0.0625rem solid rgba(52,48,42,0.12);}
+#panel-talk .inbox textarea{min-height:5rem; padding-bottom:3rem;}
+.boxpaper .friendpic{width:3.4rem; height:3.4rem;}
+
+/* ===== Dashboard v4: one big box in the companion-bar paper ===== */
+.tabs{padding:0 0.7rem; gap:0.35rem;}
+.tab{background:#D9C399; color:var(--ink); box-shadow:inset 0 -0.2rem 0.35rem rgba(110,72,28,0.18);}
+.tab[aria-selected="true"]{background-color:#E6CE9C; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.36  0 0 0 0 0.24  0 0 0 0 0.10  0 0 0 0.62 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); box-shadow:0 -0.12rem 0.3rem rgba(52,48,42,0.15);}
+.boxpaper{position:relative; padding:1.1rem 1.1rem 0.8rem; border-radius:0.75rem; color:var(--ink);
+  background-color:#E6CE9C; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.36  0 0 0 0 0.24  0 0 0 0 0.10  0 0 0 0.62 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  box-shadow:inset 0 0 1.1rem rgba(110,72,28,0.4), 0 0.25rem 0.6rem rgba(52,48,42,0.28);}
+.boxpaper::before{content:""; position:absolute; inset:0.45rem; border:0.09rem dashed rgba(96,62,28,0.7); border-radius:0.5rem; pointer-events:none;}
+.boxpaper .panel{position:relative; z-index:1;}
+#panel-talk .chead{border-bottom:0.09rem dashed rgba(96,62,28,0.45);}
+.boxpaper .cstatus{color:#4A5637;}
+#panel-talk .outbox .bubble.friend{background:#D5DDE2; color:#2C3840; box-shadow:0 0.08rem 0.2rem rgba(52,48,42,0.15);}
+#panel-talk .outbox .bubble.me{background:#5E6B44; color:#FBF6EA;}
+#panel-talk .inbox{background:none; box-shadow:none; border-radius:0; border-top:0.09rem dashed rgba(96,62,28,0.45); margin:0 -0.2rem;}
+#panel-talk .inbox::before{display:none;}
+#panel-talk .inbox:focus-within{box-shadow:none;}
+#panel-talk .inbox textarea{background:none; min-height:4.5rem; padding:0.8rem 0.6rem 3rem; font-size:1.0625rem;}
+#panel-talk .inbox textarea::placeholder{font-family:'Caveat', cursive; font-weight:600; font-size:1.45rem; opacity:0.82;}
+#panel-talk .inbox textarea:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0.1rem; border-radius:0.4rem;}
+.boxpaper .jnote{background:rgba(251,246,234,0.7); box-shadow:inset 0 0 0.5rem rgba(110,72,28,0.2);}
+.boxpaper .jentry{background:rgba(251,246,234,0.7);}
+.boxpaper input, .boxpaper .fchip{background:rgba(251,246,234,0.85);}
+.boxpaper .fchip[aria-pressed="true"]{background:#5E6B44; color:#FBF6EA;}
+.boxpaper .cuelist li{background:rgba(251,246,234,0.8);}
+
+/* ===== Hide feature ===== */
+.stripwrap{position:relative;}
+.stripwrap.hasmore .hubstrip{padding-right:3.4rem;}
+.stripwrap.hasmore .hubstrip .soon{right:3.2rem;}
+.morebtn{display:flex; align-items:center; justify-content:center; width:2.75rem; height:2.75rem; padding:0; border:none; border-radius:50%; background:none; color:var(--ink); opacity:0.75; cursor:pointer;}
+.morebtn:hover{opacity:1;}
+.morebtn:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0; opacity:1;}
+.stripwrap .morebtn{position:absolute; right:0.35rem; top:50%; transform:translateY(-50%); z-index:2;}
+.menulist li.hasmore{display:flex; align-items:center; border-bottom:0.0625rem solid rgba(52,48,42,0.15);}
+.menulist li.hasmore > button:first-child{flex:1; border-bottom:none;}
+.menulist li.hasmore .morebtn{flex:none; margin-right:-0.5rem;}
+[data-key].is-hidden{display:none !important;}
+.hide-scrim{z-index:40;}
+.hidepanel{gap:0.75rem;}
+.hidepanel h2{margin:0 0 0.25rem;}
+.hidepanel h2:focus{outline:none;}
+.hidesub{margin:-0.25rem 0 0.4rem; text-align:center; font-size:1rem; line-height:1.4;}
+.morebtn svg{display:block;}
+.morebtn{color:#9A8670; opacity:1;}
+.morebtn:hover{color:#7A6650;}
+.menulist .morebtn{color:#9A8670;}
+.menulist .morebtn:hover{color:#7A6650;}
+.hidepanel .btn{width:100%;}
+.hidepanel .hidebtn{background:#5E6B44; color:#FBF6EA;}
+.menulist li.hasmore > button:first-child{min-width:0;}
+.menulist .morebtn{width:2.75rem; min-height:2.75rem; padding:0; border-bottom:none; justify-content:center; border-radius:50%;}
+@keyframes hideup{from{transform:translateY(100%);} to{transform:none;}}
+.hidetoast{position:fixed; left:50%; bottom:6.5rem; transform:translateX(-50%); z-index:45; width:calc(100% - 2rem); max-width:26rem;
+  display:flex; align-items:center; gap:0.75rem; padding:0.75rem 0.75rem 0.75rem 1.1rem; border-radius:0.8rem;
+  background:#34302A; color:#FBF6EA; font-size:1rem; line-height:1.35; box-shadow:0 0.3rem 0.9rem rgba(52,48,42,0.35); animation:toastup 0.25s ease-out;}
+.hidetoast[hidden]{display:none;}
+.hidetoast span{flex:1;}
+.hidetoast button{flex:none; min-height:2.75rem; padding:0 1rem; border:0.125rem solid #FBF6EA; border-radius:999px; background:none; color:#FBF6EA; font:inherit; font-weight:700; cursor:pointer;}
+.hidetoast button:focus-visible{outline:0.1875rem solid #E6CE9C; outline-offset:0.15rem;}
+@keyframes toastup{from{opacity:0; transform:translate(-50%,1rem);} to{opacity:1; transform:translateX(-50%);}}
+@media (prefers-reduced-motion: reduce){.hidepanel,.hidetoast{animation:none;}}
+
+/* ===== Dashboard v5: room at the top, sticker mood buttons, tab sketches ===== */
+.dash{gap:1.25rem;}
+.dash .topbar{margin-top:0.4rem;}
+.moodrow{gap:0.85rem;}
+.moodrow h2{font-size:1.125rem;}
+.bigbox2{min-height:0; margin-top:0.4rem;}
+.moodchips{gap:0.6rem 0.55rem;}
+.moodchips .fchip{position:relative; min-height:2.75rem; padding:0.2rem 1rem 0.35rem; border:none; border-radius:0.9rem 0.7rem 1rem 0.75rem;
+  background:#FAF4E8; color:var(--ink); font-family:'Caveat', cursive; font-weight:600; font-size:1.45rem; line-height:1.1;
+  box-shadow:0 0.12rem 0.3rem rgba(52,48,42,0.22);}
+.moodchips .fchip:nth-child(odd){transform:rotate(-1.2deg);}
+.moodchips .fchip:nth-child(even){transform:rotate(1deg);}
+.moodchips .fchip::before{content:""; position:absolute; inset:0.22rem; border:0.09rem dashed transparent; border-radius:0.7rem 0.55rem 0.8rem 0.6rem; pointer-events:none;}
+.moodchips .fchip[aria-pressed="true"]{background:#FAF4E8; color:#3F4A2C; box-shadow:0 0.12rem 0.3rem rgba(52,48,42,0.22), inset 0 0 0 0.15rem #5E6B44;}
+.moodchips .fchip[aria-pressed="true"]::before{border-color:#5E6B44;}
+.moodchips .fchip.other{border:none;}
+.moodchips .fchip:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0.2rem;}
+@media (prefers-reduced-motion: reduce){.moodchips .fchip{transform:none !important;}}
+.tab{display:inline-flex; align-items:center; gap:0.3rem; white-space:nowrap; padding-left:0.55rem; padding-right:0.6rem; font-size:0.98rem;}
+.tabs{padding:0 0.35rem;}
+.tabs{gap:0.3rem; padding:0 0.5rem;}
+.tab .tabicon{color:#8A7660; flex:none;}
+.tab .tabpic{display:inline-block; width:1.5rem; height:1.5rem; border-radius:50%; overflow:hidden; flex:none;}
+.tab .tabpic svg{display:block; width:100%; height:100%;}
+
+/* v6: straight, smaller stickers, more empty space up top */
+.moodchips .fchip, .moodchips .fchip:nth-child(odd), .moodchips .fchip:nth-child(even){transform:none;}
+.moodchips{gap:0.45rem 0.4rem;}
+.moodchips .fchip{min-height:2.5rem; padding:0.1rem 0.75rem 0.25rem; font-size:1.25rem;}
+.moodrow{margin-top:1.75rem;}
+
+/* v7: Cue Alarm writing boxes match the journal box */
+.jnote.cuebox{min-height:3.4rem; padding:0.7rem 0.9rem; resize:none;}
+.cueadd{align-items:flex-start;}
+#panel-cue .flabel2{text-align:left; display:block;}
+.cueadd .jnote.cuebox{flex:1; min-height:2.9rem;}
+.cueadd .jnote.cuebox::placeholder{color:var(--ink); opacity:0.7;}
+
+/* v8: patterns, erasing, privacy note, mood row that shrinks */
+.moodrow{position:relative;}
+.changebtn, .clearbtn, .erasebtn{min-height:2.75rem; padding:0 0.6rem; border:none; background:none; color:var(--ink); font-family:inherit; font-size:0.95rem; font-weight:700; text-decoration:underline; text-underline-offset:0.2rem; cursor:pointer;}
+.changebtn{position:absolute; right:-0.4rem; top:-0.8rem;}
+.changebtn:focus-visible, .clearbtn:focus-visible, .erasebtn:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0.1rem;}
+.moodrow.picked .fchip[aria-pressed="false"]{display:none;}
+#panel-talk .chead{flex-wrap:wrap; row-gap:0;}
+.clearbtn{flex-basis:100%; text-align:right; margin:-0.6rem 0 -0.4rem; font-size:0.9rem;}
+.privnote{margin:-0.25rem 0 0.6rem; font-size:0.95rem; font-weight:700; color:#4A5637;}
+.jentry{position:relative; padding-right:4.5rem !important;}
+.jentry .erasebtn{position:absolute; right:0.2rem; top:0.2rem; font-size:0.9rem;}
+#jentries{margin-top:1rem; max-height:none;}
+.hint{margin:-0.3rem 0 0.2rem; font-size:0.9rem;}
+.patterns, .remind{margin-top:1.25rem; padding-top:1rem; border-top:0.09rem dashed rgba(96,62,28,0.45);}
+.patterns h3, .remind h3, #cue-saved h3{margin:0 0 0.4rem;}
+.patterns p, .remind p{margin:0 0 0.4rem; font-size:1rem; line-height:1.45;}
+.cuelist li{display:flex !important; align-items:center; gap:0.4rem; padding:0.5rem 0.7rem 0.5rem 0.8rem !important; box-sizing:border-box; max-width:100%;}
+.cuelist{padding:0; margin:0;}
+.cuelist .cuetxt{flex:1; min-width:0; overflow-wrap:anywhere;}
+.cuelist .ct{display:block; font-weight:700;}
+.cuelist .cl{display:block; font-size:0.95rem;}
+.cuelist .erasebtn{flex:none; position:static; transform:none; font-size:0.9rem;}
+.remind .btn{width:100%; margin-top:0.2rem;}
+.confirm-scrim{z-index:41;}
+
+/* v9: page lock */
+.lockscreen[hidden]{display:none !important;}
+.lockscreen{position:relative; min-height:80vh; display:flex; flex-direction:column; justify-content:center; padding-top:3rem;}
+.lockscreen #lock-back{position:absolute; top:0.4rem; left:-0.4rem;}
+.lockcard{gap:0.7rem;}
+.lockcard section{display:flex; flex-direction:column; gap:0.7rem;}
+.lockcard section[hidden]{display:none;}
+.lockcard h2:focus{outline:none;}
+.lockcard .flabel2{text-align:left; margin:0.2rem 0 -0.4rem;}
+.pinbox{min-height:3rem; padding:0.4rem 0.9rem; border:none; border-radius:0.6rem; background:#E6CE9C; box-shadow:inset 0 0 0.7rem rgba(110,72,28,0.3); font-size:1.5rem; letter-spacing:0.4rem; text-align:center; color:var(--ink); font-family:inherit;}
+.pinbox:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0.1rem;}
+.lockmsg{margin:0; min-height:1.2rem; font-size:0.95rem; font-weight:700; color:#8E2F2F; text-align:center;}
+.lockcard .btn{width:100%;}
+.lockcard .hidebtn{background:#5E6B44; color:#FBF6EA;}
+.linkbtn{min-height:2.75rem; border:none; background:none; color:var(--ink); font-family:inherit; font-size:0.95rem; font-weight:700; text-decoration:underline; text-underline-offset:0.2rem; cursor:pointer;}
+.linkbtn:focus-visible{outline:0.1875rem solid var(--slate);}
+
+.padlock{display:block; width:5.5rem; height:auto; margin:0 auto -0.2rem;}
+
+/* v10: floating padlock over the blurred page */
+#you.locked > :not(.lockscreen){filter:blur(10px) saturate(0.8); pointer-events:none; user-select:none;}
+.lockscreen{position:fixed; inset:0; z-index:35; min-height:0; padding:1rem 1.5rem; display:flex; flex-direction:column; align-items:center; justify-content:center; background:rgba(250,244,232,0.55); overflow-y:auto;}
+.lockscreen #lock-back{position:absolute; top:0.9rem; left:0.9rem;}
+.lockcardwrap{width:100%; max-width:26rem;}
+.lockcardwrap[hidden]{display:none;}
+.lockfloat{display:flex; flex-direction:column; align-items:center; gap:0.5rem; width:100%; max-width:22rem; text-align:center;}
+.lockfloat[hidden]{display:none;}
+.lockfloat .zone{margin:0; font-family:'Caveat', cursive; font-weight:600; font-size:1.6rem; line-height:1.1; color:var(--ink);}
+.lockfloat .zone:focus{outline:none;}
+.lockfloat .prove{margin:0 0 0.6rem; font-family:'Caveat', cursive; font-weight:600; font-size:2.6rem; line-height:1.05; color:#A83A3A;}
+.padwrap{position:relative; width:15rem; filter:drop-shadow(0 0.4rem 0.8rem rgba(52,48,42,0.3));}
+.padsvg{display:block; width:100%; height:auto;}
+.padpin{position:absolute; left:50%; top:47%; transform:translateX(-50%); width:68%; min-height:3rem; padding:0.3rem 0.6rem; border:none; border-radius:0.5rem;
+  background:#FBF3DD; box-shadow:inset 0 0.15rem 0.4rem rgba(90,60,15,0.45); color:var(--ink); font-family:inherit; font-size:1.5rem; letter-spacing:0.45rem; text-align:center;}
+.padpin::placeholder{letter-spacing:0.1rem; font-size:1.1rem; color:#7A6650;}
+.padpin:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0.15rem;}
+.lockfloat .btn{width:100%; max-width:15rem;}
+.lockfloat .hidebtn{background:#5E6B44; color:#FBF6EA;}
+#lock .padwrap .padpin{width:66% !important; max-width:66%; box-sizing:border-box; border:0.09rem solid rgba(96,62,28,0.5) !important;}
+.lockfloat .lockmsg{min-height:1.3rem;}
+</style>
+</head>
+<body>
+<main class="app">
+  <section class="hub" aria-labelledby="hub-title">
+    <div class="topbar">
+      <button type="button" class="iconbtn" id="open-menu" aria-label="Open menu">
+        <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg>
+      </button>
+      <p class="wordmark">Optional</p>
+      <button type="button" class="avatarbtn" id="open-you" aria-label="Astride and Bestie"><span class="av-slot"></span></button>
+    </div>
+    <p class="hello">Hi, <span class="me">Astride</span></p>
+    <p class="daily" id="daily" aria-label="Today's quote"><span class="words" id="daily-words"></span><span class="by" id="daily-by"></span></p>
+    <button type="button" class="previewlink" id="next-day">Preview only: show the next day's quote</button>
+    <h1 id="hub-title">Options on top of Options</h1>
+    <div class="hubstrips">
+      <div class="stripwrap hasmore" data-key="world"><button type="button" class="hubstrip" data-note="Opens Out in the World, the map of places near you."><span class="t">Out in the World</span></button><button type="button" class="morebtn" data-hide="world" data-name="Out in the World" aria-label="Hide Out in the World"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5c2.4 3.2 5.4 4.8 9 4.8s6.6-1.6 9-4.8"/><path d="M5.6 13.4l-1.6 2.2"/><path d="M9.6 15l-.6 2.7"/><path d="M14.4 15l.6 2.7"/><path d="M18.4 13.4l1.6 2.2"/></svg></button></div>
+      <div class="stripwrap"><button type="button" class="hubstrip green" data-note="Opens Mind Body Connect."><span class="t">Mind Body Connect</span></button></div>
+      <div class="stripwrap hasmore" data-key="realtalk"><button type="button" class="hubstrip blue" data-note="Opens the Real Talk preview."><span class="t">Real Talk</span><span class="soon">soon</span></button><button type="button" class="morebtn" data-hide="realtalk" data-name="Real Talk" aria-label="Hide Real Talk"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5c2.4 3.2 5.4 4.8 9 4.8s6.6-1.6 9-4.8"/><path d="M5.6 13.4l-1.6 2.2"/><path d="M9.6 15l-.6 2.7"/><path d="M14.4 15l.6 2.7"/><path d="M18.4 13.4l1.6 2.2"/></svg></button></div>
+      <div class="stripwrap"><button type="button" class="hubstrip pink" data-note="Opens Good to Know."><span class="t">Good to Know</span></button></div>
+    </div>
+    <p class="hubnote" id="hub-note" role="status"></p>
+  </section>
+
+
+  <section class="you" id="help" aria-labelledby="help-title" hidden>
+    <div class="topbar">
+      <button type="button" class="iconbtn backbtn" aria-label="Back">
+        <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+      </button>
+      <h1 class="title help-title" id="help-title">Help if Needed</h1>
+      <span class="spacer"></span>
+    </div>
+    <div class="helpcard">
+      <h2>In an emergency</h2>
+      <p>Call 911.</p>
+      <div class="btnrow"><a class="btn helpbtn" href="tel:911">Call 911</a></div>
+    </div>
+    <div class="helpcard">
+      <h2>Talk to someone now</h2>
+      <p>The 988 Suicide &amp; Crisis Lifeline is free, confidential and open 24/7.</p>
+      <div class="btnrow"><a class="btn helpbtn" href="tel:988">Call 988</a><a class="btn ghost helpbtn" href="sms:988">Text 988</a></div>
+    </div>
+    <div class="helpcard">
+      <h2>Find treatment or support</h2>
+      <p>SAMHSA&rsquo;s National Helpline is free, confidential and open 24/7. They can point you to treatment, support groups and community services near you.</p>
+      <div class="btnrow"><a class="btn helpbtn" href="tel:18006624357">Call 1-800-662-4357</a><a class="btn ghost helpbtn" href="https://findtreatment.gov" target="_blank" rel="noopener">FindTreatment.gov</a></div>
+    </div>
+  </section>
+  <section class="you dash" id="you" aria-labelledby="you-title" hidden>
+  <div class="lockscreen" id="lock" hidden>
+    <button type="button" class="iconbtn" id="lock-back" aria-label="Back"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></button>
+    <section class="lockfloat" id="lock-locked" hidden>
+      <h2 tabindex="-1" class="zone">You are entering the <span class="me">Astride</span> Zone.</h2>
+      <p class="prove">Prove that it&rsquo;s you.</p>
+      <div class="padwrap">
+        <svg class="padsvg" viewBox="0 0 120 150" aria-hidden="true">
+            <defs>
+              <linearGradient id="pf-steel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6E7378"/><stop offset=".35" stop-color="#E9ECEE"/><stop offset=".55" stop-color="#B9BEC3"/><stop offset="1" stop-color="#5B6065"/></linearGradient>
+              <linearGradient id="pf-brass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F3D58A"/><stop offset=".3" stop-color="#D9A845"/><stop offset=".65" stop-color="#B07E26"/><stop offset="1" stop-color="#7A5315"/></linearGradient>
+              <linearGradient id="pf-shine" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/></linearGradient>
+            </defs>
+            <ellipse cx="60" cy="144" rx="44" ry="5" fill="#34302A" opacity=".22"/>
+            <path d="M30 62V40a30 30 0 0 1 60 0v22" fill="none" stroke="#4A4E52" stroke-width="15" stroke-linecap="round"/>
+            <path d="M30 62V40a30 30 0 0 1 60 0v22" fill="none" stroke="url(#pf-steel)" stroke-width="12" stroke-linecap="round"/>
+            <path d="M34 44a26 26 0 0 1 22-30" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2.4" stroke-linecap="round"/>
+            <rect x="8" y="57" width="104" height="84" rx="13" fill="#6B4812"/>
+            <rect x="8" y="55" width="104" height="84" rx="13" fill="url(#pf-brass)"/>
+            <rect x="12" y="59" width="96" height="34" rx="10" fill="url(#pf-shine)"/>
+            <rect x="8.5" y="55.5" width="103" height="83" rx="12.5" fill="none" stroke="#5E4010" stroke-opacity=".5"/>
+            <g fill="#8A6018"><circle cx="18" cy="65" r="2.4"/><circle cx="102" cy="65" r="2.4"/><circle cx="18" cy="129" r="2.4"/><circle cx="102" cy="129" r="2.4"/></g>
+            <g fill="#F7E2A8"><circle cx="18" cy="64.4" r="1"/><circle cx="102" cy="64.4" r="1"/><circle cx="18" cy="128.4" r="1"/><circle cx="102" cy="128.4" r="1"/></g>
+            <path d="M60 112a4.5 4.5 0 0 0-2.6 8.2L56 129h8l-1.4-8.8A4.5 4.5 0 0 0 60 112z" fill="#2A1C0C" opacity=".85"/>
+          </svg>
+        <label class="sr-only" for="lock-pin-in">PIN</label>
+        <input type="password" id="lock-pin-in" class="padpin" inputmode="numeric" autocomplete="current-password" maxlength="6" placeholder="PIN">
+      </div>
+      <p class="lockmsg" id="lock-msg" role="alert"></p>
+      <button type="button" class="btn hidebtn" id="lock-unlock">Unlock</button>
+      <button type="button" class="btn ghost" id="lock-bio" hidden>Use Face ID or fingerprint</button>
+      <button type="button" class="linkbtn" id="lock-forgot">Forgot your PIN?</button>
+    </section>
+    <div class="sheet-wrap lockcardwrap"><div class="sheet lockcard">
+      <section id="lock-setup" hidden>
+        <h2 tabindex="-1">Lock this page</h2>
+        <p class="hidesub">Keep your chats, journal and check-ins just for you. Pick a PIN.</p>
+        <label class="flabel2" for="lock-pin">New PIN (4 to 6 numbers)</label>
+        <input type="password" id="lock-pin" class="pinbox" inputmode="numeric" autocomplete="new-password" maxlength="6">
+        <label class="flabel2" for="lock-pin2">Type it again</label>
+        <input type="password" id="lock-pin2" class="pinbox" inputmode="numeric" autocomplete="new-password" maxlength="6">
+        <p class="lockmsg" id="lock-setup-msg" role="alert"></p>
+        <button type="button" class="btn hidebtn" id="lock-save">Save PIN</button>
+      </section>
+      <section id="lock-bio-offer" hidden>
+        <h2 tabindex="-1" id="lock-bio-title">Use Face ID or fingerprint too?</h2>
+        <p class="hidesub">It&rsquo;s quicker than your PIN. Your PIN still works as a backup.</p>
+        <p class="lockmsg" id="lock-bio-msg" role="alert"></p>
+        <button type="button" class="btn hidebtn" id="lock-bio-yes">Yes, set it up</button>
+        <button type="button" class="btn ghost" id="lock-bio-no">Not now</button>
+      </section>
+    </div></div>
+  </div>
+    <div class="topbar">
+      <button type="button" class="iconbtn" id="back-home" aria-label="Back to Options"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></button>
+      <h1 class="title" id="you-title"><span class="me">Astride</span> &amp; <span class="who">Bestie</span></h1>
+      <button type="button" class="avatarbtn small" id="dash-me" aria-label="Change my picture"><span class="av-slot"></span></button>
+    </div>
+
+    <section class="moodrow" aria-labelledby="mood-title">
+      <h2 id="mood-title">What&rsquo;s up with the feels?</h2>
+      <button type="button" class="changebtn" id="mood-change" hidden>Change</button>
+      <div class="fchips moodchips" id="mood-chips">
+        <button type="button" class="fchip" aria-pressed="false">Stressed</button>
+        <button type="button" class="fchip" aria-pressed="false">Good, unwinding</button>
+        <button type="button" class="fchip" aria-pressed="false">Lonely</button>
+        <button type="button" class="fchip" aria-pressed="false">Energetic</button>
+        <button type="button" class="fchip" aria-pressed="false">Anxious</button>
+        <button type="button" class="fchip" aria-pressed="false">Something I want more of</button>
+        <button type="button" class="fchip" aria-pressed="false">Bored</button>
+        <button type="button" class="fchip" aria-pressed="false">Uncertain</button>
+        <button type="button" class="fchip other" aria-pressed="false">Other&hellip;</button>
+      </div>
+    </section>
+
+    <div class="bigbox2">
+      <div class="tabs" role="tablist" aria-label="Bestie, journal and Cue Alarm">
+        <button type="button" class="tab" role="tab" id="tab-talk" aria-selected="true" aria-controls="panel-talk"><span class="fr-slot tabpic" aria-hidden="true"></span><span class="who">Bestie</span></button>
+        <button type="button" class="tab" role="tab" id="tab-journal" aria-selected="false" aria-controls="panel-journal" tabindex="-1"><svg class="tabicon" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5h11a1.5 1.5 0 0 1 1.5 1.5v14a1.5 1.5 0 0 1-1.5 1.5H6z"/><path d="M6 3.5v17"/><path d="M4 7h3M4 12h3M4 17h3"/><path d="M10 8h5.5M10 11.5h4"/></svg>Journal</button>
+        <button type="button" class="tab" role="tab" id="tab-cue" aria-selected="false" aria-controls="panel-cue" tabindex="-1"><svg class="tabicon" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="7"/><path d="M12 9.5V13l2.3 1.6"/><path d="M4.5 6.2l2.6-2.4M19.5 6.2l-2.6-2.4"/><path d="M7.5 19.5l-1.3 1.6M16.5 19.5l1.3 1.6"/></svg>Cue Alarm</button>
+      </div>
+      <div class="boxpaper">
+        <section class="panel" id="panel-talk" role="tabpanel" aria-labelledby="tab-talk">
+          <div class="chead">
+            <button type="button" class="friendpic" id="friend-pic" aria-label="Change Bestie's look"><span class="fr-slot"></span></button>
+            <div>
+              <h2 class="cname" id="bestie-name"><span class="who">Bestie</span></h2>
+              <p class="cstatus">I got you. Type away.</p>
+            </div>
+            <button type="button" class="clearbtn" id="clear-talk" hidden>Clear conversation</button>
+          </div>
+          <div class="outbox" id="thread" aria-live="polite" aria-label="Conversation with Bestie" tabindex="0">
+            <p class="outempty">Drop your thoughts, or pick a feeling above.</p>
+          </div>
+          <div class="inbox">
+            <label class="sr-only" for="dash-input">Write to Bestie</label>
+            <textarea id="dash-input" rows="2"></textarea>
+            <div class="inbar">
+              <button type="button" class="inpulse" id="dash-pulse" aria-label="Pulse. Tap when you're feeling a type of way."><svg aria-hidden="true" width="26" height="20" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 9h5l2.5-6 4 12 3-8 1.8 2H23"/></svg></button>
+              <button type="button" class="insend" id="dash-send" aria-label="Send to Bestie"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></button>
+            </div>
+          </div>
+        </section>
+        <section class="panel" id="panel-journal" role="tabpanel" aria-labelledby="tab-journal" hidden>
+          <h2 class="ptitle" id="journal-title" tabindex="-1">Your journal</h2>
+    <p class="sub">What&rsquo;s knockin&rsquo; in your noggin? Write it down.</p>
+    <p class="privnote">Only you can read this.</p>
+    <label class="sr-only" for="jnote">Write in your journal</label>
+    <textarea id="jnote" class="jnote" rows="3" placeholder="How&rsquo;s your body, your thoughts..."></textarea>
+    <button type="button" class="startbtn nextpill" id="jsave">Save entry</button>
+    <div class="jentries" id="jentries"></div>
+
+        </section>
+        <section class="panel" id="panel-cue" role="tabpanel" aria-labelledby="tab-cue" hidden>
+          <h2 class="ptitle" id="cue-title" tabindex="-1">Cue Alarm</h2>
+    <p class="sub">Check in with yourself when you first get the urge for that thing you want to do less of. What&rsquo;s your body telling your mind? Clock it and see if a pattern emerges&mdash;then it&rsquo;s your call.</p>
+    <label class="flabel2" for="cue-time">When?</label>
+    <p class="hint">Starts at right now. Change it if it was earlier.</p>
+    <input type="time" id="cue-time" class="cuetime">
+    <label class="flabel2" for="cue-what">What&rsquo;s happening, or what&rsquo;s changed?</label>
+    <textarea id="cue-what" class="jnote cuebox" rows="2"></textarea>
+    <p class="flabel2" id="cue-feel-label">What&rsquo;s coming up for you?</p>
+    <div class="fchips moodchips" id="cue-chips" role="group" aria-labelledby="cue-feel-label">
+      <button type="button" class="fchip" aria-pressed="false">Out of control</button>
+      <button type="button" class="fchip" aria-pressed="false">Bored</button>
+      <button type="button" class="fchip" aria-pressed="false">Desperate</button>
+      <button type="button" class="fchip" aria-pressed="false">Lonely</button>
+      <button type="button" class="fchip" aria-pressed="false">Triggered</button>
+      <button type="button" class="fchip" aria-pressed="false">Restless</button>
+      <button type="button" class="fchip" aria-pressed="false">Nostalgic</button>
+      <button type="button" class="fchip" aria-pressed="false">Overwhelmed</button>
+      <button type="button" class="fchip" aria-pressed="false">Tired</button>
+      <button type="button" class="fchip" aria-pressed="false">Angry</button>
+      <button type="button" class="fchip" aria-pressed="false">Numb</button>
+      <button type="button" class="fchip" aria-pressed="false">Celebrating</button>
+      <button type="button" class="fchip" aria-pressed="false">Ignored</button>
+      <button type="button" class="fchip" aria-pressed="false">Hungry</button>
+      <button type="button" class="fchip" aria-pressed="false">Moody</button>
+    </div>
+    <div class="cueadd"><label class="sr-only" for="cue-own">Add your own feeling</label><textarea id="cue-own" class="jnote cuebox" rows="1" placeholder="Add your own..."></textarea><button type="button" id="cue-add" aria-label="Add this feeling">+</button></div>
+    <button type="button" class="startbtn nextpill" id="cue-set">Clock it</button>
+    <p class="cuemsg" id="cue-msg" role="status"></p>
+    <div class="patterns" id="cue-patterns">
+      <h3 class="flabel2">Your patterns</h3>
+      <p id="cue-pattern-text">Patterns show up after a few check-ins.</p>
+    </div>
+    <div id="cue-saved" hidden><h3 class="flabel2">Your check-ins</h3><ul class="cuelist" id="cue-list"></ul></div>
+    <div class="remind">
+      <h3 class="flabel2">Reminders</h3>
+      <p>Get a gentle nudge around the times your urges usually show up.</p>
+      <button type="button" class="btn ghost" id="cue-remind">Allow reminders</button>
+      <p class="cuemsg" id="cue-remind-msg" role="status"></p>
+    </div>
+
+        </section>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="scrim" id="menu-scrim" hidden></div>
+<nav class="drawer menudrawer" id="menu" aria-label="Menu" hidden>
+  <div class="head">
+    <p class="wordmark">Optional</p>
+    <button type="button" class="iconbtn" id="close-menu" aria-label="Close menu" style="margin:0 -0.5rem 0 0">
+      <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <ul class="menulist">
+    <li><button type="button" data-go="">Options</button></li>
+    <li><button type="button" data-go="you"><span><span class="me">Astride</span> &amp; <span class="who">Bestie</span></span></button></li>
+    <li class="hasmore" data-key="world"><button type="button" data-note="Opens Out in the World.">Out in the World</button><button type="button" class="morebtn" data-hide="world" data-name="Out in the World" aria-label="Hide Out in the World"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5c2.4 3.2 5.4 4.8 9 4.8s6.6-1.6 9-4.8"/><path d="M5.6 13.4l-1.6 2.2"/><path d="M9.6 15l-.6 2.7"/><path d="M14.4 15l.6 2.7"/><path d="M18.4 13.4l1.6 2.2"/></svg></button></li>
+    <li><button type="button" data-note="Opens Mind Body Connect.">Mind Body Connect</button></li>
+    <li class="hasmore" data-key="realtalk"><button type="button" data-note="Opens the Real Talk preview.">Real Talk <span class="soon soonin">soon</span></button><button type="button" class="morebtn" data-hide="realtalk" data-name="Real Talk" aria-label="Hide Real Talk"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5c2.4 3.2 5.4 4.8 9 4.8s6.6-1.6 9-4.8"/><path d="M5.6 13.4l-1.6 2.2"/><path d="M9.6 15l-.6 2.7"/><path d="M14.4 15l.6 2.7"/><path d="M18.4 13.4l1.6 2.2"/></svg></button></li>
+    <li><button type="button" data-note="Opens Good to Know.">Good to Know</button></li>
+    <li><button type="button" data-note="Opens Settings.">Settings</button></li>
+    <li><button type="button" data-note="Logs you out.">Log out</button></li>
+  </ul>
+  <p class="menunote" id="menu-note" role="status"></p>
+  <button type="button" class="helplink" data-go="help">Help if Needed</button>
+</nav>
+
+
+
+<div class="sheet-scrim hide-scrim" id="hide-scrim" hidden>
+  <div class="sheet-wrap"><div class="sheet hidepanel" role="dialog" aria-modal="true" aria-labelledby="hide-title" aria-describedby="hide-sub">
+    <h2 id="hide-title" tabindex="-1"></h2>
+    <p class="hidesub" id="hide-sub">You can hide it here, or turn it off completely in Settings.</p>
+    <button type="button" class="btn hidebtn" id="hide-yes"></button>
+    <button type="button" class="btn ghost" id="hide-settings">Go to Settings</button>
+    <button type="button" class="btn ghost" id="hide-cancel">Cancel</button>
+  </div></div>
+</div>
+<div class="hidetoast" id="hide-toast" role="status" aria-live="polite" hidden><span id="hide-msg"></span><button type="button" id="hide-undo">Undo</button></div>
+<div class="sheet-scrim confirm-scrim" id="confirm-scrim" hidden>
+  <div class="sheet-wrap"><div class="sheet hidepanel" role="dialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-sub">
+    <h2 id="confirm-title" tabindex="-1"></h2>
+    <p class="hidesub" id="confirm-sub"></p>
+    <button type="button" class="btn hidebtn" id="confirm-yes"></button>
+    <button type="button" class="btn ghost" id="confirm-no">Cancel</button>
+  </div></div>
+</div>
+<div class="hidetoast" id="undo-toast" role="status" aria-live="polite" hidden><span id="undo-msg"></span><button type="button" id="undo-btn">Undo</button></div>
+<div class="sheet-scrim" id="pick-scrim" hidden>
+  <div class="sheet-wrap"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pick-title">
+    <div class="shead"><button type="button" class="iconbtn closer" aria-label="Close" style="margin:0 -0.5rem 0 0"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <h2 class="beat-title" id="pick-title" tabindex="-1">Pick a picture</h2>
+    <div class="avgrid" id="pick-grid"></div>
+    <p class="sub" id="pick-note"></p>
+  </div></div>
+</div>
+<div class="friendbar-wrap">
+  <div class="friendbar">
+    <div class="inner">
+      <button type="button" class="pulsebtn" id="open-pulse" aria-label="Pulse. Tap when you're feeling a type of way.">
+        <svg aria-hidden="true" width="26" height="20" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 9h5l2.5-6 4 12 3-8 1.8 2H23"/></svg>
+        <span class="ring" aria-hidden="true"></span>
+      </button>
+      <label class="sr-only" for="talk">Talk to Bestie</label>
+      <input type="text" id="talk" placeholder="Talk to Bestie..." autocomplete="off">
+      <button type="button" class="send" aria-label="Send to Bestie">
+        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-scrim" id="pulse-scrim" hidden>
+  <div class="sheet-wrap"><div class="sheet" role="dialog" aria-modal="true" aria-label="Pulse">
+    <div class="shead">
+      <p>Pulse</p>
+      <button type="button" class="iconbtn" id="close-pulse" aria-label="Close" style="margin:0 -0.5rem 0 0">
+        <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="step" data-step="intro">
+      <h2 id="pulse-title" class="beat-title" tabindex="-1">Let&rsquo;s take a Beat</h2>
+      <button type="button" class="startbtn" data-next="g5">Ground
+        <svg aria-hidden="true" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M1 9h5l2.5-6 4 12 3-8 1.8 2H23"/></svg>
+      </button>
+    </div>
+    <div class="step" data-step="g5" hidden>
+      <p class="bignum" aria-hidden="true">5</p>
+      <h2 tabindex="-1">5 things you can see</h2>
+      <p class="sub">Name 5 things your eyes land on. Anything counts: a lamp, a crack on the floor, the sky.</p>
+      <div class="gdots" role="group" aria-label="Tap one for each you notice"><button type="button" class="gdot" aria-pressed="false" aria-label="Found 1 of 5"></button><button type="button" class="gdot" aria-pressed="false" aria-label="Found 2 of 5"></button><button type="button" class="gdot" aria-pressed="false" aria-label="Found 3 of 5"></button><button type="button" class="gdot" aria-pressed="false" aria-label="Found 4 of 5"></button><button type="button" class="gdot" aria-pressed="false" aria-label="Found 5 of 5"></button></div>
+      <button type="button" class="startbtn nextpill" data-next="g4">Next</button>
+    </div>
+    <div class="step" data-step="g4" hidden>
+      <p class="bignum" aria-hidden="true">4</p>
+      <h2 tabindex="-1">4 things you can feel</h2>
+      <p class="sub">Touch 4 things around you&mdash;the floor, your hair, anything.</p>
+      <div class="gdots" role="group" aria-label="Tap one for each you notice"><button type="button" class="gdot" aria-pressed="false" aria-label="Found 1 of 4"></button><button type="button" class="gdot" aria-pressed="false" aria-label="Found 2 of 4"></button><button type="button" class="gdot" aria-pressed="false" aria-label="Found 3 of 4"></button><button type="button" class="gdot" aria-pressed="false" aria-label="Found 4 of 4"></button></div>
+      <button type="button" class="startbtn nextpill" data-next="g3">Next</button>
+    </div>
+    <div class="step" data-step="g3" hidden>
+      <p class="bignum" aria-hidden="true">3</p>
+      <h2 tabindex="-1">3 things you can hear</h2>
+      <p class="sub">Listen. What are 3 sounds you hear? Even the hum of a fridge counts.</p>
+      <div class="gdots" role="group" aria-label="Tap one for each you notice"><button type="button" class="gdot" aria-pressed="false" aria-label="Found 1 of 3"></button><button type="button" class="gdot" aria-pressed="false" aria-label="Found 2 of 3"></button><button type="button" class="gdot" aria-pressed="false" aria-label="Found 3 of 3"></button></div>
+      <button type="button" class="startbtn nextpill" data-next="g2">Next</button>
+    </div>
+    <div class="step" data-step="g2" hidden>
+      <p class="bignum" aria-hidden="true">2</p>
+      <h2 tabindex="-1">2 things you can smell</h2>
+      <p class="sub">Sniff the air. What&rsquo;s greeting your nose? Name 2.</p>
+      <div class="gdots" role="group" aria-label="Tap one for each you notice"><button type="button" class="gdot" aria-pressed="false" aria-label="Found 1 of 2"></button><button type="button" class="gdot" aria-pressed="false" aria-label="Found 2 of 2"></button></div>
+      <button type="button" class="startbtn nextpill" data-next="g1">Next</button>
+    </div>
+    <div class="step" data-step="g1" hidden>
+      <p class="bignum" aria-hidden="true">1</p>
+      <h2 tabindex="-1">1 thing you can taste</h2>
+      <p class="sub">Finally, what can you taste? Your last meal, perhaps, or maybe just the inside of your mouth.</p>
+      <div class="gdots" role="group" aria-label="Tap one for each you notice"><button type="button" class="gdot" aria-pressed="false" aria-label="Found 1 of 1"></button></div>
+      <button type="button" class="startbtn nextpill" data-next="end">Next</button>
+    </div>
+    <div class="step" data-step="end" hidden>
+      <h2 tabindex="-1">You're here, right now.</h2>
+      <p class="done-msg">You tapped into your human senses, the superpowers that we take for granted, and found yourself still in your body and still functioning. You are working as intended.</p>
+      <p class="sub ask"><span class="who">Bestie</span>&rsquo;s here if you want to unfold.</p>
+      <button type="button" class="startbtn talkbtn" id="pulse-talk"><span>Talk to <span class="who">Bestie</span></span></button>
+      <button type="button" class="linkbtn notnow" id="pulse-done">Not right now</button>
+      <p class="crisis">If this feels like more than you can handle, you can call or text <a href="tel:988">988</a> any time.</p>
+    </div>
+  </div></div>
+</div>
+<script src="quotes.js"></script>
+<script src="avatars.js"></script>
+<script src="friends.js"></script>
+<script>
+(function(){
+  var note = document.getElementById('hub-note');
+  var strips = document.querySelectorAll('.hubstrip');
+  for (var i = 0; i < strips.length; i++){
+    strips[i].addEventListener('click', function(){ note.textContent = 'Preview only. ' + this.getAttribute('data-note'); });
+  }
+
+  /* ---------- daily quote ---------- */
+  var Q = window.OPTIONAL_QUOTES || [];
+  var offset = 0;
+  function dayNumber(){
+    var now = new Date();
+    var local = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+    return Math.floor((local - Date.UTC(2026, 0, 1)) / 86400000);
+  }
+  function showQuote(){
+    if (!Q.length) return;
+    var n = ((dayNumber() + offset) % Q.length + Q.length) % Q.length;
+    var q = Q[n];
+    document.getElementById('daily-words').textContent = '“' + q.text + '”';
+    document.getElementById('daily-by').textContent = q.by;
+    document.getElementById('daily').classList.toggle('long', q.text.length > 110);
+  }
+  showQuote();
+  document.getElementById('next-day').addEventListener('click', function(){ offset++; showQuote(); });
+
+  /* ---------- pictures: yours (avatars.js) and Bestie's (friends.js) ---------- */
+  var SETS = { me: window.OPTIONAL_AVATARS || {}, friend: window.OPTIONAL_FRIENDS || {} };
+  var chosen = { me: 'curly', friend: 'elephant' };
+  try { var s1 = localStorage.getItem('optional-preview-avatar'); if (s1 && SETS.me[s1]) chosen.me = s1;
+        var s2 = localStorage.getItem('optional-preview-friend'); if (s2 && SETS.friend[s2]) chosen.friend = s2; } catch(e){}
+  function paint(){
+    var a = document.querySelectorAll('.av-slot'); for (var i = 0; i < a.length; i++) a[i].innerHTML = SETS.me[chosen.me].svg;
+    var f = document.querySelectorAll('.fr-slot'); for (var j = 0; j < f.length; j++) f[j].innerHTML = SETS.friend[chosen.friend].svg;
+  }
+  paint();
+  var pickScrim = document.getElementById('pick-scrim'), pickGrid = document.getElementById('pick-grid'), pickWhich = 'me', pickReturn = null;
+  function openPicker(which, from){
+    pickWhich = which; pickReturn = from || null;
+    document.getElementById('pick-title').textContent = which === 'me' ? 'Pick your picture' : 'Pick a look for ' + (document.querySelector('.who').textContent || 'Bestie');
+    document.getElementById('pick-note').textContent = which === 'me' ? 'Adding your own photo is coming later. It will be kept private, like your journal.' : '';
+    pickGrid.innerHTML = '';
+    var set = SETS[which];
+    Object.keys(set).forEach(function(k){
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'avopt'; b.setAttribute('aria-label', set[k].name);
+      b.setAttribute('aria-pressed', chosen[which] === k ? 'true' : 'false');
+      b.innerHTML = set[k].svg;
+      b.addEventListener('click', function(){
+        chosen[which] = k;
+        try { localStorage.setItem(which === 'me' ? 'optional-preview-avatar' : 'optional-preview-friend', k); } catch(e){}
+        paint();
+        var all = pickGrid.querySelectorAll('.avopt'); for (var i = 0; i < all.length; i++) all[i].setAttribute('aria-pressed', all[i] === b ? 'true' : 'false');
+      });
+      pickGrid.appendChild(b);
+    });
+    openSheet(pickScrim);
+  }
+  // generic open/close for the paper cards
+  var lastOpener = null;
+  function openSheet(sc){ lastOpener = document.activeElement; sc.hidden = false; document.body.style.overflow = 'hidden'; var h = sc.querySelector('h2'); if (h) h.focus(); }
+  function closeSheet(sc){ sc.hidden = true; document.body.style.overflow = ''; if (lastOpener && lastOpener.focus) lastOpener.focus(); }
+  ['pick-scrim'].forEach(function(id){
+    var sc = document.getElementById(id);
+    sc.querySelector('.closer').addEventListener('click', function(){ closeSheet(sc); });
+    sc.addEventListener('click', function(e){ if (e.target === sc) closeSheet(sc); });
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key !== 'Escape') return;
+    ['pick-scrim'].forEach(function(id){ var sc = document.getElementById(id); if (!sc.hidden) closeSheet(sc); });
+  });
+  // hold down your avatar (on any page) to change it
+  var held = false;
+  function holdable(btn){
+    var timer = null;
+    btn.addEventListener('pointerdown', function(){ held = false; timer = setTimeout(function(){ held = true; openPicker('me', btn); }, 550); });
+    ['pointerup','pointerleave','pointercancel'].forEach(function(ev){ btn.addEventListener(ev, function(){ clearTimeout(timer); }); });
+    btn.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+    btn.addEventListener('click', function(e){ if (held) { e.stopImmediatePropagation(); e.preventDefault(); held = false; } }, true);
+  }
+  holdable(document.getElementById('open-you'));
+  holdable(document.getElementById('dash-me'));
+  document.getElementById('dash-me').addEventListener('click', function(){ openPicker('me', this); });
+  document.getElementById('friend-pic').addEventListener('click', function(){ openPicker('friend', this); });
+
+
+  /* ---------- notebook tabs on the big box ---------- */
+  var tabs = ['talk','journal','cue'];
+  function selectTab(name, focus){
+    tabs.forEach(function(n){
+      var tb = document.getElementById('tab-' + n), pn = document.getElementById('panel-' + n), on = n === name;
+      tb.setAttribute('aria-selected', on ? 'true' : 'false'); tb.tabIndex = on ? 0 : -1; pn.hidden = !on;
+      if (on && focus) tb.focus();
+    });
+  }
+  tabs.forEach(function(n, i){
+    var tb = document.getElementById('tab-' + n);
+    tb.addEventListener('click', function(){ selectTab(n); });
+    tb.addEventListener('keydown', function(e){
+      if (e.key === 'ArrowRight') { e.preventDefault(); selectTab(tabs[(i + 1) % tabs.length], true); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); selectTab(tabs[(i + tabs.length - 1) % tabs.length], true); }
+    });
+  });
+
+  /* ---------- Shared: torn paper confirm + Undo note ---------- */
+  var cScrim = document.getElementById('confirm-scrim'), cYes = document.getElementById('confirm-yes'), cNo = document.getElementById('confirm-no'), cBack = null, cDo = null;
+  function confirmIt(title, sub, yesLabel, doIt){
+    cBack = document.activeElement; cDo = doIt;
+    document.getElementById('confirm-title').textContent = title;
+    document.getElementById('confirm-sub').textContent = sub;
+    cYes.textContent = yesLabel; cScrim.hidden = false; cYes.focus();
+  }
+  function closeConfirm(back){ cScrim.hidden = true; if (back && cBack && cBack.offsetParent) cBack.focus(); }
+  cYes.addEventListener('click', function(){ closeConfirm(false); if (cDo) cDo(); });
+  cNo.addEventListener('click', function(){ closeConfirm(true); });
+  cScrim.addEventListener('click', function(e){ if (e.target === cScrim) closeConfirm(true); });
+  cScrim.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') { e.stopPropagation(); closeConfirm(true); return; }
+    if (e.key !== 'Tab') return;
+    if (e.shiftKey && document.activeElement === cYes) { e.preventDefault(); cNo.focus(); }
+    else if (!e.shiftKey && document.activeElement === cNo) { e.preventDefault(); cYes.focus(); }
+  });
+  var uToast = document.getElementById('undo-toast'), uTimer = null, uFn = null;
+  function undoNote(msg, fn){
+    document.getElementById('undo-msg').textContent = msg; uFn = fn; uToast.hidden = false;
+    clearTimeout(uTimer); uTimer = setTimeout(function(){ uToast.hidden = true; }, 7000);
+  }
+  document.getElementById('undo-btn').addEventListener('click', function(){ uToast.hidden = true; clearTimeout(uTimer); if (uFn) uFn(); });
+  uToast.addEventListener('mouseenter', function(){ clearTimeout(uTimer); });
+  uToast.addEventListener('mouseleave', function(){ uTimer = setTimeout(function(){ uToast.hidden = true; }, 7000); });
+  function stamp(d){ return d.toLocaleDateString(undefined, {weekday:'short', month:'short', day:'numeric'}) + ', ' + d.toLocaleTimeString(undefined, {hour:'numeric', minute:'2-digit'}); }
+  function keep(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch (e){} }
+  function load(k){ try { return JSON.parse(localStorage.getItem(k) || '[]'); } catch (e){ return []; } }
+
+  /* ---------- Journal (preview: saved in this browser only) ---------- */
+  var jentries = document.getElementById('jentries'), journal = load('optional-preview-journal');
+  function drawJournal(){
+    jentries.innerHTML = '';
+    journal.forEach(function(en, i){
+      var p = document.createElement('div'); p.className = 'jentry';
+      var w = document.createElement('span'); w.className = 'when'; w.textContent = stamp(new Date(en.at));
+      var tx = document.createElement('p'); tx.style.margin = '0'; tx.textContent = en.text;
+      var er = document.createElement('button'); er.type = 'button'; er.className = 'erasebtn'; er.textContent = 'Erase';
+      er.setAttribute('aria-label', 'Erase the entry from ' + w.textContent);
+      er.addEventListener('click', function(){
+        confirmIt('Erase this entry?', 'It will be gone for good once the Undo note closes.', 'Erase', function(){
+          var gone = journal.splice(i, 1)[0]; keep('optional-preview-journal', journal); drawJournal();
+          document.getElementById('jnote').focus();
+          undoNote('Entry erased.', function(){ journal.splice(i, 0, gone); keep('optional-preview-journal', journal); drawJournal(); });
+        });
+      });
+      p.appendChild(w); p.appendChild(tx); p.appendChild(er); jentries.appendChild(p);
+    });
+  }
+  function addJournal(text){ journal.unshift({ at: Date.now(), text: text }); keep('optional-preview-journal', journal); drawJournal(); }
+  drawJournal();
+  document.getElementById('jsave').addEventListener('click', function(){
+    var box = document.getElementById('jnote'), txt = box.value.trim();
+    if (!txt) { box.focus(); return; }
+    addJournal(txt); box.value = '';
+  });
+
+  /* ---------- Bestie: clear conversation ---------- */
+  document.getElementById('clear-talk').addEventListener('click', function(){
+    var th = document.getElementById('thread'), btn = this;
+    confirmIt('Clear this conversation?', 'It will be gone for good once the Undo note closes.', 'Clear', function(){
+      var saved = th.innerHTML;
+      th.innerHTML = '<p class="outempty">Drop your thoughts, or pick a feeling above.</p>'; btn.hidden = true;
+      document.getElementById('dash-input').focus();
+      undoNote('Conversation cleared.', function(){ th.innerHTML = saved; btn.hidden = false; });
+    });
+  });
+
+  /* ---------- Cue Alarm: clock the moment, as often as needed ---------- */
+  var cueChips = document.getElementById('cue-chips'), cueTime = document.getElementById('cue-time');
+  function pad(n){ return (n < 10 ? '0' : '') + n; }
+  function nowTime(){ var d = new Date(); return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+  cueTime.value = nowTime();
+  document.getElementById('tab-cue').addEventListener('click', function(){ if (!cueTime.dataset.touched) cueTime.value = nowTime(); });
+  cueTime.addEventListener('input', function(){ cueTime.dataset.touched = '1'; });
+  function wireChip(c){ c.addEventListener('click', function(){ this.setAttribute('aria-pressed', this.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); }); }
+  Array.prototype.forEach.call(cueChips.querySelectorAll('.fchip'), wireChip);
+  function addOwn(){
+    var f = document.getElementById('cue-own'), v = f.value.trim(); if (!v) return;
+    var c = document.createElement('button'); c.type = 'button'; c.className = 'fchip'; c.textContent = v; c.setAttribute('aria-pressed', 'true');
+    wireChip(c); cueChips.appendChild(c); f.value = '';
+  }
+  document.getElementById('cue-add').addEventListener('click', addOwn);
+  document.getElementById('cue-own').addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); addOwn(); } });
+  var cues = load('optional-preview-cues');
+  function fmt(tm){ var p = tm.split(':'), h = +p[0], m = p[1]; return ((h % 12) || 12) + ':' + m + (h < 12 ? ' AM' : ' PM'); }
+  function partOfDay(tm){ var h = +tm.split(':')[0]; return h < 5 ? 'late at night' : h < 12 ? 'in the morning' : h < 17 ? 'in the afternoon' : h < 21 ? 'in the evening' : 'late at night'; }
+  function drawPatterns(){
+    var out = document.getElementById('cue-pattern-text');
+    var week = Date.now() - 7 * 864e5, recent = cues.filter(function(c){ return c.at >= week; });
+    if (recent.length < 3) { out.textContent = 'Patterns show up after a few check-ins.'; return; }
+    var feel = {}, when = {};
+    recent.forEach(function(c){ (c.feels || []).forEach(function(f){ feel[f] = (feel[f] || 0) + 1; }); var p = partOfDay(c.time); when[p] = (when[p] || 0) + 1; });
+    var top = Object.keys(feel).sort(function(a, b){ return feel[b] - feel[a]; });
+    var topWhen = Object.keys(when).sort(function(a, b){ return when[b] - when[a]; })[0];
+    var line = 'This week you clocked ' + recent.length + ' urges, mostly ' + topWhen + '.';
+    if (top.length) line += ' ' + top[0] + ' came up ' + feel[top[0]] + (feel[top[0]] === 1 ? ' time' : ' times') + (top[1] ? ', then ' + top[1] + '.' : '.');
+    out.textContent = line;
+  }
+  function drawCues(){
+    var list = document.getElementById('cue-list'); list.innerHTML = '';
+    document.getElementById('cue-saved').hidden = cues.length === 0;
+    cues.forEach(function(c, i){
+      var li = document.createElement('li');
+      var ct = document.createElement('span'); ct.className = 'ct'; ct.textContent = new Date(c.at).toLocaleDateString(undefined, {weekday:'short', month:'short', day:'numeric'}) + ', ' + fmt(c.time);
+      var cl = document.createElement('span'); cl.className = 'cl'; cl.textContent = [ (c.feels || []).join(', '), c.what ].filter(Boolean).join(' · ') || 'Clocked';
+      var er = document.createElement('button'); er.type = 'button'; er.className = 'erasebtn'; er.textContent = 'Erase'; er.setAttribute('aria-label', 'Erase the check-in from ' + ct.textContent);
+      er.addEventListener('click', function(){
+        confirmIt('Erase this check-in?', 'It will be gone for good once the Undo note closes.', 'Erase', function(){
+          var gone = cues.splice(i, 1)[0]; keep('optional-preview-cues', cues); drawCues(); drawPatterns();
+          document.getElementById('cue-set').focus();
+          undoNote('Check-in erased.', function(){ cues.splice(i, 0, gone); keep('optional-preview-cues', cues); drawCues(); drawPatterns(); });
+        });
+      });
+      var txt = document.createElement('div'); txt.className = 'cuetxt'; txt.appendChild(ct); txt.appendChild(cl);
+      li.appendChild(txt); li.appendChild(er); list.appendChild(li);
+    });
+  }
+  drawCues(); drawPatterns();
+  document.getElementById('cue-set').addEventListener('click', function(){
+    var tm = cueTime.value, msg = document.getElementById('cue-msg');
+    if (!tm) { msg.textContent = 'Pick a time first.'; cueTime.focus(); return; }
+    var feels = Array.prototype.filter.call(cueChips.querySelectorAll('.fchip'), function(c){ return c.getAttribute('aria-pressed') === 'true'; }).map(function(c){ return c.textContent; });
+    var what = document.getElementById('cue-what').value.trim();
+    cues.unshift({ at: Date.now(), time: tm, feels: feels, what: what }); keep('optional-preview-cues', cues);
+    drawCues(); drawPatterns();
+    document.getElementById('cue-what').value = ''; delete cueTime.dataset.touched; cueTime.value = nowTime();
+    Array.prototype.forEach.call(cueChips.querySelectorAll('.fchip'), function(c){ c.setAttribute('aria-pressed', 'false'); });
+    msg.textContent = 'Clocked. You noticed it, and that counts.';
+  });
+
+  /* ---------- Reminders: asks permission; real buzzing needs the server piece ---------- */
+  document.getElementById('cue-remind').addEventListener('click', function(){
+    var out = document.getElementById('cue-remind-msg');
+    var ios = /iPhone|iPad|iPod/.test(navigator.userAgent), installed = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+    if (ios && !installed) { out.textContent = 'On iPhone, reminders work once Optional is on your home screen. In Safari, tap Share, then Add to Home Screen.'; return; }
+    if (!('Notification' in window)) { out.textContent = 'This browser can’t show reminders.'; return; }
+    try {
+      Notification.requestPermission().then(function(p){
+        out.textContent = p === 'granted' ? 'Reminders are on. They start buzzing once we connect the reminder service.' : 'Reminders stay off. You can turn them on later in Settings.';
+      });
+    } catch (e){ out.textContent = 'This browser can’t show reminders.'; }
+  });
+
+  window.OptionalDash = { addJournal: addJournal, bestieOff: function(){ try { return localStorage.getItem('optional-bestie-off') === '1'; } catch (e){ return false; } } };
+
+  /* ---------- Home <-> You ---------- */
+  var hub = document.querySelector('.hub'), you = document.getElementById('you');
+  var pages = {'': hub, '#you': you, '#help': document.getElementById('help')};
+  var navStack = 0;
+  function route(){
+    var key = pages[location.hash] ? location.hash : '';
+    for (var k in pages) pages[k].hidden = (k !== key);
+    document.body.classList.toggle('on-dash', key === '#you');
+    if (window.OptionalLock) OptionalLock.check();
+    window.scrollTo(0, 0);
+    var back = pages[key].querySelector('.backbtn, #back-home');
+    if (back) back.focus();
+    else if (document.activeElement && (document.activeElement.id === 'back-home' || document.activeElement.classList.contains('backbtn'))) document.getElementById('open-you').focus();
+  }
+  function go(hash){ navStack++; location.hash = hash; }
+  function goBack(){
+    if (navStack > 0) { navStack--; history.back(); }
+    else { history.replaceState(null, '', location.pathname + location.search); route(); }
+  }
+  document.getElementById('open-you').addEventListener('click', function(){ go('you'); });
+  document.getElementById('back-home').addEventListener('click', goBack);
+  document.querySelector('#help .backbtn').addEventListener('click', goBack);
+
+  /* ---------- ☰ menu ---------- */
+  var menu = document.getElementById('menu'), mscrim = document.getElementById('menu-scrim'), menuBtn = document.getElementById('open-menu');
+  var menuNote = document.getElementById('menu-note');
+  function openMenu(){ menu.hidden = false; mscrim.hidden = false; document.body.classList.add('hide-bar'); menuNote.textContent = ''; menu.querySelector('.menulist button').focus(); }
+  function closeMenu(returnFocus){ menu.hidden = true; mscrim.hidden = true; document.body.classList.remove('hide-bar'); if (returnFocus) menuBtn.focus(); }
+  menuBtn.addEventListener('click', openMenu);
+  document.getElementById('close-menu').addEventListener('click', function(){ closeMenu(true); });
+  mscrim.addEventListener('click', function(){ closeMenu(true); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !menu.hidden) closeMenu(true); });
+  var mitems = menu.querySelectorAll('[data-go], [data-note]');
+  for (var mi = 0; mi < mitems.length; mi++){
+    mitems[mi].addEventListener('click', function(){
+      if (this.hasAttribute('data-go')) {
+        var dest = this.getAttribute('data-go');
+        closeMenu(false);
+        if (dest === '') { if (location.hash) { history.replaceState(null, '', location.pathname + location.search); route(); } }
+        else if (location.hash !== '#' + dest) go(dest);
+      } else {
+        menuNote.textContent = 'Preview only. ' + this.getAttribute('data-note');
+      }
+    });
+  }
+
+  /* talking: the dashboard has its own big input box; the bar on other pages sends here too */
+  var talk = document.getElementById('talk'), thread = document.getElementById('thread'), dashIn = document.getElementById('dash-input');
+  function say(msg){
+    if (location.hash !== '#you') go('you');
+    selectTab('talk');
+    var empty = thread.querySelector('.outempty'); if (empty) empty.remove();
+    var me = document.createElement('p'); me.className = 'bubble me'; me.textContent = msg; thread.appendChild(me);
+    document.getElementById('clear-talk').hidden = false;
+    thread.scrollTop = thread.scrollHeight;
+    setTimeout(function(){
+      var r = document.createElement('p'); r.className = 'bubble friend';
+      r.textContent = (document.querySelector('#bestie-name .who').textContent || 'Bestie') + '\u2019s traversing the interwebs, making their way to you. Be here when they land.';
+      thread.appendChild(r); thread.scrollTop = thread.scrollHeight;
+    }, 500);
+  }
+  function sendFrom(box){
+    var msg = box.value.trim();
+    if (!msg){ if (location.hash !== '#you') go('you'); setTimeout(function(){ dashIn.focus(); }, 60); return; }
+    box.value = ''; say(msg);
+  }
+  document.querySelector('.friendbar .send').addEventListener('click', function(){ sendFrom(talk); });
+  talk.addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); sendFrom(talk); } });
+  document.getElementById('dash-send').addEventListener('click', function(){ sendFrom(dashIn); dashIn.focus(); });
+  dashIn.addEventListener('keydown', function(e){ if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendFrom(dashIn); } });
+  var moodRow = document.querySelector('.moodrow');
+  document.getElementById('mood-change').addEventListener('click', function(){ moodRow.classList.remove('picked'); this.hidden = true; var p = document.querySelector('#mood-chips .fchip[aria-pressed="true"]'); (p || document.querySelector('#mood-chips .fchip')).focus(); });
+  Array.prototype.forEach.call(document.querySelectorAll('#mood-chips .fchip'), function(c){
+    c.addEventListener('click', function(){
+      Array.prototype.forEach.call(document.querySelectorAll('#mood-chips .fchip'), function(o){ o.setAttribute('aria-pressed', o === c ? 'true' : 'false'); });
+      moodRow.classList.add('picked'); document.getElementById('mood-change').hidden = false;
+      if (c.classList.contains('other')) { dashIn.placeholder = 'Tell me how you’re feeling...'; dashIn.focus(); return; }
+      if (window.OptionalDash && OptionalDash.bestieOff()) { OptionalDash.addJournal('Feeling: ' + c.textContent); return; }
+      say(c.textContent);
+    });
+  });
+  window.addEventListener('hashchange', route);
+  route();
+  /* ---------- Pulse: haptics + 5-4-3-2-1 grounding ---------- */
+  var scrim = document.getElementById('pulse-scrim');
+  var openBtn = document.getElementById('open-pulse');
+  var canVibrate = typeof navigator.vibrate === 'function';
+  function iosTick(){
+    // Safari on iPhone has no vibration API; toggling a hidden switch gives one light tap on iOS 17.4+.
+    try {
+      var l = document.createElement('label'), c = document.createElement('input');
+      c.type = 'checkbox'; c.setAttribute('switch', ''); l.appendChild(c);
+      l.style.cssText = 'position:fixed;opacity:0;pointer-events:none;left:-99px';
+      document.body.appendChild(l); l.click(); document.body.removeChild(l);
+    } catch(e){}
+  }
+  function haptic(pattern){
+    if (canVibrate) { try { navigator.vibrate(pattern); return; } catch(e){} }
+    iosTick();
+  }
+  function showStep(n){
+    var steps = scrim.querySelectorAll('.step');
+    for (var i = 0; i < steps.length; i++) steps[i].hidden = steps[i].getAttribute('data-step') !== String(n);
+    var h = scrim.querySelector('.step[data-step="' + n + '"] h2');
+    if (h) { h.setAttribute('tabindex', '-1'); h.focus(); }
+  }
+  function resetDots(){ var d = scrim.querySelectorAll('.gdot'); for (var i = 0; i < d.length; i++) d[i].setAttribute('aria-pressed', 'false'); }
+  function openPulse(){
+    haptic([70, 90, 110]);
+    openBtn.classList.remove('beat'); void openBtn.offsetWidth; openBtn.classList.add('beat');
+    resetDots(); scrim.hidden = false; document.body.style.overflow = 'hidden'; showStep('intro');
+  }
+  function closePulse(){ scrim.hidden = true; document.body.style.overflow = ''; }
+  openBtn.addEventListener('click', openPulse);
+  document.getElementById('dash-pulse').addEventListener('click', openPulse);
+  document.getElementById('close-pulse').addEventListener('click', function(){ closePulse(); openBtn.focus(); });
+  document.getElementById('pulse-done').addEventListener('click', function(){ closePulse(); openBtn.focus(); });
+  document.getElementById('pulse-talk').addEventListener('click', function(){ closePulse(); if (location.hash !== '#you') go('you'); setTimeout(function(){ document.getElementById('bestie').scrollIntoView({block:'start'}); }, 40); setTimeout(function(){ document.getElementById('talk').focus(); }, 80); });
+  scrim.addEventListener('click', function(e){ if (e.target === scrim) { closePulse(); openBtn.focus(); } });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !scrim.hidden) { closePulse(); openBtn.focus(); } });
+  var nexts = scrim.querySelectorAll('[data-next]');
+  for (var x = 0; x < nexts.length; x++){
+    nexts[x].addEventListener('click', function(){ showStep(this.getAttribute('data-next')); });
+  }
+  var dots = scrim.querySelectorAll('.gdot');
+  for (var d = 0; d < dots.length; d++){
+    dots[d].addEventListener('click', function(){
+      var on = this.getAttribute('aria-pressed') !== 'true';
+      this.setAttribute('aria-pressed', on ? 'true' : 'false');
+      if (on) haptic(25);
+    });
+  }
+})();
+</script>
+
+<script>
+/* ===== Hide feature: ⋯ → panel → hide, with an Undo note ===== */
+(function(){
+  var KEY='optional-hidden';
+  function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||'[]'); }catch(e){ return []; } }
+  function save(a){ try{ localStorage.setItem(KEY, JSON.stringify(a)); }catch(e){} }
+  var hidden=load();
+  function apply(){ document.querySelectorAll('[data-key]').forEach(function(el){ el.classList.toggle('is-hidden', hidden.indexOf(el.getAttribute('data-key'))>-1); }); }
+  apply();
+  var scrim=document.getElementById('hide-scrim'), title=document.getElementById('hide-title'), yes=document.getElementById('hide-yes'),
+      cancel=document.getElementById('hide-cancel'), toast=document.getElementById('hide-toast'), msg=document.getElementById('hide-msg'),
+      undo=document.getElementById('hide-undo'), current=null, opener=null, timer=null, last=null;
+  function open(btn){ opener=btn; current={key:btn.getAttribute('data-hide'), name:btn.getAttribute('data-name')};
+    title.textContent=current.name; yes.textContent='Hide here'; scrim.hidden=false; yes.focus(); }
+  function close(back){ scrim.hidden=true; if(back && opener && document.body.contains(opener) && opener.offsetParent) opener.focus(); }
+  document.querySelectorAll('.morebtn').forEach(function(b){ b.addEventListener('click', function(e){ e.stopPropagation(); open(b); }); });
+  cancel.addEventListener('click', function(){ close(true); });
+  document.getElementById('hide-settings').addEventListener('click', function(){ close(false); msg.textContent='Settings is coming soon.'; undo.hidden=true; toast.hidden=false; startTimer(); if(opener && opener.offsetParent) opener.focus(); });
+  scrim.addEventListener('click', function(e){ if(e.target===scrim) close(true); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape' && !scrim.hidden){ e.stopPropagation(); close(true); } }, true);
+  scrim.addEventListener('keydown', function(e){ if(e.key!=='Tab') return; var f=[yes,document.getElementById('hide-settings'),cancel], i=f.indexOf(document.activeElement);
+    if(e.shiftKey && i<=0){ e.preventDefault(); f[f.length-1].focus(); } else if(!e.shiftKey && i===f.length-1){ e.preventDefault(); yes.focus(); } });
+  function hideToast(){ toast.hidden=true; clearTimeout(timer); }
+  function startTimer(){ clearTimeout(timer); timer=setTimeout(hideToast, 7000); }
+  yes.addEventListener('click', function(){
+    if(hidden.indexOf(current.key)<0) hidden.push(current.key); save(hidden); apply(); last=current; close(false);
+    msg.textContent=current.name+' is hidden. You can bring it back in Settings.'; undo.hidden=false; toast.hidden=false; startTimer();
+    var inMenu=opener && opener.closest('.menulist'), next=inMenu ? opener.closest('.menulist').querySelector('li:not(.is-hidden) button') : document.getElementById('hub-title');
+    if(next){ if(!inMenu) next.setAttribute('tabindex','-1'); next.focus(); } });
+  undo.addEventListener('click', function(){ if(!last) return; hidden=hidden.filter(function(k){ return k!==last.key; }); save(hidden); apply(); hideToast();
+    var b=document.querySelector('.stripwrap [data-hide="'+last.key+'"]'); if(b && b.offsetParent) b.focus(); });
+  ['mouseenter','focusin'].forEach(function(ev){ toast.addEventListener(ev, function(){ clearTimeout(timer); }); });
+  ['mouseleave','focusout'].forEach(function(ev){ toast.addEventListener(ev, function(e){ if(ev==='focusout' && toast.contains(e.relatedTarget)) return; if(!toast.hidden) startTimer(); }); });
+  window.OptionalHide={reset:function(){ hidden=[]; save(hidden); apply(); }};
+})();
+</script>
+<script>
+/* ===== Page lock for Astride & Bestie: PIN, plus Face ID / fingerprint where the phone offers it ===== */
+(function(){
+  var you = document.getElementById('you'), box = document.getElementById('lock');
+  var K = 'optional-lock', unlockedAt = 0, hiddenAt = 0, RELOCK = 0;   // leaving the app locks it right away
+  function get(){ try { return JSON.parse(localStorage.getItem(K) || 'null'); } catch (e){ return null; } }
+  function put(v){ try { localStorage.setItem(K, JSON.stringify(v)); } catch (e){} }
+  var mem = get();
+  function b64(buf){ return btoa(String.fromCharCode.apply(null, new Uint8Array(buf))); }
+  function unb64(s){ return Uint8Array.from(atob(s), function(c){ return c.charCodeAt(0); }); }
+  function rand(n){ var a = new Uint8Array(n); crypto.getRandomValues(a); return a; }
+  async function hash(pin, salt){
+    var data = new TextEncoder().encode(salt + ':' + pin);
+    if (crypto.subtle) return b64(await crypto.subtle.digest('SHA-256', data));
+    var h = 0; for (var i = 0; i < data.length; i++) h = (h * 31 + data[i]) | 0; return String(h);
+  }
+  var bioOK = false;
+  (async function(){ try { bioOK = !!(window.PublicKeyCredential && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()); } catch (e){ bioOK = false; } draw(); })();
+  function $(id){ return document.getElementById(id); }
+  function show(id){ ['lock-setup','lock-bio-offer','lock-locked'].forEach(function(s){ $(s).hidden = (s !== id); }); box.querySelector('.lockcardwrap').hidden = (id === 'lock-locked'); }
+  function draw(){
+    if (!mem) { show('lock-setup'); }
+    else { show('lock-locked'); $('lock-bio').hidden = !(bioOK && mem.cred); }
+  }
+  function isOpen(){ return unlockedAt && (!hiddenAt || Date.now() - hiddenAt < RELOCK); }
+  function behind(on){ Array.prototype.forEach.call(you.children, function(c){ if (c !== box) { if (on) c.setAttribute('inert', ''); else c.removeAttribute('inert'); c.setAttribute('aria-hidden', on ? 'true' : 'false'); } }); }
+  function lock(){ unlockedAt = 0; you.classList.add('locked'); behind(true); box.hidden = false; draw(); }
+  function unlock(){
+    unlockedAt = Date.now(); hiddenAt = 0; you.classList.remove('locked'); behind(false); box.hidden = true;
+    ['lock-pin','lock-pin2','lock-pin-in'].forEach(function(i){ $(i).value = ''; });
+    var b = document.getElementById('back-home'); if (b) b.focus();
+  }
+  function check(){
+    if (location.hash !== '#you') { unlockedAt = 0; return; }   // leaving the page locks it again
+    if (isOpen()) { you.classList.remove('locked'); behind(false); box.hidden = true; return; }
+    lock(); setTimeout(function(){ var h = box.querySelector('section:not([hidden]) h2'); if (h) h.focus(); }, 30);
+  }
+  document.addEventListener('visibilitychange', function(){
+    if (document.hidden) { hiddenAt = Date.now(); unlockedAt = 0; if (location.hash === '#you') lock(); }
+  });
+  window.addEventListener('hashchange', check);
+  function msg(id, t){ $(id).textContent = t; }
+  function goodPin(p){ return /^\d{4,6}$/.test(p); }
+  $('lock-save').addEventListener('click', async function(){
+    var a = $('lock-pin').value.trim(), b = $('lock-pin2').value.trim();
+    if (!goodPin(a)) { msg('lock-setup-msg', 'Use 4 to 6 numbers.'); $('lock-pin').focus(); return; }
+    if (a !== b) { msg('lock-setup-msg', 'Those two don’t match. Try again.'); $('lock-pin2').focus(); return; }
+    var salt = b64(rand(16)); mem = { salt: salt, pin: await hash(a, salt), cred: null }; put(mem);
+    if (bioOK) { show('lock-bio-offer'); $('lock-bio-title').focus(); } else unlock();
+  });
+  $('lock-bio-yes').addEventListener('click', async function(){
+    try {
+      var c = await navigator.credentials.create({ publicKey: {
+        challenge: rand(32), rp: { name: 'Optional' },
+        user: { id: rand(16), name: 'optional-user', displayName: 'Optional' },
+        pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
+        authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'preferred' }, timeout: 60000 } });
+      mem.cred = b64(c.rawId); put(mem); unlock();
+    } catch (e){ msg('lock-bio-msg', 'That didn’t work. You can use your PIN, and try again later in Settings.'); }
+  });
+  $('lock-bio-no').addEventListener('click', unlock);
+  $('lock-bio').addEventListener('click', async function(){
+    try {
+      await navigator.credentials.get({ publicKey: { challenge: rand(32), allowCredentials: [{ type: 'public-key', id: unb64(mem.cred) }], userVerification: 'required', timeout: 60000 } });
+      unlock();
+    } catch (e){ msg('lock-msg', 'That didn’t work. Try again, or use your PIN.'); }
+  });
+  async function tryPin(){
+    var p = $('lock-pin-in').value.trim();
+    if (!p) { $('lock-pin-in').focus(); return; }
+    if (await hash(p, mem.salt) === mem.pin) unlock();
+    else { msg('lock-msg', 'That PIN didn’t match. Try again.'); $('lock-pin-in').value = ''; $('lock-pin-in').focus(); }
+  }
+  $('lock-unlock').addEventListener('click', tryPin);
+  $('lock-pin-in').addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); tryPin(); } });
+  $('lock-forgot').addEventListener('click', function(){ msg('lock-msg', 'Log out, then log back in with your password, and you can set a new PIN.'); });
+  $('lock-back').addEventListener('click', function(){ history.back(); });
+  window.OptionalLock = { check: check, lock: lock, reset: function(){ mem = null; put(null); try { localStorage.removeItem(K); } catch (e){} lock(); } };
+  check();
+})();
+</script>
+</body>
+
+</html>
