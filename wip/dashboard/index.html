@@ -766,6 +766,26 @@ body.on-dash .friendbar-wrap{display:none;}
 .lockfloat .hidebtn{background:#5E6B44; color:#FBF6EA;}
 #lock .padwrap .padpin{width:66% !important; max-width:66%; box-sizing:border-box; border:0.09rem solid rgba(96,62,28,0.5) !important;}
 .lockfloat .lockmsg{min-height:1.3rem;}
+
+/* v11: buttons. Main actions are stitched olive patches; second choices are lifted words. */
+.startbtn.startbtn, .btn.hidebtn.hidebtn{position:relative; min-height:3rem; padding:0.6rem 1.7rem; border:none; background:#5E6B44; background-image:none; color:#FBF6EA;
+  font-family:inherit; font-size:1.1rem; font-weight:700; letter-spacing:0; text-shadow:none;
+  border-radius:1.4rem 0.9rem 1.3rem 1rem / 1rem 1.3rem 0.9rem 1.4rem; box-shadow:0 0.15rem 0.3rem rgba(52,48,42,0.3), inset 0 0.1rem 0 rgba(255,255,255,0.15); cursor:pointer;}
+.startbtn.startbtn::after, .btn.hidebtn.hidebtn::after{content:""; position:absolute; inset:0.3rem; border:0.1rem dashed rgba(251,246,234,0.7); border-radius:1.1rem 0.7rem 1rem 0.8rem / 0.8rem 1rem 0.7rem 1.1rem; pointer-events:none;}
+.startbtn.startbtn:hover, .btn.hidebtn.hidebtn:hover{background:#4F5B38;}
+.startbtn.startbtn:active, .btn.hidebtn.hidebtn:active{transform:translateY(0.06rem); box-shadow:0 0.08rem 0.18rem rgba(52,48,42,0.3);}
+.startbtn.startbtn:focus-visible, .btn.hidebtn.hidebtn:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0.25rem;}
+.btn.ghost:not(.helpbtn), .linkbtn.linkbtn, .clearbtn.clearbtn, .changebtn.changebtn, .erasebtn.erasebtn{min-height:2.75rem; min-width:2.75rem; padding:0.4rem 0.8rem; border:none !important; border-radius:0.6rem;
+  background:none; box-shadow:none; color:#3A332B; font-family:inherit; font-weight:700; text-decoration:none;
+  text-shadow:0 0.09rem 0 rgba(255,255,255,0.55), 0 0.18rem 0.3rem rgba(52,48,42,0.35); cursor:pointer;}
+.btn.ghost:not(.helpbtn):hover, .linkbtn.linkbtn:hover, .clearbtn.clearbtn:hover, .changebtn.changebtn:hover, .erasebtn.erasebtn:hover{color:#1F1B16; text-shadow:0 0.09rem 0 rgba(255,255,255,0.6), 0 0.28rem 0.45rem rgba(52,48,42,0.4);}
+.btn.ghost:not(.helpbtn):active, .linkbtn.linkbtn:active, .clearbtn.clearbtn:active, .changebtn.changebtn:active, .erasebtn.erasebtn:active{transform:translateY(0.06rem); text-shadow:0 0.05rem 0.1rem rgba(52,48,42,0.3);}
+.btn.ghost:not(.helpbtn):focus-visible, .linkbtn.linkbtn:focus-visible, .clearbtn.clearbtn:focus-visible, .changebtn.changebtn:focus-visible, .erasebtn.erasebtn:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0.1rem;}
+.btn.ghost:not(.helpbtn){font-size:1.05rem;}
+
+/* v12: shorter pop-up buttons */
+.hidepanel .btn.hidebtn, .lockcard .btn.hidebtn, .lockfloat .btn.hidebtn{width:auto; min-width:10rem; align-self:center;}
+.hidepanel .btn.ghost, .lockcard .btn.ghost, .lockfloat .btn.ghost{width:auto; align-self:center;}
 </style>
 </head>
 <body>
@@ -1004,7 +1024,7 @@ body.on-dash .friendbar-wrap{display:none;}
 <div class="sheet-scrim hide-scrim" id="hide-scrim" hidden>
   <div class="sheet-wrap"><div class="sheet hidepanel" role="dialog" aria-modal="true" aria-labelledby="hide-title" aria-describedby="hide-sub">
     <h2 id="hide-title" tabindex="-1"></h2>
-    <p class="hidesub" id="hide-sub">You can hide it here, or turn it off completely in Settings.</p>
+    <p class="hidesub" id="hide-sub">You can hide it here, or disable this page completely in Settings.</p>
     <button type="button" class="btn hidebtn" id="hide-yes"></button>
     <button type="button" class="btn ghost" id="hide-settings">Go to Settings</button>
     <button type="button" class="btn ghost" id="hide-cancel">Cancel</button>
