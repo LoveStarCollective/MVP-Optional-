@@ -10,6 +10,21 @@ const MODEL = Deno.env.get("BESTIE_MODEL") ?? "claude-haiku-5-5";
 const MAX_TURNS = 20;          // only the last 20 messages are sent
 const MAX_CHARS = 2000;        // per message
 
+
+// Supabase gives functions a built-in server key. Newer projects call it SUPABASE_SECRET_KEYS (a list),
+// older ones SUPABASE_SERVICE_ROLE_KEY. Use whichever this project has.
+function serverKey(): string {
+  const list = Deno.env.get("SUPABASE_SECRET_KEYS");
+  if (list) {
+    try {
+      const keys = JSON.parse(list);
+      const first = typeof keys === "object" && keys !== null ? (keys.default ?? Object.values(keys)[0]) : null;
+      if (typeof first === "string" && first) return first;
+    } catch { /* fall through */ }
+  }
+  return Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+}
+
 const cors = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info",
@@ -27,7 +42,7 @@ Deno.serve(async (req) => {
 
   // 1. Who is this? (must be logged in)
   const jwt = (req.headers.get("Authorization") ?? "").replace("Bearer ", "");
-  const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  const admin = createClient(Deno.env.get("SUPABASE_URL")!, serverKey());
   const { data: who, error: whoErr } = await admin.auth.getUser(jwt);
   if (whoErr || !who?.user) return reply({ error: "login" }, 401);
 
