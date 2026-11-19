@@ -114,19 +114,44 @@
     });
   }
 
-  // ---------- companion bar ----------
-  // Bestie isn't built yet, so typing shows a short note and keeps what they wrote.
-  var talk = $('talk'), talkNote = $('talk-note'), noteTimer = null;
-  function bestieSoon(){
-    talkNote.textContent = '';
-    var who = document.querySelector('.who');
-    var name = (who && who.textContent) || 'Bestie';
-    setTimeout(function(){ talkNote.textContent = name + '\u2019s almost here. Check back soon!'; }, 30);
-    clearTimeout(noteTimer);
-    noteTimer = setTimeout(function(){ talkNote.textContent = ''; }, 6000);
+  // ---------- Bestie chat (test version on the dashboard) ----------
+  var talk = $('talk'), thread = $('chat-thread'), chatIn = $('chat-input'), chatSend = $('chat-send'), chatLeft = $('chat-left');
+  var convo = [], busy = false;
+  function friendNow(){ var w = document.querySelector('.who'); return (w && w.textContent) || 'Bestie'; }
+  function nickNow(){ var n = document.querySelector('.nick-name'); var t = n && n.textContent; return t && t !== 'You' ? t : ''; }
+  function bubble(who, text){
+    var e = thread.querySelector('.chatempty'); if (e) e.remove();
+    var p = document.createElement('p'); p.className = 'chatbubble ' + who; p.textContent = text;
+    thread.appendChild(p); thread.scrollTop = thread.scrollHeight; return p;
   }
-  document.querySelector('.friendbar .send').addEventListener('click', bestieSoon);
-  talk.addEventListener('keydown', function(e){ if (e.key === 'Enter'){ e.preventDefault(); bestieSoon(); } });
+  async function sendChat(text){
+    text = (text || '').trim(); if (!text || busy) return;
+    busy = true; chatSend.disabled = true;
+    bubble('me', text); convo.push({ role: 'user', text: text });
+    var wait = bubble('friend', '\u2026'); wait.setAttribute('aria-label', friendNow() + ' is typing');
+    var r = await window.OptionalAccount.askBestie(convo.slice(), friendNow(), nickNow());
+    var answer;
+    if (r && r.text) { answer = r.text; convo.push({ role: 'assistant', text: answer }); }
+    else if (r && r.error === 'not_connected') answer = friendNow() + '\u2019s traversing the interwebs, making their way to you. Be here when they land.';
+    else if (r && r.error === 'limit') answer = 'I\u2019m glad you\u2019re expressing yourself. Let\u2019s keep it going tomorrow. If you need more help now, tap Help if Needed in the menu.';
+    else if (r && r.error === 'login') answer = 'Log back in and I\u2019ll be right here.';
+    else answer = 'Uh-oh... I\u2019m at a loss for words. Give me a moment and try again.';
+    if (!(r && r.text)) convo.pop();
+    wait.textContent = answer; wait.removeAttribute('aria-label');
+    chatLeft.textContent = (r && typeof r.left === 'number' && r.left <= 10) ? r.left + (r.left === 1 ? ' message' : ' messages') + ' left today.' : '';
+    thread.scrollTop = thread.scrollHeight;
+    busy = false; chatSend.disabled = false;
+  }
+  chatSend.addEventListener('click', function(){ var t = chatIn.value; chatIn.value = ''; sendChat(t); chatIn.focus(); });
+  chatIn.addEventListener('keydown', function(e){ if (e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); chatSend.click(); } });
+  // The companion bar on other pages sends here.
+  function fromBar(){
+    var t = talk.value; talk.value = '';
+    goTo('dash');
+    setTimeout(function(){ if (t.trim()) sendChat(t); else chatIn.focus(); }, 60);
+  }
+  document.querySelector('.friendbar .send').addEventListener('click', fromBar);
+  talk.addEventListener('keydown', function(e){ if (e.key === 'Enter'){ e.preventDefault(); fromBar(); } });
 
   // ---------- Pulse: haptics + 5, 4, 3, 2, 1 grounding ----------
   var scrim = $('pulse-scrim'), openBtn = $('open-pulse');

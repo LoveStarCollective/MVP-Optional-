@@ -281,7 +281,16 @@
     </div>
     <div class="yousec">
       <h2><span class="who">Bestie</span></h2>
-      <p class="soonbox"><strong>Coming soon</strong>This is where you and <span class="who">Bestie</span> will talk.</p>
+      <p class="chatstatus">I got you. Type away.</p>
+      <div class="chatthread" id="chat-thread" aria-live="polite" aria-label="Conversation" tabindex="0">
+        <p class="chatempty">Drop your thoughts.</p>
+      </div>
+      <p class="chatleft" id="chat-left" role="status"></p>
+      <div class="chatin">
+        <label class="sr-only" for="chat-input">Write to <span class="who">Bestie</span></label>
+        <textarea id="chat-input" rows="2"></textarea>
+        <button type="button" class="pbtn" id="chat-send">Send</button>
+      </div>
     </div>
     <div class="yousec">
       <h2>My journal</h2>

@@ -426,6 +426,20 @@
       try { await getClient().auth.signOut(); } catch (error){ /* already logged out */ }
     },
 
+    // Sends the recent chat to Bestie's server piece and returns { text, left } or { error }.
+    askBestie: async function(messages, friend, nick){
+      try {
+        var res = await getClient().functions.invoke('bestie', { body: { messages: messages, friend: friend, nick: nick } });
+        if (res.error){
+          var code = res.error.context && res.error.context.status;
+          return { error: code === 503 ? 'not_connected' : code === 429 ? 'limit' : code === 401 ? 'login' : 'other' };
+        }
+        return res.data || { error: 'other' };
+      } catch (error){
+        return { error: 'other' };
+      }
+    },
+
     isLoggedIn: function(){
       return !!dataKey;
     }
