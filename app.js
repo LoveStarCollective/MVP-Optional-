@@ -28,7 +28,9 @@
       $(screens[i]).hidden = (screens[i] !== id);
     }
     document.body.classList.toggle('in-app', inApp.indexOf(id) !== -1);
+    document.body.classList.toggle('on-dash', id === 'dash');
     if (window.OptionalInApp){ window.OptionalInApp.onShow(id); }
+    if (window.OptionalDash){ window.OptionalDash.onShow(id); }
     window.scrollTo(0, 0);
     if (moveFocus){
       var heading = document.querySelector('#' + id + ' h1');
@@ -97,6 +99,8 @@
   }
 
   function showRecoveryKey(key, readyLine){
+    extras = { friendLook: 'elephant', hidden: [] };
+    if (window.OptionalDash){ window.OptionalDash.start(allSettings()); }
     $('key-ready').textContent = readyLine;
     $('key-text').textContent = key;
     $('key-saved').checked = false;
@@ -117,13 +121,18 @@
     go('more');
   }
 
+  var extras = {};               // other saved settings: friendLook, hidden
   function enterApp(settings){
-    setFriend((settings && settings.friend) || '');
-    setNickname((settings && settings.nick) || '');
-    avatar = (settings && settings.avatar) || 'curly';
+    settings = settings || {};
+    setFriend(settings.friend || '');
+    setNickname(settings.nick || '');
+    avatar = settings.avatar || 'curly';
+    extras = { friendLook: settings.friendLook || 'elephant', hidden: settings.hidden || [] };
     if (window.OptionalInApp){ window.OptionalInApp.setAvatar(avatar); }
+    if (window.OptionalDash){ window.OptionalDash.start(settings); }
     openStart();
   }
+  function allSettings(){ return { friend: friendName, nick: nickname, avatar: avatar, friendLook: extras.friendLook, hidden: extras.hidden }; }
 
   // Open the "check your email" screen for a sign-up or a password reset.
   function openCode(mode, email){
@@ -435,6 +444,8 @@
   // ---------- log out ----------
   function logOut(){
     if (window.OptionalInApp){ window.OptionalInApp.closeAll(); }
+    if (window.OptionalDash){ window.OptionalDash.reset(); }
+    extras = {};
     Account.logOut().then(function(){
       setFriend('');
       setNickname('');
@@ -452,7 +463,11 @@
     go: go,
     saveAvatar: function(key){
       avatar = key;
-      return Account.saveSettings({ friend: friendName, nick: nickname, avatar: key });
+      return Account.saveSettings(allSettings());
+    },
+    updateSettings: function(patch){
+      for (var k in patch){ if (k === 'friendLook' || k === 'hidden') extras[k] = patch[k]; }
+      return Account.saveSettings(allSettings());
     }
   };
 

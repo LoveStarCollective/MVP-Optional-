@@ -426,6 +426,44 @@
       try { await getClient().auth.signOut(); } catch (error){ /* already logged out */ }
     },
 
+    // ---------- Journal entries and Cue Alarm check-ins (locked on the phone first) ----------
+    addEntry: async function(kind, value){
+      try {
+        if (!dataKey){ throw new Error('locked'); }
+        var result = await getClient().from('entries')
+          .insert({ user_id: userId, kind: kind, data: await encryptJSON(value) })
+          .select('id, created_at').single();
+        if (result.error){ throw result.error; }
+        return result.data;
+      } catch (error){
+        throw fail(error);
+      }
+    },
+    listEntries: async function(kind){
+      try {
+        if (!dataKey){ throw new Error('locked'); }
+        var result = await getClient().from('entries').select('id, data, created_at')
+          .eq('user_id', userId).eq('kind', kind).order('created_at', { ascending: false }).limit(500);
+        if (result.error){ throw result.error; }
+        var out = [];
+        for (var i = 0; i < (result.data || []).length; i++){
+          var row = result.data[i];
+          try { out.push({ id: row.id, at: row.created_at, value: await decryptJSON(row.data) }); } catch (e){ /* skip anything unreadable */ }
+        }
+        return out;
+      } catch (error){
+        throw fail(error);
+      }
+    },
+    deleteEntry: async function(id){
+      try {
+        var result = await getClient().from('entries').delete().eq('id', id).eq('user_id', userId);
+        if (result.error){ throw result.error; }
+      } catch (error){
+        throw fail(error);
+      }
+    },
+
     // Sends the recent chat to Bestie's server piece and returns { text, left } or { error }.
     askBestie: async function(messages, friend, nick){
       try {

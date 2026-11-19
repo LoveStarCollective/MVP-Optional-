@@ -20,44 +20,14 @@
     $('daily').classList.toggle('long', q.text.length > 110);
   }
 
-  // ---------- pictures (avatars.js) ----------
+  // ---------- your picture in every .av-slot (the picker lives in dash.js) ----------
   var A = window.OPTIONAL_AVATARS || {};
-  var current = 'curly';
-  var grid = $('avgrid');
-  Object.keys(A).forEach(function(k){
-    var b = document.createElement('button');
-    b.type = 'button'; b.className = 'avopt'; b.setAttribute('aria-label', A[k].name); b.dataset.av = k;
-    b.innerHTML = A[k].svg;
-    b.addEventListener('click', function(){ pickAvatar(k); });
-    grid.appendChild(b);
-  });
   function setAvatar(k){
     if (!A[k]) k = 'curly';
-    current = k;
     var slots = document.querySelectorAll('.av-slot');
     for (var i = 0; i < slots.length; i++) slots[i].innerHTML = A[k].svg;
-    var opts = grid.querySelectorAll('.avopt');
-    for (var j = 0; j < opts.length; j++) opts[j].setAttribute('aria-pressed', opts[j].dataset.av === k ? 'true' : 'false');
   }
-  function pickAvatar(k){
-    var before = current;
-    setAvatar(k);
-    var status = $('av-status');
-    status.textContent = 'Saving…';
-    app().saveAvatar(k).then(function(){
-      status.textContent = 'Saved.';
-    }, function(){
-      setAvatar(before);
-      status.textContent = "That didn't save. Please try again.";
-    });
-  }
-  setAvatar(current);
-  $('change-av').addEventListener('click', function(){
-    var picker = $('avpicker'), open = picker.hidden;
-    picker.hidden = !open;
-    this.setAttribute('aria-expanded', open ? 'true' : 'false');
-    $('av-status').textContent = '';
-  });
+  setAvatar('curly');
 
   // ---------- "coming soon" for pages that aren't built yet ----------
   function soonNote(button){
@@ -114,41 +84,12 @@
     });
   }
 
-  // ---------- Bestie chat (test version on the dashboard) ----------
-  var talk = $('talk'), thread = $('chat-thread'), chatIn = $('chat-input'), chatSend = $('chat-send'), chatLeft = $('chat-left');
-  var convo = [], busy = false;
-  function friendNow(){ var w = document.querySelector('.who'); return (w && w.textContent) || 'Bestie'; }
-  function nickNow(){ var n = document.querySelector('.nick-name'); var t = n && n.textContent; return t && t !== 'You' ? t : ''; }
-  function bubble(who, text){
-    var e = thread.querySelector('.chatempty'); if (e) e.remove();
-    var p = document.createElement('p'); p.className = 'chatbubble ' + who; p.textContent = text;
-    thread.appendChild(p); thread.scrollTop = thread.scrollHeight; return p;
-  }
-  async function sendChat(text){
-    text = (text || '').trim(); if (!text || busy) return;
-    busy = true; chatSend.disabled = true;
-    bubble('me', text); convo.push({ role: 'user', text: text });
-    var wait = bubble('friend', '\u2026'); wait.setAttribute('aria-label', friendNow() + ' is typing');
-    var r = await window.OptionalAccount.askBestie(convo.slice(), friendNow(), nickNow());
-    var answer;
-    if (r && r.text) { answer = r.text; convo.push({ role: 'assistant', text: answer }); }
-    else if (r && r.error === 'not_connected') answer = friendNow() + '\u2019s traversing the interwebs, making their way to you. Be here when they land.';
-    else if (r && r.error === 'limit') answer = 'I\u2019m glad you\u2019re expressing yourself. Let\u2019s keep it going tomorrow. If you need more help now, tap Help if Needed in the menu.';
-    else if (r && r.error === 'login') answer = 'Log back in and I\u2019ll be right here.';
-    else answer = 'Uh-oh... I\u2019m at a loss for words. Give me a moment and try again.';
-    if (!(r && r.text)) convo.pop();
-    wait.textContent = answer; wait.removeAttribute('aria-label');
-    chatLeft.textContent = (r && typeof r.left === 'number' && r.left <= 10) ? r.left + (r.left === 1 ? ' message' : ' messages') + ' left today.' : '';
-    thread.scrollTop = thread.scrollHeight;
-    busy = false; chatSend.disabled = false;
-  }
-  chatSend.addEventListener('click', function(){ var t = chatIn.value; chatIn.value = ''; sendChat(t); chatIn.focus(); });
-  chatIn.addEventListener('keydown', function(e){ if (e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); chatSend.click(); } });
-  // The companion bar on other pages sends here.
+  // ---------- companion bar: sends what they typed to the Friend on the dashboard ----------
+  var talk = $('talk');
   function fromBar(){
     var t = talk.value; talk.value = '';
     goTo('dash');
-    setTimeout(function(){ if (t.trim()) sendChat(t); else chatIn.focus(); }, 60);
+    if (window.OptionalDash) OptionalDash.sendFromBar(t);
   }
   document.querySelector('.friendbar .send').addEventListener('click', fromBar);
   talk.addEventListener('keydown', function(e){ if (e.key === 'Enter'){ e.preventDefault(); fromBar(); } });
@@ -217,8 +158,7 @@
       if (id === 'options'){ stepsIn = 0; showQuote(); }
       var notes = document.querySelectorAll('.hubnote');
       for (var i = 0; i < notes.length; i++) notes[i].textContent = '';
-      if (id !== 'dash'){ $('avpicker').hidden = true; $('change-av').setAttribute('aria-expanded', 'false'); }
     },
-    closeAll: function(){ closeMenu(false); closePulse(false); talk.value = ''; talkNote.textContent = ''; setAvatar('curly'); }
+    closeAll: function(){ closeMenu(false); closePulse(false); talk.value = ''; setAvatar('curly'); }
   };
 })();

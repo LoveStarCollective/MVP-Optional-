@@ -253,54 +253,172 @@
     <p class="daily" id="daily" aria-label="Today's quote"><span class="words" id="daily-words"></span><span class="by" id="daily-by"></span></p>
     <h1 id="options-title">Options on top of Options</h1>
     <div class="hubstrips">
-      <button type="button" class="hubstrip soon-btn"><span class="t">Out in the World</span></button>
-      <button type="button" class="hubstrip green soon-btn"><span class="t">Mind Body Connect</span></button>
-      <button type="button" class="hubstrip blue soon-btn"><span class="t">Real Talk</span><span class="soon">soon</span></button>
-      <button type="button" class="hubstrip pink soon-btn"><span class="t">Good to Know</span></button>
+      <div class="stripwrap hasmore" data-key="world"><button type="button" class="hubstrip soon-btn"><span class="t">Out in the World</span></button><button type="button" class="morebtn" data-hide="world" data-name="Out in the World" aria-label="Hide Out in the World"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5c2.4 3.2 5.4 4.8 9 4.8s6.6-1.6 9-4.8"/><path d="M5.6 13.4l-1.6 2.2"/><path d="M9.6 15l-.6 2.7"/><path d="M14.4 15l.6 2.7"/><path d="M18.4 13.4l1.6 2.2"/></svg></button></div>
+      <div class="stripwrap"><button type="button" class="hubstrip green soon-btn"><span class="t">Mind Body Connect</span></button></div>
+      <div class="stripwrap hasmore" data-key="realtalk"><button type="button" class="hubstrip blue soon-btn"><span class="t">Real Talk</span><span class="soon">soon</span></button><button type="button" class="morebtn" data-hide="realtalk" data-name="Real Talk" aria-label="Hide Real Talk"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5c2.4 3.2 5.4 4.8 9 4.8s6.6-1.6 9-4.8"/><path d="M5.6 13.4l-1.6 2.2"/><path d="M9.6 15l-.6 2.7"/><path d="M14.4 15l.6 2.7"/><path d="M18.4 13.4l1.6 2.2"/></svg></button></div>
+      <div class="stripwrap"><button type="button" class="hubstrip pink soon-btn"><span class="t">Good to Know</span></button></div>
     </div>
     <p class="hubnote" role="status"></p>
   </section>
 
   <!-- YOU & YOUR FRIEND (placeholder dashboard) -->
-  <section class="screen inapp" id="dash" aria-labelledby="dash-title" hidden>
+  <section class="screen inapp dashpage" id="dash" aria-labelledby="dash-title" hidden>
+  <div class="lockscreen" id="lock" hidden>
+    <button type="button" class="iconbtn inback" id="lock-back" aria-label="Back"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></button>
+    <section class="lockfloat" id="lock-locked" hidden>
+      <h2 tabindex="-1" class="zone">You are entering the <span class="zone-name">your</span> Zone.</h2>
+      <p class="prove">Prove that it&rsquo;s you.</p>
+      <div class="padwrap">
+        <svg class="padsvg" viewBox="0 0 120 150" aria-hidden="true">
+            <defs>
+              <linearGradient id="pf-steel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6E7378"/><stop offset=".35" stop-color="#E9ECEE"/><stop offset=".55" stop-color="#B9BEC3"/><stop offset="1" stop-color="#5B6065"/></linearGradient>
+              <linearGradient id="pf-brass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F3D58A"/><stop offset=".3" stop-color="#D9A845"/><stop offset=".65" stop-color="#B07E26"/><stop offset="1" stop-color="#7A5315"/></linearGradient>
+              <linearGradient id="pf-shine" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/></linearGradient>
+            </defs>
+            <ellipse cx="60" cy="144" rx="44" ry="5" fill="#34302A" opacity=".22"/>
+            <path d="M30 62V40a30 30 0 0 1 60 0v22" fill="none" stroke="#4A4E52" stroke-width="15" stroke-linecap="round"/>
+            <path d="M30 62V40a30 30 0 0 1 60 0v22" fill="none" stroke="url(#pf-steel)" stroke-width="12" stroke-linecap="round"/>
+            <path d="M34 44a26 26 0 0 1 22-30" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2.4" stroke-linecap="round"/>
+            <rect x="8" y="57" width="104" height="84" rx="13" fill="#6B4812"/>
+            <rect x="8" y="55" width="104" height="84" rx="13" fill="url(#pf-brass)"/>
+            <rect x="12" y="59" width="96" height="34" rx="10" fill="url(#pf-shine)"/>
+            <rect x="8.5" y="55.5" width="103" height="83" rx="12.5" fill="none" stroke="#5E4010" stroke-opacity=".5"/>
+            <g fill="#8A6018"><circle cx="18" cy="65" r="2.4"/><circle cx="102" cy="65" r="2.4"/><circle cx="18" cy="129" r="2.4"/><circle cx="102" cy="129" r="2.4"/></g>
+            <g fill="#F7E2A8"><circle cx="18" cy="64.4" r="1"/><circle cx="102" cy="64.4" r="1"/><circle cx="18" cy="128.4" r="1"/><circle cx="102" cy="128.4" r="1"/></g>
+            <path d="M60 112a4.5 4.5 0 0 0-2.6 8.2L56 129h8l-1.4-8.8A4.5 4.5 0 0 0 60 112z" fill="#2A1C0C" opacity=".85"/>
+          </svg>
+        <label class="sr-only" for="lock-pin-in">PIN</label>
+        <input type="password" id="lock-pin-in" class="padpin" inputmode="numeric" autocomplete="current-password" maxlength="6" placeholder="PIN">
+      </div>
+      <p class="lockmsg" id="lock-msg" role="alert"></p>
+      <button type="button" class="pbtn hidebtn" id="lock-unlock">Unlock</button>
+      <button type="button" class="pbtn ghost" id="lock-bio" hidden>Use Face ID or fingerprint</button>
+      <button type="button" class="linkbtn" id="lock-forgot">Forgot your PIN?</button>
+    </section>
+    <div class="sheet-wrap lockcardwrap"><div class="sheet lockcard">
+      <section id="lock-setup" hidden>
+        <h2 tabindex="-1">Lock this page</h2>
+        <p class="hidesub">Keep your chats, journal and check-ins just for you. Pick a PIN.</p>
+        <label class="flabel2" for="lock-pin">New PIN (4 to 6 numbers)</label>
+        <input type="password" id="lock-pin" class="pinbox" inputmode="numeric" autocomplete="new-password" maxlength="6">
+        <label class="flabel2" for="lock-pin2">Type it again</label>
+        <input type="password" id="lock-pin2" class="pinbox" inputmode="numeric" autocomplete="new-password" maxlength="6">
+        <p class="lockmsg" id="lock-setup-msg" role="alert"></p>
+        <button type="button" class="pbtn hidebtn" id="lock-save">Save PIN</button>
+      </section>
+      <section id="lock-bio-offer" hidden>
+        <h2 tabindex="-1" id="lock-bio-title">Use Face ID or fingerprint too?</h2>
+        <p class="hidesub">It&rsquo;s quicker than your PIN. Your PIN still works as a backup.</p>
+        <p class="lockmsg" id="lock-bio-msg" role="alert"></p>
+        <button type="button" class="pbtn hidebtn" id="lock-bio-yes">Yes, set it up</button>
+        <button type="button" class="pbtn ghost" id="lock-bio-no">Not now</button>
+      </section>
+    </div></div>
+  </div>
     <div class="topbar">
-      <button type="button" class="iconbtn inback" aria-label="Back"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></button>
+      <button type="button" class="iconbtn inback" id="back-home" aria-label="Back to Options"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></button>
       <h1 class="title" id="dash-title"><span class="nick-name">You</span> &amp; <span class="who">Bestie</span></h1>
-      <span class="spacer"></span>
+      <button type="button" class="avatarbtn small" id="dash-me" aria-label="Change my picture"><span class="av-slot"></span></button>
     </div>
-    <div class="youcard">
-      <div class="avatar-big"><span class="av-slot"></span></div>
-      <p class="name"><span class="nick-name"></span></p>
-      <button type="button" class="linkbtn" id="change-av" aria-expanded="false" aria-controls="avpicker">Change my picture</button>
-    </div>
-    <div class="avpicker" id="avpicker" hidden>
-      <h2>Pick a picture</h2>
-      <div class="avgrid" id="avgrid"></div>
-      <p class="small">Adding your own photo is coming later. It will be kept private, like your journal.</p>
-      <p class="small" id="av-status" role="status"></p>
-    </div>
-    <div class="yousec">
-      <h2><span class="who">Bestie</span></h2>
-      <p class="chatstatus">I got you. Type away.</p>
-      <div class="chatthread" id="chat-thread" aria-live="polite" aria-label="Conversation" tabindex="0">
-        <p class="chatempty">Drop your thoughts.</p>
+
+    <section class="moodrow" aria-labelledby="mood-title">
+      <h2 id="mood-title">What&rsquo;s up with the feels?</h2>
+      <button type="button" class="changebtn" id="mood-change" hidden>Change</button>
+      <div class="fchips moodchips" id="mood-chips">
+        <button type="button" class="fchip" aria-pressed="false">Stressed</button>
+        <button type="button" class="fchip" aria-pressed="false">Good, unwinding</button>
+        <button type="button" class="fchip" aria-pressed="false">Lonely</button>
+        <button type="button" class="fchip" aria-pressed="false">Energetic</button>
+        <button type="button" class="fchip" aria-pressed="false">Anxious</button>
+        <button type="button" class="fchip" aria-pressed="false">Something I want more of</button>
+        <button type="button" class="fchip" aria-pressed="false">Bored</button>
+        <button type="button" class="fchip" aria-pressed="false">Uncertain</button>
+        <button type="button" class="fchip other" aria-pressed="false">Other&hellip;</button>
       </div>
-      <p class="chatleft" id="chat-left" role="status"></p>
-      <div class="chatin">
-        <label class="sr-only" for="chat-input">Write to <span class="who">Bestie</span></label>
-        <textarea id="chat-input" rows="2"></textarea>
-        <button type="button" class="pbtn" id="chat-send">Send</button>
+    </section>
+
+    <div class="bigbox2">
+      <div class="tabs" role="tablist" aria-label="Bestie, journal and Cue Alarm">
+        <button type="button" class="tab" role="tab" id="tab-talk" aria-selected="true" aria-controls="panel-talk"><span class="fr-slot tabpic" aria-hidden="true"></span><span class="who">Bestie</span></button>
+        <button type="button" class="tab" role="tab" id="tab-journal" aria-selected="false" aria-controls="panel-journal" tabindex="-1"><svg class="tabicon" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5h11a1.5 1.5 0 0 1 1.5 1.5v14a1.5 1.5 0 0 1-1.5 1.5H6z"/><path d="M6 3.5v17"/><path d="M4 7h3M4 12h3M4 17h3"/><path d="M10 8h5.5M10 11.5h4"/></svg>Journal</button>
+        <button type="button" class="tab" role="tab" id="tab-cue" aria-selected="false" aria-controls="panel-cue" tabindex="-1"><svg class="tabicon" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="7"/><path d="M12 9.5V13l2.3 1.6"/><path d="M4.5 6.2l2.6-2.4M19.5 6.2l-2.6-2.4"/><path d="M7.5 19.5l-1.3 1.6M16.5 19.5l1.3 1.6"/></svg>Cue Alarm</button>
+      </div>
+      <div class="boxpaper">
+        <section class="panel" id="panel-talk" role="tabpanel" aria-labelledby="tab-talk">
+          <div class="chead">
+            <button type="button" class="friendpic" id="friend-pic" aria-label="Change Bestie's look"><span class="fr-slot"></span></button>
+            <div>
+              <h2 class="cname" id="bestie-name"><span class="who">Bestie</span></h2>
+              <p class="cstatus">I got you. Type away.</p>
+            </div>
+            <button type="button" class="clearbtn" id="clear-talk" hidden>Clear conversation</button>
+          </div>
+          <div class="outbox" id="thread" aria-live="polite" aria-label="Conversation with Bestie" tabindex="0">
+            <p class="outempty">Drop your thoughts, or pick a feeling above.</p>
+          </div>
+          <div class="inbox">
+            <label class="sr-only" for="dash-input">Write to Bestie</label>
+            <textarea id="dash-input" rows="2"></textarea>
+            <div class="inbar">
+              <button type="button" class="inpulse" id="dash-pulse" aria-label="Pulse. Tap when you're feeling a type of way."><svg aria-hidden="true" width="26" height="20" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 9h5l2.5-6 4 12 3-8 1.8 2H23"/></svg></button>
+              <button type="button" class="insend" id="dash-send" aria-label="Send to Bestie"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></button>
+            </div>
+          </div>
+        </section>
+        <section class="panel" id="panel-journal" role="tabpanel" aria-labelledby="tab-journal" hidden>
+          <h2 class="ptitle" id="journal-title" tabindex="-1">Your journal</h2>
+    <p class="sub">What&rsquo;s knockin&rsquo; in your noggin? Write it down.</p>
+    <p class="privnote">Only you can read this.</p>
+    <label class="sr-only" for="jnote">Write in your journal</label>
+    <textarea id="jnote" class="jnote" rows="3" placeholder="How&rsquo;s your body, your thoughts..."></textarea>
+    <button type="button" class="startbtn nextpill" id="jsave">Save entry</button>
+    <div class="jentries" id="jentries"></div>
+
+        </section>
+        <section class="panel" id="panel-cue" role="tabpanel" aria-labelledby="tab-cue" hidden>
+          <h2 class="ptitle" id="cue-title" tabindex="-1">Cue Alarm</h2>
+    <p class="sub">Check in with yourself when you first get the urge for that thing you want to do less of. What&rsquo;s your body telling your mind? Clock it and see if a pattern emerges&mdash;then it&rsquo;s your call.</p>
+    <label class="flabel2" for="cue-time">When?</label>
+    <p class="hint">Starts at right now. Change it if it was earlier.</p>
+    <input type="time" id="cue-time" class="cuetime">
+    <label class="flabel2" for="cue-what">What&rsquo;s happening, or what&rsquo;s changed?</label>
+    <textarea id="cue-what" class="jnote cuebox" rows="2"></textarea>
+    <p class="flabel2" id="cue-feel-label">What&rsquo;s coming up for you?</p>
+    <div class="fchips moodchips" id="cue-chips" role="group" aria-labelledby="cue-feel-label">
+      <button type="button" class="fchip" aria-pressed="false">Out of control</button>
+      <button type="button" class="fchip" aria-pressed="false">Bored</button>
+      <button type="button" class="fchip" aria-pressed="false">Desperate</button>
+      <button type="button" class="fchip" aria-pressed="false">Lonely</button>
+      <button type="button" class="fchip" aria-pressed="false">Triggered</button>
+      <button type="button" class="fchip" aria-pressed="false">Restless</button>
+      <button type="button" class="fchip" aria-pressed="false">Nostalgic</button>
+      <button type="button" class="fchip" aria-pressed="false">Overwhelmed</button>
+      <button type="button" class="fchip" aria-pressed="false">Tired</button>
+      <button type="button" class="fchip" aria-pressed="false">Angry</button>
+      <button type="button" class="fchip" aria-pressed="false">Numb</button>
+      <button type="button" class="fchip" aria-pressed="false">Celebrating</button>
+      <button type="button" class="fchip" aria-pressed="false">Ignored</button>
+      <button type="button" class="fchip" aria-pressed="false">Hungry</button>
+      <button type="button" class="fchip" aria-pressed="false">Moody</button>
+    </div>
+    <div class="cueadd"><label class="sr-only" for="cue-own">Add your own feeling</label><textarea id="cue-own" class="jnote cuebox" rows="1" placeholder="Add your own..."></textarea><button type="button" id="cue-add" aria-label="Add this feeling">+</button></div>
+    <button type="button" class="startbtn nextpill" id="cue-set">Clock it</button>
+    <p class="cuemsg" id="cue-msg" role="status"></p>
+    <div class="patterns" id="cue-patterns">
+      <h3 class="flabel2">Your patterns</h3>
+      <p id="cue-pattern-text">Patterns show up after a few check-ins.</p>
+    </div>
+    <div id="cue-saved" hidden><h3 class="flabel2">Your check-ins</h3><ul class="cuelist" id="cue-list"></ul></div>
+    <div class="remind">
+      <h3 class="flabel2">Reminders</h3>
+      <p>Get a gentle nudge around the times your urges usually show up.</p>
+      <button type="button" class="pbtn ghost" id="cue-remind">Allow reminders</button>
+      <p class="cuemsg" id="cue-remind-msg" role="status"></p>
+    </div>
+
+        </section>
       </div>
     </div>
-    <div class="yousec">
-      <h2>My journal</h2>
-      <p class="soonbox"><strong>Coming soon</strong>Your journal will live here, private to you.</p>
-    </div>
-    <div class="btnrow">
-      <button type="button" class="pbtn ghost soon-btn">Settings</button>
-      <button type="button" class="pbtn ghost do-logout">Log out</button>
-    </div>
-    <p class="hubnote" role="status"></p>
   </section>
 
   <!-- HELP IF NEEDED -->
@@ -359,6 +477,34 @@
 
 </main>
 
+<div class="sheet-scrim hide-scrim" id="hide-scrim" hidden>
+  <div class="sheet-wrap"><div class="sheet hidepanel" role="dialog" aria-modal="true" aria-labelledby="hide-title" aria-describedby="hide-sub">
+    <h2 id="hide-title" tabindex="-1"></h2>
+    <p class="hidesub" id="hide-sub">You can hide it here, or disable this page completely in Settings.</p>
+    <button type="button" class="pbtn hidebtn" id="hide-yes"></button>
+    <button type="button" class="pbtn ghost" id="hide-settings">Go to Settings</button>
+    <button type="button" class="pbtn ghost" id="hide-cancel">Cancel</button>
+  </div></div>
+</div>
+<div class="hidetoast" id="hide-toast" role="status" aria-live="polite" hidden><span id="hide-msg"></span><button type="button" id="hide-undo">Undo</button></div>
+<div class="sheet-scrim confirm-scrim" id="confirm-scrim" hidden>
+  <div class="sheet-wrap"><div class="sheet hidepanel" role="dialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-sub">
+    <h2 id="confirm-title" tabindex="-1"></h2>
+    <p class="hidesub" id="confirm-sub"></p>
+    <button type="button" class="pbtn hidebtn" id="confirm-yes"></button>
+    <button type="button" class="pbtn ghost" id="confirm-no">Cancel</button>
+  </div></div>
+</div>
+<div class="hidetoast" id="undo-toast" role="status" aria-live="polite" hidden><span id="undo-msg"></span><button type="button" id="undo-btn">Undo</button></div>
+<div class="sheet-scrim" id="pick-scrim" hidden>
+  <div class="sheet-wrap"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pick-title">
+    <div class="shead"><button type="button" class="iconbtn closer" aria-label="Close" style="margin:0 -0.5rem 0 0"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <h2 class="beat-title" id="pick-title" tabindex="-1">Pick a picture</h2>
+    <div class="avgrid" id="pick-grid"></div>
+    <p class="sub" id="pick-note"></p>
+  </div></div>
+</div>
+<div class="hidetoast" id="hide-toast" role="status" aria-live="polite" hidden><span id="hide-msg"></span><button type="button" id="hide-undo">Undo</button></div>
 <div class="scrim" id="menu-scrim" hidden></div>
 <nav class="drawer menudrawer" id="menu" aria-label="Menu" hidden>
   <div class="head">
@@ -370,9 +516,9 @@
   <ul class="menulist">
     <li><button type="button" data-goto="options">Options</button></li>
     <li><button type="button" data-goto="dash"><span><span class="nick-name">You</span> &amp; <span class="who">Bestie</span></span></button></li>
-    <li><button type="button" class="soon-btn">Out in the World</button></li>
+    <li class="hasmore" data-key="world"><button type="button" class="soon-btn">Out in the World</button><button type="button" class="morebtn" data-hide="world" data-name="Out in the World" aria-label="Hide Out in the World"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5c2.4 3.2 5.4 4.8 9 4.8s6.6-1.6 9-4.8"/><path d="M5.6 13.4l-1.6 2.2"/><path d="M9.6 15l-.6 2.7"/><path d="M14.4 15l.6 2.7"/><path d="M18.4 13.4l1.6 2.2"/></svg></button></li>
     <li><button type="button" class="soon-btn">Mind Body Connect</button></li>
-    <li><button type="button" class="soon-btn">Real Talk <span class="soon soonin">soon</span></button></li>
+    <li class="hasmore" data-key="realtalk"><button type="button" class="soon-btn">Real Talk <span class="soon soonin">soon</span></button><button type="button" class="morebtn" data-hide="realtalk" data-name="Real Talk" aria-label="Hide Real Talk"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5c2.4 3.2 5.4 4.8 9 4.8s6.6-1.6 9-4.8"/><path d="M5.6 13.4l-1.6 2.2"/><path d="M9.6 15l-.6 2.7"/><path d="M14.4 15l.6 2.7"/><path d="M18.4 13.4l1.6 2.2"/></svg></button></li>
     <li><button type="button" class="soon-btn">Good to Know</button></li>
     <li><button type="button" class="soon-btn">Settings</button></li>
     <li><button type="button" class="do-logout">Log out</button></li>
@@ -459,8 +605,10 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="quotes.js"></script>
 <script src="avatars.js"></script>
+<script src="friends.js"></script>
 <script src="account.js"></script>
 <script src="inapp.js"></script>
 <script src="app.js"></script>
+<script src="dash.js"></script>
 </body>
 </html>
