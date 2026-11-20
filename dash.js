@@ -289,7 +289,7 @@
           var setup = (window.OptionalAccount && OptionalAccount.enablePush) ? OptionalAccount.enablePush() : Promise.resolve();
           setup.then(function(){ out.textContent = 'Reminders are on.'; showReminderSettings(); saveReminders(); },
                      function(){ out.textContent = 'Reminders couldn\u2019t be turned on. Try again in a moment.'; });
-        } else out.textContent = 'Reminders stay off. You can allow them anytime.';
+        } else out.textContent = 'Notifications are blocked for Optional on this phone. Turn them on in your browser\u2019s site settings (tap the icon next to the web address), then tap Allow reminders again.';
       });
     } catch (e){ out.textContent = 'This browser can\u2019t show reminders.'; }
   });
@@ -453,7 +453,7 @@
 /* ===== Page lock for Astride & Bestie: PIN, plus Face ID / fingerprint where the phone offers it ===== */
 (function(){
   var you = document.getElementById('dash'), box = document.getElementById('lock');
-  var K = 'optional-lock', unlockedAt = 0, hiddenAt = 0, RELOCK = 0;   // leaving the app locks it right away
+  var K = 'optional-lock', unlockedAt = 0;
   function get(){ try { return JSON.parse(localStorage.getItem(K) || 'null'); } catch (e){ return null; } }
   function put(v){ try { localStorage.setItem(K, JSON.stringify(v)); } catch (e){} }
   var mem = get();
@@ -473,24 +473,46 @@
     if (!mem) { show('lock-setup'); }
     else { show('lock-locked'); $('lock-bio').hidden = !(bioOK && mem.cred); }
   }
-  function isOpen(){ return unlockedAt && (!hiddenAt || Date.now() - hiddenAt < RELOCK); }
+  // How long the page stays unlocked after you step away: 1, 10 or 30 minutes, or until the app is closed.
+  var leftAt = 0;
+  function mode(){ return (mem && mem.after) || 'closed'; }
+  function isOpen(){
+    if (!unlockedAt) return false;
+    if (mode() === 'closed' || !leftAt) return true;
+    return Date.now() - leftAt < (+mode()) * 60000;
+  }
   function behind(on){ Array.prototype.forEach.call(you.children, function(c){ if (c !== box) { if (on) c.setAttribute('inert', ''); else c.removeAttribute('inert'); c.setAttribute('aria-hidden', on ? 'true' : 'false'); } }); }
   function zone(){ var n = document.querySelector('#dash-title .nick-name'); var t = n && n.textContent; document.querySelectorAll('.zone-name').forEach(function(z){ z.textContent = (t && t !== 'You') ? t : 'your'; }); }
-  function lock(){ zone(); unlockedAt = 0; you.classList.add('locked'); behind(true); box.hidden = false; draw(); }
+  function lock(){ zone(); unlockedAt = 0; leftAt = 0; you.classList.add('locked'); behind(true); box.hidden = false; draw(); }
   function unlock(){
-    unlockedAt = Date.now(); hiddenAt = 0; you.classList.remove('locked'); behind(false); box.hidden = true;
+    unlockedAt = Date.now(); leftAt = 0; you.classList.remove('locked'); behind(false); box.hidden = true;
     ['lock-pin','lock-pin2','lock-pin-in'].forEach(function(i){ $(i).value = ''; });
     var b = document.getElementById('back-home'); if (b) b.focus();
     if (window.OptionalDash && OptionalDash.unlocked) OptionalDash.unlocked();
   }
   function check(){
-    if (location.hash !== '#dash') { unlockedAt = 0; return; }   // leaving the page locks it again
-    if (isOpen()) { you.classList.remove('locked'); behind(false); box.hidden = true; if (window.OptionalDash && OptionalDash.unlocked) OptionalDash.unlocked(); return; }
+    if (location.hash !== '#dash') { if (unlockedAt && !leftAt) leftAt = Date.now(); return; }
+    if (isOpen()) { leftAt = 0; you.classList.remove('locked'); behind(false); box.hidden = true; if (window.OptionalDash && OptionalDash.unlocked) OptionalDash.unlocked(); return; }
     lock(); setTimeout(function(){ var h = box.querySelector('section:not([hidden]) h2'); if (h) h.focus(); }, 30);
   }
   document.addEventListener('visibilitychange', function(){
-    if (document.hidden) { hiddenAt = Date.now(); unlockedAt = 0; if (location.hash === '#dash') lock(); }
+    if (document.hidden) { if (unlockedAt && !leftAt) leftAt = Date.now(); }
+    else if (location.hash === '#dash') check();
   });
+  var AFTER_LABELS = { '1': 'After 1 minute', '10': 'After 10 minutes', '30': 'After 30 minutes', 'closed': 'Only when the app is closed' };
+  function showAfter(){ var l = $('autolock-label'); if (l) l.textContent = AFTER_LABELS[mode()] || AFTER_LABELS.closed; }
+  function setAfter(v){ if (!mem) return; mem.after = v; put(mem); showAfter(); }
+  document.querySelectorAll('input[name="lock-after"]').forEach(function(r){ r.addEventListener('change', function(){ if (this.checked) { if (mem) setAfter(this.value); else pendingAfter = this.value; } }); });
+  var pendingAfter = 'closed';
+  var alScrim = $('autolock-scrim');
+  $('autolock-change').addEventListener('click', function(){
+    document.querySelectorAll('input[name="lock-after2"]').forEach(function(r){ r.checked = r.value === mode(); });
+    alScrim.hidden = false; var on = alScrim.querySelector('input:checked') || alScrim.querySelector('input'); on.focus();
+  });
+  document.querySelectorAll('input[name="lock-after2"]').forEach(function(r){ r.addEventListener('change', function(){ if (this.checked) setAfter(this.value); }); });
+  $('autolock-done').addEventListener('click', function(){ alScrim.hidden = true; $('autolock-change').focus(); });
+  alScrim.addEventListener('keydown', function(e){ if (e.key === 'Escape') { alScrim.hidden = true; $('autolock-change').focus(); } });
+  showAfter();
   window.addEventListener('hashchange', check);
   function msg(id, t){ $(id).textContent = t; }
   function goodPin(p){ return /^\d{4,6}$/.test(p); }
@@ -498,7 +520,7 @@
     var a = $('lock-pin').value.trim(), b = $('lock-pin2').value.trim();
     if (!goodPin(a)) { msg('lock-setup-msg', 'Use 4 to 6 numbers.'); $('lock-pin').focus(); return; }
     if (a !== b) { msg('lock-setup-msg', 'Those two don’t match. Try again.'); $('lock-pin2').focus(); return; }
-    var salt = b64(rand(16)); mem = { salt: salt, pin: await hash(a, salt), cred: null }; put(mem);
+    var salt = b64(rand(16)); mem = { salt: salt, pin: await hash(a, salt), cred: null, after: pendingAfter }; put(mem); showAfter();
     if (bioOK) { show('lock-bio-offer'); $('lock-bio-title').focus(); } else unlock();
   });
   $('lock-bio-yes').addEventListener('click', async function(){

@@ -751,3 +751,12 @@ body.on-dash .friendbar-wrap{display:none;}
 .cuelist .erasebtn{width:auto; min-width:2.75rem; white-space:nowrap;}
 .remind [hidden]{display:none !important;}
 #bnote-title{color:var(--red);}
+
+/* Auto-lock choices */
+.lockafter{border:none; margin:0.3rem 0 0; padding:0; display:flex; flex-direction:column; gap:0.1rem; text-align:left;}
+.lockafter legend{padding:0; margin-bottom:0.2rem;}
+.radiorow{display:flex; align-items:center; gap:0.6rem; min-height:2.75rem; font-size:1rem; cursor:pointer;}
+.radiorow input{width:1.25rem; height:1.25rem; accent-color:#5E6B44; flex:none;}
+.radiorow input:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0.15rem;}
+.autolock{margin:0.6rem 0 0; text-align:center; font-size:0.9rem;}
+.autolock .linkbtn{display:inline; min-height:2.75rem; padding:0 0.3rem; font-size:0.9rem;}

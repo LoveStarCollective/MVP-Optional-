@@ -309,6 +309,7 @@
         <input type="password" id="lock-pin" class="pinbox" inputmode="numeric" autocomplete="new-password" maxlength="6">
         <label class="flabel2" for="lock-pin2">Type it again</label>
         <input type="password" id="lock-pin2" class="pinbox" inputmode="numeric" autocomplete="new-password" maxlength="6">
+        <fieldset class="lockafter"><legend class="flabel2">Lock again</legend><label class="radiorow"><input type="radio" name="lock-after" value="1"> After 1 minute</label><label class="radiorow"><input type="radio" name="lock-after" value="10"> After 10 minutes</label><label class="radiorow"><input type="radio" name="lock-after" value="30"> After 30 minutes</label><label class="radiorow"><input type="radio" name="lock-after" value="closed" checked> Only when the app is closed</label></fieldset>
         <p class="lockmsg" id="lock-setup-msg" role="alert"></p>
         <button type="button" class="pbtn hidebtn" id="lock-save">Save PIN</button>
       </section>
@@ -444,6 +445,7 @@
         </section>
       </div>
     </div>
+    <p class="autolock">Auto-lock: <span id="autolock-label">Only when the app is closed</span> &middot; <button type="button" class="linkbtn" id="autolock-change">Change</button></p>
   </section>
 
   <!-- HELP IF NEEDED -->
@@ -526,6 +528,14 @@
     <h2 id="bnote-title" tabindex="-1">A grounding note</h2>
     <p class="hidesub" id="bnote-text"><span class="who">Bestie</span> is not a therapist, doctor, or certified in anything, really. It&rsquo;s an AI friend that wants to help you with your self-study so you can become an expert on yourself. It&rsquo;ll never tell you what to do, how to think, or judge you. If you&rsquo;re in a serious crisis, it will point you to more support, and Help if Needed in the menu is always there.</p>
     <button type="button" class="pbtn hidebtn" id="bnote-ok">I understand</button>
+  </div></div>
+</div>
+<div class="sheet-scrim confirm-scrim" id="autolock-scrim" hidden>
+  <div class="sheet-wrap"><div class="sheet hidepanel" role="dialog" aria-modal="true" aria-labelledby="autolock-title">
+    <h2 id="autolock-title" tabindex="-1">Lock again</h2>
+    <p class="hidesub">How long your page stays unlocked after you step away.</p>
+    <fieldset class="lockafter"><legend class="sr-only">Lock again</legend><label class="radiorow"><input type="radio" name="lock-after2" value="1"> After 1 minute</label><label class="radiorow"><input type="radio" name="lock-after2" value="10"> After 10 minutes</label><label class="radiorow"><input type="radio" name="lock-after2" value="30"> After 30 minutes</label><label class="radiorow"><input type="radio" name="lock-after2" value="closed" checked> Only when the app is closed</label></fieldset>
+    <button type="button" class="pbtn hidebtn" id="autolock-done">Done</button>
   </div></div>
 </div>
 <div class="sheet-scrim" id="pick-scrim" hidden>
