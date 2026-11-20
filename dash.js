@@ -65,6 +65,7 @@
       tb.setAttribute('aria-selected', on ? 'true' : 'false'); tb.tabIndex = on ? 0 : -1; pn.hidden = !on;
       if (on && focus) tb.focus();
     });
+    if (name === 'talk') setTimeout(maybeNote, 30);
   }
   tabs.forEach(function(n, i){
     var tb = document.getElementById('tab-' + n);
@@ -210,23 +211,97 @@
       document.getElementById('cue-what').value = ''; delete cueTime.dataset.touched; cueTime.value = nowTime();
       Array.prototype.forEach.call(cueChips.querySelectorAll('.fchip'), function(c){ c.setAttribute('aria-pressed', 'false'); });
       msg.textContent = 'Clocked. You noticed it, and that counts.';
+      if (reminders.auto) saveReminders(); if (!$('remind-set').hidden) drawReminders();
     }, function(){ msg.textContent = 'That didn\u2019t save. Try again.'; }).then(function(){ btn.disabled = false; });
   });
 
-  /* ---------- Reminders: asks permission; real buzzing needs the server piece ---------- */
-  document.getElementById('cue-remind').addEventListener('click', function(){
-    var out = document.getElementById('cue-remind-msg');
+  /* ---------- Reminders: your times, a pattern suggestion, and an automatic switch (off by default) ---------- */
+  var reminders = { times: [], auto: false };
+  function fmt12(tm){ return fmt(tm); }
+  function toMin(tm){ var p = tm.split(':'); return (+p[0]) * 60 + (+p[1]); }
+  function fromMin(m){ m = ((m % 1440) + 1440) % 1440; return pad(Math.floor(m / 60)) + ':' + pad(m % 60); }
+  // Your most common time to clock an urge over the last two weeks (needs at least 3 check-ins near the same time).
+  function usualTimes(){
+    var since = Date.now() - 14 * 864e5, buckets = {};
+    cues.filter(function(c){ return c.at >= since && c.time; }).forEach(function(c){
+      var m = toMin(c.time), b = Math.floor(m / 60); (buckets[b] = buckets[b] || []).push(m);
+    });
+    return Object.keys(buckets).filter(function(b){ return buckets[b].length >= 3; })
+      .sort(function(a, b){ return buckets[b].length - buckets[a].length; }).slice(0, 2)
+      .map(function(b){ var ms = buckets[b].sort(function(x, y){ return x - y; }); var mid = ms[Math.floor(ms.length / 2)];
+        return { usual: fromMin(mid), nudge: fromMin(Math.round((mid - 15) / 5) * 5) }; });
+  }
+  function saveReminders(){
+    var p = app().updateSettings({ reminders: { times: reminders.times.slice(), auto: reminders.auto } });
+    if (window.OptionalAccount && OptionalAccount.syncReminders) {
+      var auto = reminders.auto ? usualTimes().map(function(u){ return u.nudge; }) : [];
+      p = p.then(function(){ return OptionalAccount.syncReminders(reminders.times.concat(auto)); });
+    }
+    return p.catch(function(){ $('cue-remind-msg').textContent = 'That didn\u2019t save. Try again.'; });
+  }
+  function drawReminders(){
+    var list = $('remind-list'); list.innerHTML = '';
+    reminders.times.slice().sort().forEach(function(tm){
+      var li = document.createElement('li');
+      var txt = document.createElement('div'); txt.className = 'cuetxt'; txt.innerHTML = '<span class="ct"></span>'; txt.firstChild.textContent = fmt12(tm);
+      var er = document.createElement('button'); er.type = 'button'; er.className = 'erasebtn'; er.textContent = 'Remove'; er.setAttribute('aria-label', 'Remove the ' + fmt12(tm) + ' reminder');
+      er.addEventListener('click', function(){
+        reminders.times = reminders.times.filter(function(t){ return t !== tm; }); drawReminders(); saveReminders();
+        $('remind-time').focus();
+        undoNote('Reminder removed.', function(){ reminders.times.push(tm); drawReminders(); saveReminders(); });
+      });
+      li.appendChild(txt); li.appendChild(er); list.appendChild(li);
+    });
+    $('remind-empty').hidden = reminders.times.length > 0;
+    var u = usualTimes(), sug = $('remind-suggest');
+    var fresh = u.filter(function(x){ return reminders.times.indexOf(x.nudge) < 0; })[0];
+    if (fresh && !reminders.auto) {
+      $('remind-suggest-text').textContent = 'You often clock urges around ' + fmt12(fresh.usual) + '. Want a reminder at ' + fmt12(fresh.nudge) + '?';
+      sug.dataset.time = fresh.nudge; sug.hidden = false;
+    } else sug.hidden = true;
+    $('remind-auto').checked = !!reminders.auto;
+    $('remind-auto-note').textContent = reminders.auto
+      ? (u.length ? 'On. You\u2019ll get a nudge around ' + u.map(function(x){ return fmt12(x.nudge); }).join(' and ') + '. It adjusts as your patterns change.' : 'On. Once a pattern shows up in your check-ins, reminders will follow it.')
+      : 'Off. Turn it on and reminders follow your patterns.';
+  }
+  function showReminderSettings(){ $('remind-set').hidden = false; $('cue-remind').hidden = true; drawReminders(); }
+  $('remind-add').addEventListener('click', function(){
+    var tm = $('remind-time').value;
+    if (!tm) { $('remind-time').focus(); return; }
+    if (reminders.times.indexOf(tm) < 0) { reminders.times.push(tm); drawReminders(); saveReminders(); }
+    $('remind-time').value = ''; $('cue-remind-msg').textContent = 'Reminder set for ' + fmt12(tm) + '.';
+  });
+  $('remind-suggest-add').addEventListener('click', function(){
+    var tm = $('remind-suggest').dataset.time; if (!tm) return;
+    if (reminders.times.indexOf(tm) < 0) reminders.times.push(tm);
+    drawReminders(); saveReminders(); $('cue-remind-msg').textContent = 'Reminder set for ' + fmt12(tm) + '.'; $('remind-time').focus();
+  });
+  $('remind-auto').addEventListener('change', function(){ reminders.auto = this.checked; drawReminders(); saveReminders(); });
+  $('cue-remind').addEventListener('click', function(){
+    var out = $('cue-remind-msg');
     var ios = /iPhone|iPad|iPod/.test(navigator.userAgent), installed = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
-    if (ios && !installed) { out.textContent = 'On iPhone, reminders work once Optional is on your home screen. In Safari, tap Share, then Add to Home Screen.'; return; }
-    if (!('Notification' in window)) { out.textContent = 'This browser can’t show reminders.'; return; }
+    if (window.__previewReminders) { showReminderSettings(); return; }
+    if (ios && !installed) { out.textContent = 'On iPhone, reminders work once Optional is on your home screen. In Safari, tap Share, then Add to Home Screen, then open Optional from there.'; return; }
+    if (!('Notification' in window)) { out.textContent = 'This browser can\u2019t show reminders.'; return; }
     try {
       Notification.requestPermission().then(function(p){
-        out.textContent = p === 'granted' ? 'Reminders are on. They start buzzing once we connect the reminder service.' : 'Reminders stay off. You can turn them on later in Settings.';
+        if (p === 'granted') {
+          var setup = (window.OptionalAccount && OptionalAccount.enablePush) ? OptionalAccount.enablePush() : Promise.resolve();
+          setup.then(function(){ out.textContent = 'Reminders are on.'; showReminderSettings(); saveReminders(); },
+                     function(){ out.textContent = 'Reminders couldn\u2019t be turned on. Try again in a moment.'; });
+        } else out.textContent = 'Reminders stay off. You can allow them anytime.';
       });
-    } catch (e){ out.textContent = 'This browser can’t show reminders.'; }
+    } catch (e){ out.textContent = 'This browser can\u2019t show reminders.'; }
   });
-
-
+  function startReminders(settings){
+    var r = (settings && settings.reminders) || {};
+    reminders = { times: Array.isArray(r.times) ? r.times.slice() : [], auto: !!r.auto };
+    var granted = ('Notification' in window) && Notification.permission === 'granted';
+    $('remind-set').hidden = !granted && !window.__previewReminders; $('cue-remind').hidden = !$('remind-set').hidden;
+    if (!$('remind-set').hidden) drawReminders();
+    // Already allowed on this phone: quietly make sure it's still set up to receive reminders.
+    if (granted && window.OptionalAccount && OptionalAccount.enablePush) OptionalAccount.enablePush().catch(function(){});
+  }
 
   /* ---------- talking to your Friend ---------- */
   var thread = $('thread'), dashIn = $('dash-input'), dashSend = $('dash-send'), convo = [], busy = false;
@@ -242,6 +317,7 @@
   async function say(text){
     text = (text || '').trim(); if (!text || busy) return;
     selectTab('talk');
+    if (!noteOk) { showNote(function(){ say(text); }); return; }
     busy = true; dashSend.disabled = true;
     bubble('me', text); convo.push({ role: 'user', text: text });
     $('clear-talk').hidden = false;
@@ -261,6 +337,21 @@
     thread.scrollTop = thread.scrollHeight;
     busy = false; dashSend.disabled = false;
   }
+  // A grounding note: shown the first time the chat opens after each login. They tap "I understand" before chatting.
+  var noteOk = false, noteThen = null;
+  function chatVisible(){ var p = $('dash'); return !p.hidden && !p.classList.contains('locked') && !$('panel-talk').hidden; }
+  function showNote(then){
+    if (then) noteThen = then;
+    var sc = $('bestie-note'); if (!sc.hidden) return;
+    sc.hidden = false; document.body.style.overflow = 'hidden'; $('bnote-ok').focus();
+  }
+  function maybeNote(){ if (!noteOk && chatVisible()) showNote(); }
+  $('bnote-ok').addEventListener('click', function(){
+    noteOk = true; $('bestie-note').hidden = true; document.body.style.overflow = '';
+    var t = noteThen; noteThen = null; if (t) t(); else dashIn.focus();
+  });
+  $('bestie-note').addEventListener('keydown', function(e){ if (e.key === 'Tab') { e.preventDefault(); $('bnote-ok').focus(); } });
+
   function sendBox(){ var t = dashIn.value; dashIn.value = ''; say(t); dashIn.focus(); }
   dashSend.addEventListener('click', sendBox);
   dashIn.addEventListener('keydown', function(e){ if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendBox(); } });
@@ -285,17 +376,20 @@
       var j = await Acc.listEntries('journal'); journal = j; drawJournal();
       var c = await Acc.listEntries('cue');
       cues = c.map(function(e){ return { id: e.id, at: Date.parse(e.at) || Date.now(), time: e.value.time, feels: e.value.feels || [], what: e.value.what || '' }; });
-      drawCues(); drawPatterns(); loaded = true;
+      drawCues(); drawPatterns(); loaded = true; if (!$('remind-set').hidden) { drawReminders(); if (reminders.auto) saveReminders(); }
     } catch (e){ undoNote('Your journal and check-ins didn\u2019t load. Try again in a moment.'); }
   }
   window.OptionalDash = {
     confirmIt: confirmIt,
+    reload: function(){ return loadEntries(); },
+    unlocked: function(){ setTimeout(maybeNote, 50); },
     start: function(settings){
       settings = settings || {};
       chosen.me = SETS.me[settings.avatar] ? settings.avatar : 'curly';
       chosen.friend = SETS.friend[settings.friendLook] ? settings.friendLook : 'elephant';
       paint();
       if (window.OptionalHide) OptionalHide.load(settings.hidden);
+      startReminders(settings);
       loaded = false; loadEntries();
     },
     onShow: function(id){
@@ -311,9 +405,10 @@
       })();
     },
     reset: function(){
-      convo = []; journal = []; cues = []; loaded = false;
+      convo = []; journal = []; cues = []; loaded = false; noteOk = false; noteThen = null; $('bestie-note').hidden = true;
       thread.innerHTML = '<p class="outempty">Drop your thoughts, or pick a feeling above.</p>';
       $('clear-talk').hidden = true; leftNote.textContent = ''; drawJournal(); drawCues(); drawPatterns();
+      reminders = { times: [], auto: false }; $('remind-set').hidden = true; $('cue-remind').hidden = false;
       moodRow.classList.remove('picked'); $('mood-change').hidden = true;
       Array.prototype.forEach.call(document.querySelectorAll('#mood-chips .fchip'), function(o){ o.setAttribute('aria-pressed', 'false'); });
       if (window.OptionalHide) OptionalHide.reset();
@@ -386,10 +481,11 @@
     unlockedAt = Date.now(); hiddenAt = 0; you.classList.remove('locked'); behind(false); box.hidden = true;
     ['lock-pin','lock-pin2','lock-pin-in'].forEach(function(i){ $(i).value = ''; });
     var b = document.getElementById('back-home'); if (b) b.focus();
+    if (window.OptionalDash && OptionalDash.unlocked) OptionalDash.unlocked();
   }
   function check(){
     if (location.hash !== '#dash') { unlockedAt = 0; return; }   // leaving the page locks it again
-    if (isOpen()) { you.classList.remove('locked'); behind(false); box.hidden = true; return; }
+    if (isOpen()) { you.classList.remove('locked'); behind(false); box.hidden = true; if (window.OptionalDash && OptionalDash.unlocked) OptionalDash.unlocked(); return; }
     lock(); setTimeout(function(){ var h = box.querySelector('section:not([hidden]) h2'); if (h) h.focus(); }, 30);
   }
   document.addEventListener('visibilitychange', function(){

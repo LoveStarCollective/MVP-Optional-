@@ -426,6 +426,35 @@
       try { await getClient().auth.signOut(); } catch (error){ /* already logged out */ }
     },
 
+    // ---------- Reminders: this phone's delivery address and the reminder times ----------
+    enablePush: async function(){
+      try {
+        if (!('serviceWorker' in navigator) || !('PushManager' in window)){ throw new Error('no-push'); }
+        var reg = await navigator.serviceWorker.register('sw.js');
+        await navigator.serviceWorker.ready;
+        var keyRes = await getClient().functions.invoke('reminders', { body: { action: 'key' } });
+        if (keyRes.error || !keyRes.data || !keyRes.data.key){ throw keyRes.error || new Error('no-key'); }
+        var raw = atob(keyRes.data.key.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((keyRes.data.key.length + 3) % 4));
+        var appKey = new Uint8Array(raw.length); for (var i = 0; i < raw.length; i++){ appKey[i] = raw.charCodeAt(i); }
+        var sub = await reg.pushManager.getSubscription();
+        if (!sub){ sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: appKey }); }
+        var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+        var saved = await getClient().functions.invoke('reminders', { body: { action: 'subscribe', subscription: sub.toJSON(), tz: tz } });
+        if (saved.error){ throw saved.error; }
+      } catch (error){
+        throw fail(error);
+      }
+    },
+    syncReminders: async function(times){
+      try {
+        var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+        var res = await getClient().functions.invoke('reminders', { body: { action: 'set', times: times, tz: tz } });
+        if (res.error){ throw res.error; }
+      } catch (error){
+        throw fail(error);
+      }
+    },
+
     // ---------- Journal entries and Cue Alarm check-ins (locked on the phone first) ----------
     addEntry: async function(kind, value){
       try {

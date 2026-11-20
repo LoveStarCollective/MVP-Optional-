@@ -127,12 +127,12 @@
     setFriend(settings.friend || '');
     setNickname(settings.nick || '');
     avatar = settings.avatar || 'curly';
-    extras = { friendLook: settings.friendLook || 'elephant', hidden: settings.hidden || [] };
+    extras = { friendLook: settings.friendLook || 'elephant', hidden: settings.hidden || [], reminders: settings.reminders || { times: [], auto: false } };
     if (window.OptionalInApp){ window.OptionalInApp.setAvatar(avatar); }
     if (window.OptionalDash){ window.OptionalDash.start(settings); }
     openStart();
   }
-  function allSettings(){ return { friend: friendName, nick: nickname, avatar: avatar, friendLook: extras.friendLook, hidden: extras.hidden }; }
+  function allSettings(){ return { friend: friendName, nick: nickname, avatar: avatar, friendLook: extras.friendLook, hidden: extras.hidden, reminders: extras.reminders }; }
 
   // Open the "check your email" screen for a sign-up or a password reset.
   function openCode(mode, email){
@@ -466,7 +466,7 @@
       return Account.saveSettings(allSettings());
     },
     updateSettings: function(patch){
-      for (var k in patch){ if (k === 'friendLook' || k === 'hidden') extras[k] = patch[k]; }
+      for (var k in patch){ if (k === 'friendLook' || k === 'hidden' || k === 'reminders') extras[k] = patch[k]; }
       return Account.saveSettings(allSettings());
     }
   };

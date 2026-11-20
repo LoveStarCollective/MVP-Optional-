@@ -6,6 +6,12 @@
 <title>Optional</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dangrek&family=Caveat:wght@600&family=Nunito:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="app.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="theme-color" content="#E8D2BC">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Optional">
 </head>
 <body>
 <main class="app">
@@ -414,6 +420,25 @@
       <p>Get a gentle nudge around the times your urges usually show up.</p>
       <button type="button" class="pbtn ghost" id="cue-remind">Allow reminders</button>
       <p class="cuemsg" id="cue-remind-msg" role="status"></p>
+      <div id="remind-set" hidden>
+        <p class="flabel2" id="remind-list-label">Your times</p>
+        <ul class="cuelist remindlist" id="remind-list" aria-labelledby="remind-list-label"></ul>
+        <p class="hint" id="remind-empty">No reminder times yet.</p>
+        <div class="remindadd">
+          <label class="sr-only" for="remind-time">Reminder time</label>
+          <input type="time" id="remind-time" class="cuetime">
+          <button type="button" class="pbtn hidebtn" id="remind-add">Add</button>
+        </div>
+        <div class="remindsuggest" id="remind-suggest" hidden>
+          <p id="remind-suggest-text"></p>
+          <button type="button" class="linkbtn" id="remind-suggest-add">Add a reminder</button>
+        </div>
+        <label class="switchrow" for="remind-auto">
+          <span>Remind me around my usual times</span>
+          <input type="checkbox" role="switch" id="remind-auto">
+        </label>
+        <p class="hint" id="remind-auto-note"></p>
+      </div>
     </div>
 
         </section>
@@ -496,6 +521,13 @@
   </div></div>
 </div>
 <div class="hidetoast" id="undo-toast" role="status" aria-live="polite" hidden><span id="undo-msg"></span><button type="button" id="undo-btn">Undo</button></div>
+<div class="sheet-scrim confirm-scrim" id="bestie-note" hidden>
+  <div class="sheet-wrap"><div class="sheet hidepanel" role="dialog" aria-modal="true" aria-labelledby="bnote-title" aria-describedby="bnote-text">
+    <h2 id="bnote-title" tabindex="-1">A grounding note</h2>
+    <p class="hidesub" id="bnote-text"><span class="who">Bestie</span> is not a therapist, doctor, or certified in anything, really. It&rsquo;s an AI friend that wants to help you with your self-study so you can become an expert on yourself. It&rsquo;ll never tell you what to do, how to think, or judge you. If you&rsquo;re in a serious crisis, it will point you to more support, and Help if Needed in the menu is always there.</p>
+    <button type="button" class="pbtn hidebtn" id="bnote-ok">I understand</button>
+  </div></div>
+</div>
 <div class="sheet-scrim" id="pick-scrim" hidden>
   <div class="sheet-wrap"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pick-title">
     <div class="shead"><button type="button" class="iconbtn closer" aria-label="Close" style="margin:0 -0.5rem 0 0"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
