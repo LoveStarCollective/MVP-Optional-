@@ -218,8 +218,9 @@
     for (var i = 0; i < d.length; i++){ d[i].classList.remove('popped', 'press'); d[i].setAttribute('aria-pressed', 'false'); if (!d[i].querySelector('svg')) d[i].innerHTML = CREASE; }
   }
   function openPulse(){
-    // A slow heartbeat, about 5 seconds, that eases as it goes (Android). iPhone gets one light tap.
-    haptic([70,120,110,700, 70,120,110,750, 70,120,110,800, 70,120,110,850, 70,120,140]);
+    // If the heartbeat didn't start on touch (keyboard, or the phone blocked it), start it now.
+    if (!canVibrate) iosTick(); // iPhone browsers only allow one light tap
+    else if (Date.now() - beatStarted > 1500) startHeartbeat();
     openBtn.classList.remove('beat'); void openBtn.offsetWidth; openBtn.classList.add('beat');
     resetDots(); scrim.hidden = false; document.body.style.overflow = 'hidden'; showStep('intro');
   }
@@ -228,6 +229,14 @@
     scrim.hidden = true; document.body.style.overflow = '';
     if (returnFocus) openBtn.focus();
   }
+  // The heartbeat starts the moment a finger touches Pulse, not when it lifts.
+  var HEARTBEAT = [70,120,110,700, 70,120,110,750, 70,120,110,800, 70,120,110,850, 70,120,140]; // about 5 seconds, easing as it goes
+  var beatStarted = 0;
+  function startHeartbeat(){
+    if (!canVibrate) return;
+    try { if (navigator.vibrate(HEARTBEAT)) beatStarted = Date.now(); } catch (e){}
+  }
+  openBtn.addEventListener('pointerdown', startHeartbeat);
   openBtn.addEventListener('click', openPulse);
   $('close-pulse').addEventListener('click', function(){ closePulse(true); });
   $('pulse-done').addEventListener('click', function(){ closePulse(true); });
