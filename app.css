@@ -760,3 +760,42 @@ body.on-dash .friendbar-wrap{display:none;}
 .radiorow input:focus-visible{outline:0.1875rem solid var(--slate); outline-offset:0.15rem;}
 .autolock{margin:0.6rem 0 0; text-align:center; font-size:0.9rem;}
 .autolock .linkbtn{display:inline; min-height:2.75rem; padding:0 0.3rem; font-size:0.9rem;}
+
+/* ===== Pulse bubbles: glossy bubbles that pop, plus the Grounded ending (Nov 20, 2026) ===== */
+.gdot{position:relative; border:0.15rem dashed #5A3A1E; cursor:pointer;
+  background:radial-gradient(circle at 32% 27%, rgba(255,255,255,.98) 0 10%, rgba(255,255,255,.4) 20%, transparent 32%), radial-gradient(circle at 70% 76%, rgba(255,255,255,.55) 0 6%, transparent 15%), radial-gradient(circle at 50% 50%, rgba(247,242,233,.35) 50%, rgba(200,185,160,.5) 82%, rgba(150,125,95,.45) 100%);
+  box-shadow:0 0.2rem 0.35rem rgba(52,48,42,.25), inset 0 -0.2rem 0.35rem rgba(120,95,65,.3), inset 0 0.12rem 0.2rem rgba(255,255,255,.8); transition:transform .11s ease-out; animation:none !important;}
+.gdot.press{transform:scale(.86,.8);}
+.gdot.popped, .gdot[aria-pressed="true"]{cursor:default; border-style:solid; border-color:#8a6222; background:radial-gradient(circle at 50% 50%, #d9b06e 0%, #c49548 70%, #b0842f 100%); box-shadow:inset 0 0.08rem 0.15rem rgba(60,40,15,.35);}
+.gdot svg.crease{position:absolute; inset:0; width:100%; height:100%; opacity:0; transition:opacity .25s .05s; pointer-events:none;}
+.gdot.popped svg.crease{opacity:1;}
+.pop-flash{position:absolute; inset:-2px; border-radius:50%; background:rgba(255,255,255,.95); pointer-events:none; animation:popflash .2s ease-out forwards;}
+@keyframes popflash{to{opacity:0; transform:scale(1.2);}}
+.pop-ring{position:absolute; left:50%; top:50%; width:10px; height:10px; margin:-5px; border-radius:50%; border:2px solid #b0842f; pointer-events:none; animation:popring .45s ease-out forwards;}
+@keyframes popring{to{transform:scale(7); opacity:0; border-width:.5px;}}
+.pop-shard{position:absolute; left:50%; top:50%; width:2px; height:8px; margin:-4px -1px; background:#8a6222; border-radius:2px; pointer-events:none; animation:popshard .42s ease-out forwards;}
+@keyframes popshard{from{transform:rotate(var(--r)) translateY(-14px);} to{transform:rotate(var(--r)) translateY(-38px); opacity:0;}}
+#pulse-scrim .sheet{position:relative;}
+#pulse-scrim .step{position:relative; z-index:2;}
+.pulse-scene{position:absolute; inset:0; z-index:1; pointer-events:none; background:url("concrete.jpg") 50% 100% / auto 165% no-repeat; opacity:0; transition:opacity 1s ease-out;}
+.pulse-scene.on{opacity:1;}
+.pulse-scene::after{content:""; position:absolute; inset:0; opacity:0; transition:opacity 2.2s ease-in-out; background:radial-gradient(ellipse 85% 42% at 50% 47%, rgba(250,244,232,.7) 0%, rgba(250,244,232,0) 100%), rgba(250,244,232,.72);}
+.pulse-scene.muted::after{opacity:1;}
+.pulse-fb{position:absolute; z-index:1; width:2.75rem; height:2.75rem; margin:-1.375rem; transition-property:left,top,transform,opacity; transition-timing-function:cubic-bezier(.12,.55,.2,1);}
+.pulse-fb .gdot{display:block; width:100%; height:100%; animation:bubbleup .6s ease-out both !important;}
+.pulse-fb .gdot.popped{animation:none !important;}
+.pulse-fb.spread{opacity:.8;}
+@keyframes bubbleup{from{opacity:0; transform:translateY(16px) scale(.5);} 70%{opacity:1; transform:translateY(-2px) scale(1.03);} to{opacity:1; transform:none;}}
+#pulse-scrim .step.exhaling .gdot{transition:transform 1s ease-in, opacity 1s ease-in, filter 1s ease-in; transform:scale(1.15); opacity:0; filter:blur(3px);}
+#pulse-scrim .step.exhaling > *:not(.gdots){transition:opacity .8s ease-in .2s; opacity:0;}
+#pulse-scrim .step.arrive{margin:auto 0;}
+#pulse-scrim .step.arrive > *{animation:arrive 1.1s ease-out both;}
+#pulse-scrim .step.arrive > *:nth-child(2){animation-delay:.35s;}
+#pulse-scrim .step.arrive > *:nth-child(3){animation-delay:.7s;}
+#pulse-scrim .step.arrive > *:nth-child(n+4){animation-delay:.9s;}
+@keyframes arrive{from{opacity:0; transform:translateY(.4rem);} to{opacity:1; transform:none;}}
+@media (prefers-reduced-motion: reduce){
+  .pop-flash, .pop-ring, .pop-shard{display:none;}
+  .gdot{transition:none;}
+  #pulse-scrim .step.arrive > *{animation:none;}
+}

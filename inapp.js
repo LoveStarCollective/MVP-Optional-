@@ -110,19 +110,121 @@
     if (canVibrate){ try { navigator.vibrate(pattern); return; } catch (e){} }
     iosTick();
   }
+  // ---------- Pulse bubbles: pop sound, pop burst, and the Grounded ending ----------
+  var CREASE = '<svg class="crease" aria-hidden="true" viewBox="0 0 44 44" fill="none" stroke="rgba(90,58,20,.55)" stroke-width="1" stroke-linecap="round"><path d="M22 22 L13 9 M22 22 L33 8 M22 22 L37 25 M22 22 L28 37 M22 22 L11 34 M22 22 L6 20"/><path d="M16 14 l3 -1 M31 15 l-1 2.5 M32 29 l-3 -1 M17 31 l2 -2.5" stroke-width=".8"/></svg>';
+  var audio = null;
+  function popSound(){
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === 'suspended') audio.resume();
+      var t = audio.currentTime, len = Math.floor(audio.sampleRate * 0.05), buf = audio.createBuffer(1, len, audio.sampleRate), data = buf.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 4);
+      var src = audio.createBufferSource(); src.buffer = buf;
+      var bp = audio.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1300 + Math.random() * 400; bp.Q.value = 1.2;
+      var g1 = audio.createGain(); g1.gain.value = 0.35;
+      src.connect(bp); bp.connect(g1); g1.connect(audio.destination); src.start(t);
+      var o = audio.createOscillator(), g2 = audio.createGain();
+      o.frequency.setValueAtTime(190, t); o.frequency.exponentialRampToValueAtTime(60, t + 0.07);
+      g2.gain.setValueAtTime(0.25, t); g2.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+      o.connect(g2); g2.connect(audio.destination); o.start(t); o.stop(t + 0.09);
+    } catch (e){}
+  }
+  function burstOn(b, shards){
+    var f = document.createElement('span'); f.className = 'pop-flash'; b.appendChild(f);
+    var r = document.createElement('span'); r.className = 'pop-ring'; b.appendChild(r);
+    for (var i = 0; i < shards; i++){ var s = document.createElement('span'); s.className = 'pop-shard'; s.style.setProperty('--r', (i * (360 / shards) + Math.random() * 20) + 'deg'); b.appendChild(s); }
+    setTimeout(function(){ var x = b.querySelectorAll('.pop-flash,.pop-ring,.pop-shard'); for (var k = 0; k < x.length; k++) x[k].remove(); }, 460);
+  }
+  function popBubble(b){
+    if (b.classList.contains('popped') || b.classList.contains('press')) return;
+    b.classList.add('press');
+    setTimeout(function(){ b.classList.remove('press'); b.classList.add('popped'); b.setAttribute('aria-pressed', 'true'); popSound(); haptic(30); burstOn(b, 6); }, 110);
+  }
+  var sheet = scrim.querySelector('.sheet'), endingBits = [], endingTimers = [];
+  function later(fn, ms){ endingTimers.push(setTimeout(fn, ms)); }
+  function clearEnding(){
+    for (var i = 0; i < endingTimers.length; i++) clearTimeout(endingTimers[i]);
+    endingTimers = [];
+    for (var k = 0; k < endingBits.length; k++) endingBits[k].remove();
+    endingBits = [];
+    if (sheet) sheet.style.minHeight = '';
+    var s = scrim.querySelectorAll('.step'); for (var n = 0; n < s.length; n++) s[n].classList.remove('arrive', 'exhaling');
+  }
+  function groundedEnding(){
+    clearEnding();
+    var g1 = scrim.querySelector('[data-step="g1"]'), endStep = scrim.querySelector('[data-step="end"]');
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    endStep.style.visibility = 'hidden'; endStep.hidden = false; var eh = endStep.offsetHeight; endStep.hidden = true; endStep.style.visibility = '';
+    sheet.style.minHeight = Math.min(Math.max(sheet.offsetHeight, 600, eh + 260), window.innerHeight * 0.88) + 'px';
+    var scene = document.createElement('div'); scene.className = 'pulse-scene'; scene.setAttribute('aria-hidden', 'true');
+    if (reduce){
+      sheet.appendChild(scene); endingBits.push(scene); scene.classList.add('on', 'muted'); showStep('end'); return;
+    }
+    g1.classList.add('exhaling');
+    later(function(){
+      g1.classList.remove('exhaling');
+      var s = scrim.querySelectorAll('.step'); for (var n = 0; n < s.length; n++) s[n].hidden = true;
+      sheet.appendChild(scene); endingBits.push(scene); void scene.offsetWidth; scene.classList.add('on');
+      var W = sheet.clientWidth, H = sheet.clientHeight, pts = [], tries = 0, fbs = [];
+      while (pts.length < 15 && tries < 2000){
+        tries++;
+        var px = W * (0.14 + Math.random() * 0.72), py = H * (0.14 + Math.random() * 0.72), ok = true;
+        for (var q = 0; q < pts.length; q++){ if (Math.hypot(pts[q][0] - px, pts[q][1] - py) < 58){ ok = false; break; } }
+        if (ok) pts.push([px, py]);
+      }
+      pts.forEach(function(pt, i){
+        var w = document.createElement('div'); w.className = 'pulse-fb';
+        var sc = 0.82 + Math.random() * 0.33; w.setAttribute('data-sc', sc);
+        w.style.left = pt[0] + 'px'; w.style.top = pt[1] + 'px'; w.style.transform = 'scale(' + sc + ')';
+        w.innerHTML = '<span class="gdot">' + CREASE + '</span>';
+        w.firstChild.style.animationDelay = (i * 70 + Math.random() * 40) + 'ms';
+        scene.appendChild(w); fbs.push(w);
+      });
+      later(function(){
+        var bs = fbs.map(function(w){ return w.firstChild; });
+        bs.forEach(function(b){ b.classList.add('press'); });
+        later(function(){
+          popSound(); later(popSound, 12); later(popSound, 24); haptic(60);
+          bs.forEach(function(b){ b.classList.remove('press'); b.classList.add('popped'); burstOn(b, 5); });
+          scene.classList.add('muted');
+          later(function(){
+            var cx = W / 2, cy = H / 2;
+            fbs.forEach(function(w){
+              var x = parseFloat(w.style.left), y = parseFloat(w.style.top), r = Math.random() * 44, a = Math.random() * Math.PI * 2;
+              var nx = (x < cx ? 36 : W - 36) + (x < cx ? 1 : -1) * Math.abs(Math.cos(a) * r);
+              var ny = (y < cy ? 38 : H - 38) + (y < cy ? 1 : -1) * Math.abs(Math.sin(a) * r);
+              var dur = 1.9 + Math.random() * 1.1;
+              w.style.transitionDuration = dur + 's,' + dur + 's,' + dur + 's,' + (dur + 0.4) + 's';
+              w.style.transitionDelay = (Math.random() * 0.25) + 's';
+              w.classList.add('spread'); w.style.left = nx + 'px'; w.style.top = ny + 'px';
+              w.style.transform = 'scale(' + w.getAttribute('data-sc') + ') rotate(' + (Math.random() * 50 - 25) + 'deg)';
+            });
+          }, 500);
+          later(function(){ showStep('end'); endStep.classList.remove('arrive'); void endStep.offsetWidth; endStep.classList.add('arrive'); }, 1700);
+        }, 160);
+      }, 14 * 70 + 40 + 600 + 120 + 1100);
+    }, 1000);
+  }
+
   function showStep(n){
     var steps = scrim.querySelectorAll('.step');
     for (var i = 0; i < steps.length; i++) steps[i].hidden = steps[i].getAttribute('data-step') !== String(n);
     var h = scrim.querySelector('.step[data-step="' + n + '"] h2');
     if (h){ h.setAttribute('tabindex', '-1'); h.focus(); }
   }
-  function resetDots(){ var d = scrim.querySelectorAll('.gdot'); for (var i = 0; i < d.length; i++) d[i].setAttribute('aria-pressed', 'false'); }
+  function resetDots(){
+    clearEnding();
+    var d = scrim.querySelectorAll('.gdots .gdot');
+    for (var i = 0; i < d.length; i++){ d[i].classList.remove('popped', 'press'); d[i].setAttribute('aria-pressed', 'false'); if (!d[i].querySelector('svg')) d[i].innerHTML = CREASE; }
+  }
   function openPulse(){
-    haptic([70, 90, 110]);
+    // A slow heartbeat, about 5 seconds, that eases as it goes (Android). iPhone gets one light tap.
+    haptic([70,120,110,700, 70,120,110,750, 70,120,110,800, 70,120,110,850, 70,120,140]);
     openBtn.classList.remove('beat'); void openBtn.offsetWidth; openBtn.classList.add('beat');
     resetDots(); scrim.hidden = false; document.body.style.overflow = 'hidden'; showStep('intro');
   }
   function closePulse(returnFocus){
+    clearEnding();
     scrim.hidden = true; document.body.style.overflow = '';
     if (returnFocus) openBtn.focus();
   }
@@ -133,15 +235,13 @@
   scrim.addEventListener('click', function(e){ if (e.target === scrim) closePulse(true); });
   var nexts = scrim.querySelectorAll('[data-next]');
   for (var x = 0; x < nexts.length; x++){
-    nexts[x].addEventListener('click', function(){ showStep(this.getAttribute('data-next')); });
+    nexts[x].addEventListener('click', function(){ var n = this.getAttribute('data-next'); if (n === 'end') groundedEnding(); else showStep(n); });
   }
-  var dots = scrim.querySelectorAll('.gdot');
+  var dots = scrim.querySelectorAll('.gdots .gdot');
   for (var d = 0; d < dots.length; d++){
-    dots[d].addEventListener('click', function(){
-      var on = this.getAttribute('aria-pressed') !== 'true';
-      this.setAttribute('aria-pressed', on ? 'true' : 'false');
-      if (on) haptic(25);
-    });
+    dots[d].innerHTML = CREASE;
+    dots[d].addEventListener('pointerdown', function(){ popBubble(this); });
+    dots[d].addEventListener('click', function(e){ if (e.detail === 0) popBubble(this); }); // keyboard and screen readers
   }
 
   // Escape closes whatever is open on top.
