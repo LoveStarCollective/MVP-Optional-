@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Optional</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dangrek&family=Caveat:wght@600&family=Nunito:wght@400;600;700&display=swap">
-<link rel="stylesheet" href="app.css?v=20261121d">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="app.css?v=20261121h">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="theme-color" content="#E8D2BC">
@@ -261,9 +262,9 @@
     </div>
     <p class="hello">Hi<span class="hello-name"></span></p>
     <p class="daily" id="daily" aria-label="Today's quote"><span class="words" id="daily-words"></span><span class="by" id="daily-by"></span></p>
-    <h1 id="options-title">Options on top of Options</h1>
+    <h1 id="options-title" class="sr-only">The Options Menu</h1>
     <div class="hubstrips">
-      <div class="stripwrap hasmore" data-key="world"><button type="button" class="hubstrip soon-btn"><span class="t">Out in the World</span></button><button type="button" class="morebtn" data-hide="world" data-name="Out in the World" aria-label="Hide Out in the World"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5c2.4 3.2 5.4 4.8 9 4.8s6.6-1.6 9-4.8"/><path d="M5.6 13.4l-1.6 2.2"/><path d="M9.6 15l-.6 2.7"/><path d="M14.4 15l.6 2.7"/><path d="M18.4 13.4l1.6 2.2"/></svg></button></div>
+      <div class="stripwrap hasmore" data-key="world"><button type="button" class="hubstrip" data-world><span class="t">Out in the World</span></button><button type="button" class="morebtn" data-hide="world" data-name="Out in the World" aria-label="Hide Out in the World"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5c2.4 3.2 5.4 4.8 9 4.8s6.6-1.6 9-4.8"/><path d="M5.6 13.4l-1.6 2.2"/><path d="M9.6 15l-.6 2.7"/><path d="M14.4 15l.6 2.7"/><path d="M18.4 13.4l1.6 2.2"/></svg></button></div>
       <div class="stripwrap"><button type="button" class="hubstrip green soon-btn"><span class="t">Mind Body Connect</span></button></div>
       <div class="stripwrap hasmore" data-key="realtalk"><button type="button" class="hubstrip blue soon-btn"><span class="t">Real Talk</span><span class="soon">soon</span></button><button type="button" class="morebtn" data-hide="realtalk" data-name="Real Talk" aria-label="Hide Real Talk"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5c2.4 3.2 5.4 4.8 9 4.8s6.6-1.6 9-4.8"/><path d="M5.6 13.4l-1.6 2.2"/><path d="M9.6 15l-.6 2.7"/><path d="M14.4 15l.6 2.7"/><path d="M18.4 13.4l1.6 2.2"/></svg></button></div>
       <div class="stripwrap"><button type="button" class="hubstrip pink soon-btn"><span class="t">Good to Know</span></button></div>
@@ -327,7 +328,7 @@
     </div></div>
   </div>
     <div class="topbar">
-      <button type="button" class="iconbtn inback" id="back-home" aria-label="Back to Options"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></button>
+      <span class="navpair"><button type="button" class="iconbtn menubtn" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg></button></span>
       <h1 class="title" id="dash-title"><span class="nick-name">You</span> &amp; <span class="who">Bestie</span></h1>
       <button type="button" class="avatarbtn small" id="dash-me" aria-label="Change my picture"><span class="av-slot"></span></button>
     </div>
@@ -455,9 +456,7 @@
   <!-- HELP IF NEEDED -->
   <section class="screen inapp" id="help" aria-labelledby="help-title" hidden>
     <div class="topbar">
-      <button type="button" class="iconbtn inback" aria-label="Back">
-        <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
-      </button>
+      <span class="navpair"><button type="button" class="iconbtn menubtn" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg></button></span>
       <h1 class="title help-title" id="help-title">Help if Needed</h1>
       <span class="spacer"></span>
     </div>
@@ -505,7 +504,132 @@
     </form>
   </section>
 
+<section class="screen" id="world" aria-labelledby="world-title" hidden>
+  <div class="topbar">
+      <span class="navpair"><button type="button" class="iconbtn menubtn" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg></button></span>
+    <p class="wordmark">Optional</p>
+    <span class="spacer"></span>
+  </div>
+  <h1 id="world-title" class="wintro"><span class="sr-only">Out in the World. </span><span class="wl">Before you do that&hellip; <em>thing</em>,</span> <span class="wl">consider what&rsquo;s nearby.</span></h1>
+
+  <div class="wmapwrap">
+    <div id="w-map" class="wmap" role="application" aria-label="Map of places and shared events. The list below has the same places."></div>
+    <button type="button" class="wsearch" id="w-search" hidden>Search this area</button>
+    <button type="button" class="wlocate" id="w-locate" aria-label="Use my location"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span>Near me</span></button>
+  </div>
+  <div class="wbar">
+    <button type="button" class="startbtn wfilter" id="w-filter" aria-haspopup="dialog">Filter<span class="wcount" id="w-fcount" hidden></span></button>
+    <button type="button" class="startbtn wshare" id="w-share" aria-haspopup="dialog" aria-label="Share something happening"><span aria-hidden="true" class="wplus">+</span> Share</button>
+  </div>
+  <p class="wstatus" id="w-status" role="status"></p>
+
+  <div class="wlisthead">
+    <h2 id="w-count">Nearby</h2>
+  </div>
+  <ul class="wlist" id="w-list" tabindex="0" aria-label="Places and events nearby"></ul>
+</section>
+
 </main>
+<!-- Filters -->
+<div class="sheet-scrim" id="f-scrim" hidden>
+  <div class="sheet-wrap"><div class="sheet wsheet" role="dialog" aria-modal="true" aria-labelledby="f-title">
+    <div class="shead"><button type="button" class="iconbtn" id="f-close" aria-label="Close"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <h2 id="f-title" class="wsheettitle">Filter</h2>
+    <p class="wnote">Tap to narrow it down. Tap the eyelids to hide something you&rsquo;d rather not see.</p>
+    <div id="f-groups"></div>
+    <div class="fhidden" id="f-hidden" hidden>
+      <button type="button" class="fhidtoggle" id="f-hidtoggle" aria-expanded="false" aria-controls="f-hidlist">Hidden items <span id="f-hidcount"></span><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+      <ul class="fhidlist" id="f-hidlist" hidden></ul>
+    </div>
+    <div class="actions wsticky">
+      <button type="button" class="startbtn" id="f-apply">Show results</button>
+      <button type="button" class="linkbtn" id="f-clear">Clear all</button>
+    </div>
+  </div></div>
+</div>
+
+<!-- Share something -->
+<div class="sheet-scrim" id="s-scrim" hidden>
+  <div class="sheet-wrap"><div class="sheet wsheet" role="dialog" aria-modal="true" aria-labelledby="s-title">
+    <div class="shead"><button type="button" class="iconbtn" id="s-close" aria-label="Close"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <h2 id="s-title" class="wsheettitle">Share</h2>
+    <p class="wnote">Spotted something good? Share it. Posts are anonymous.</p>
+    <form id="s-form" novalidate>
+      <div class="field">
+        <label class="flabel" for="s-type">What kind of thing is it?</label>
+        <select id="s-type" required></select>
+      </div>
+      <div class="field" id="s-whatwrap" hidden>
+        <label class="flabel" for="s-what">What&rsquo;s happening?</label>
+        <select id="s-what"><option value="">Pick one</option></select>
+      </div>
+      <div class="field" id="s-otherwrap" hidden>
+        <label class="flabel" for="s-name">Tell us what it is</label>
+        <input type="text" id="s-name" maxlength="80" placeholder="Keep it short">
+        <p class="hintline">Posts that aren&rsquo;t on the list get a quick check before they go up.</p>
+      </div>
+      <div class="field">
+        <label class="flabel" for="s-headline">Give it a title <span class="hint">(optional)</span></label>
+        <input type="text" id="s-headline" maxlength="60" placeholder="Jazz trio, no cover">
+      </div>
+      <div class="field">
+        <label class="flabel" for="s-where">Where?</label>
+        <input type="text" id="s-where" maxlength="80" placeholder="Name of the place, not a home address">
+        <p class="hintline">The pin goes where the map is centered. Move the map first if you need to.</p>
+      </div>
+      <div class="wrow2">
+        <div class="field">
+          <label class="flabel" for="s-date">Day</label>
+          <input type="date" id="s-date">
+        </div>
+        <div class="field">
+          <label class="flabel" for="s-time">Starts</label>
+          <input type="time" id="s-time">
+        </div>
+      </div>
+      <fieldset class="field wfs">
+        <legend class="flabel">Cost</legend>
+        <div class="wchips">
+          <label class="wpick"><input type="radio" name="s-cost" value="Free" checked><span>Free</span></label>
+          <label class="wpick"><input type="radio" name="s-cost" value="$"><span>$</span></label>
+          <label class="wpick"><input type="radio" name="s-cost" value="$$"><span>$$</span></label>
+          <label class="wpick"><input type="radio" name="s-cost" value="$$$"><span>$$$</span></label>
+        </div>
+        <input type="text" id="s-price" maxlength="20" placeholder="Price, if you know it ($10)" aria-label="Price">
+      </fieldset>
+      <fieldset class="field wfs">
+        <legend class="flabel">Good to know</legend>
+        <div class="wchips">
+          <label class="wpick"><input type="checkbox" value="Indoor"><span>Indoor</span></label>
+          <label class="wpick"><input type="checkbox" value="Outdoor"><span>Outdoor</span></label>
+          <label class="wpick"><input type="checkbox" value="Family-friendly"><span>Family-friendly</span></label>
+          <label class="wpick"><input type="checkbox" value="Solo-friendly"><span>Solo-friendly</span></label>
+          <label class="wpick"><input type="checkbox" value="Wheelchair accessible"><span>Wheelchair accessible</span></label>
+          <label class="wpick"><input type="checkbox" value="Alcohol-free"><span>Alcohol-free</span></label>
+          <label class="wpick"><input type="checkbox" value="Pet-friendly"><span>Pet-friendly</span></label>
+          <label class="wpick"><input type="checkbox" value="Sport &amp; exercise"><span>Sport &amp; exercise</span></label>
+          <label class="wpick"><input type="checkbox" value="Food"><span>Food</span></label>
+        </div>
+      </fieldset>
+      <div class="field">
+        <label class="flabel" for="s-details">Anything else? <span class="hint">(optional)</span></label>
+        <textarea id="s-details" rows="3" maxlength="300"></textarea>
+      </div>
+      <div class="wmeetup" id="s-meetup" hidden>
+        <p><strong>Meetups are at your own risk.</strong> Meet in public places, tell someone where you&rsquo;re going, and trust your gut.</p>
+        <label class="check" for="s-meetok"><input type="checkbox" id="s-meetok"><span>Got it</span></label>
+      </div>
+      <p class="error" id="s-err" role="alert"></p>
+      <div class="actions">
+        <button type="submit" class="startbtn">Share it</button>
+      </div>
+    </form>
+  </div></div>
+</div>
+
+<p class="holdnote wtoast" id="w-toast" role="status" hidden></p>
+
+
 
 <div class="sheet-scrim hide-scrim" id="hide-scrim" hidden>
   <div class="sheet-wrap"><div class="sheet hidepanel" role="dialog" aria-modal="true" aria-labelledby="hide-title" aria-describedby="hide-sub">
@@ -559,9 +683,9 @@
     </button>
   </div>
   <ul class="menulist">
-    <li><button type="button" data-goto="options">Options</button></li>
+    <li><button type="button" data-goto="options">The Options Menu</button></li>
     <li><button type="button" data-goto="dash"><span><span class="nick-name">You</span> &amp; <span class="who">Bestie</span></span></button></li>
-    <li class="hasmore" data-key="world"><button type="button" class="soon-btn">Out in the World</button><button type="button" class="morebtn" data-hide="world" data-name="Out in the World" aria-label="Hide Out in the World"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5c2.4 3.2 5.4 4.8 9 4.8s6.6-1.6 9-4.8"/><path d="M5.6 13.4l-1.6 2.2"/><path d="M9.6 15l-.6 2.7"/><path d="M14.4 15l.6 2.7"/><path d="M18.4 13.4l1.6 2.2"/></svg></button></li>
+    <li class="hasmore" data-key="world"><button type="button" data-world>Out in the World</button><button type="button" class="morebtn" data-hide="world" data-name="Out in the World" aria-label="Hide Out in the World"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5c2.4 3.2 5.4 4.8 9 4.8s6.6-1.6 9-4.8"/><path d="M5.6 13.4l-1.6 2.2"/><path d="M9.6 15l-.6 2.7"/><path d="M14.4 15l.6 2.7"/><path d="M18.4 13.4l1.6 2.2"/></svg></button></li>
     <li><button type="button" class="soon-btn">Mind Body Connect</button></li>
     <li class="hasmore" data-key="realtalk"><button type="button" class="soon-btn">Real Talk <span class="soon soonin">soon</span></button><button type="button" class="morebtn" data-hide="realtalk" data-name="Real Talk" aria-label="Hide Real Talk"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5c2.4 3.2 5.4 4.8 9 4.8s6.6-1.6 9-4.8"/><path d="M5.6 13.4l-1.6 2.2"/><path d="M9.6 15l-.6 2.7"/><path d="M14.4 15l.6 2.7"/><path d="M18.4 13.4l1.6 2.2"/></svg></button></li>
     <li><button type="button" class="soon-btn">Good to Know</button></li>
@@ -648,12 +772,14 @@
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="quotes.js?v=20261121d"></script>
-<script src="avatars.js?v=20261121d"></script>
-<script src="friends.js?v=20261121d"></script>
-<script src="account.js?v=20261121d"></script>
-<script src="inapp.js?v=20261121d"></script>
-<script src="app.js?v=20261121d"></script>
-<script src="dash.js?v=20261121d"></script>
+<script src="quotes.js?v=20261121h"></script>
+<script src="avatars.js?v=20261121h"></script>
+<script src="friends.js?v=20261121h"></script>
+<script src="account.js?v=20261121h"></script>
+<script src="inapp.js?v=20261121h"></script>
+<script src="app.js?v=20261121h"></script>
+<script src="dash.js?v=20261121h"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="world.js?v=20261121h"></script>
 </body>
 </html>

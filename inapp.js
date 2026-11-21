@@ -53,12 +53,16 @@
     else { app().go('options'); }
   }
   $('open-dash').addEventListener('click', function(){ goTo('dash'); });
+  var worlds = document.querySelectorAll('[data-world]');
+  for (var w = 0; w < worlds.length; w++) worlds[w].addEventListener('click', function(){ if (typeof closeMenu === 'function') closeMenu(false); goTo('world'); });
   var backs = document.querySelectorAll('.inback');
   for (var b = 0; b < backs.length; b++) backs[b].addEventListener('click', goBack);
 
   // ---------- ☰ menu ----------
   var menu = $('menu'), mscrim = $('menu-scrim'), menuBtn = $('open-menu');
-  function openMenu(){
+  // Every in-app page has a menu button; remember which one opened it so focus returns there.
+  function openMenu(e){
+    if (e && e.currentTarget) menuBtn = e.currentTarget;
     menu.hidden = false; mscrim.hidden = false;
     document.body.classList.add('hide-bar');
     menuBtn.setAttribute('aria-expanded', 'true');
@@ -71,7 +75,8 @@
     menuBtn.setAttribute('aria-expanded', 'false');
     if (returnFocus) menuBtn.focus();
   }
-  menuBtn.addEventListener('click', openMenu);
+  var menuBtns = document.querySelectorAll('#open-menu, .menubtn');
+  for (var mb = 0; mb < menuBtns.length; mb++) menuBtns[mb].addEventListener('click', openMenu);
   $('close-menu').addEventListener('click', function(){ closeMenu(true); });
   mscrim.addEventListener('click', function(){ closeMenu(true); });
   var gotos = menu.querySelectorAll('[data-goto]');
@@ -303,6 +308,7 @@
     setAvatar: setAvatar,
     onShow: function(id){
       if (id === 'options'){ stepsIn = 0; showQuote(); }
+      if (id === 'world' && window.OptionalWorld) OptionalWorld.show();
       var notes = document.querySelectorAll('.hubnote');
       for (var i = 0; i < notes.length; i++) notes[i].textContent = '';
     },

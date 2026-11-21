@@ -487,7 +487,7 @@
   function unlock(){
     unlockedAt = Date.now(); leftAt = 0; you.classList.remove('locked'); behind(false); box.hidden = true;
     ['lock-pin','lock-pin2','lock-pin-in'].forEach(function(i){ $(i).value = ''; });
-    var b = document.getElementById('back-home'); if (b) b.focus();
+    var b = document.querySelector('#dash .menubtn'); if (b) b.focus();
     if (window.OptionalDash && OptionalDash.unlocked) OptionalDash.unlocked();
   }
   function check(){
