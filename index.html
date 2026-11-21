@@ -20,19 +20,13 @@
   <section class="screen" id="welcome" aria-labelledby="welcome-title">
     <p class="tagline">no rules, just choices</p>
     <div class="hero">
-      <div class="couchwrap">
-        <img class="couchimg" src="couch.png" alt="" width="502" height="315">
-        <div class="wordwrap"><div class="wordscrap"><p class="wordmark" aria-label="Optional">Optional</p></div></div>
-      </div>
+      <img class="covercouch" src="couch-cover.png" alt="Optional" width="555" height="329">
       <h1 id="welcome-title">
         <span class="line">Before you do that&hellip;</span>
         <span class="line"><em>thing</em>,</span>
         <span class="line">consider your</span>
       </h1>
-      <button type="button" class="startbtn optbtn" data-go="login" aria-label="Options. Log in if you already have an account">options</button>
-    </div>
-    <div class="actions">
-      <button type="button" class="linkbtn" data-go="meet">Create an account</button>
+      <button type="button" class="startbtn optbtn" data-go="login" aria-label="Options. Log in or create an account">options</button>
     </div>
     <p class="private">
       <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
@@ -46,17 +40,17 @@
       <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
     </button>
     <form id="name-form" class="hero" novalidate>
-      <img class="couch small" src="couch.png" alt="" width="502" height="315">
+      <img class="couch small" src="couch-cover.png" alt="" width="555" height="329">
       <h1 id="meet-title">Hi, I'm your <span class="opt">Optional</span> Friend!</h1>
       <p class="body">I&rsquo;m here to help you spot them cues, the little signals from your mind and body that let you know something&rsquo;s up. That way, you&rsquo;re the front seat driver of your choices.</p>
-      <p class="body">And when things are a bit much and you need a moment, tap the <span class="beaticon" role="img" aria-label="heartbeat button"><svg aria-hidden="true" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 9h5l2.5-6 4 12 3-8 1.8 2H23"/></svg></span> and we&rsquo;ll slow down together.</p>
+      <p class="body">And when things are a bit much and you need a moment, hold the <span class="beaticon" role="img" aria-label="heartbeat button"><svg aria-hidden="true" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 9h5l2.5-6 4 12 3-8 1.8 2H23"/></svg></span> for a few seconds and we&rsquo;ll slow down together.</p>
       <div>
         <label class="note" for="cheer-name">Name me Something Good <span class="hint">(or keep it as Bestie &#128521;!)</span></label>
         <input type="text" id="cheer-name" name="cheer-name" placeholder="Bestie" autocomplete="off" maxlength="30">
       </div>
       <div class="actions">
-        <button type="submit" class="btn">Let's go</button>
-        <button type="button" class="link" id="skip-intro">Skip intro</button>
+        <button type="submit" class="startbtn">Let's go</button>
+        <button type="button" class="linkbtn" id="skip-intro">Skip intro</button>
       </div>
     </form>
   </section>
@@ -67,16 +61,16 @@
       <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
     </button>
     <form id="you-form" class="hero" novalidate>
-      <img class="couch small" src="couch.png" alt="" width="502" height="315">
-      <p class="note center"><span class="who">Bestie</span> is officially on your team.</p>
-      <h1 id="you-title" tabindex="-1"><label for="user-name" class="plain">And what should I call you?</label></h1>
+      <img class="youmirror" src="mirror.png" alt="" width="500" height="246">
+      <p class="note center selfstudy"><span class="ln">It&rsquo;s your mirror, and <span class="who">Bestie</span> is here</span> <span class="ln">to help you reflect.</span></p>
+      <h1 id="you-title" tabindex="-1"><label for="user-name" class="plain">Who&rsquo;s looking back?</label></h1>
       <div>
-        <input type="text" id="user-name" name="user-name" autocomplete="nickname" maxlength="30" aria-describedby="you-hint">
-        <p class="hintline center" id="you-hint">A nickname works.</p>
+        <input type="text" id="user-name" name="user-name" autocomplete="nickname" maxlength="30" aria-describedby="you-hint you-err">
+        <p class="hintline center" id="you-hint">Permission to invent.</p>
+        <p class="error center" id="you-err" role="alert"></p>
       </div>
       <div class="actions">
-        <button type="submit" class="btn">Let's go</button>
-        <button type="button" class="link" id="skip-you">Skip</button>
+        <button type="submit" class="startbtn">Let's go</button>
       </div>
     </form>
   </section>
@@ -370,7 +364,7 @@
             <label class="sr-only" for="dash-input">Write to Bestie</label>
             <textarea id="dash-input" rows="2"></textarea>
             <div class="inbar">
-              <button type="button" class="inpulse" id="dash-pulse" aria-label="Pulse. Tap when you're feeling a type of way."><svg aria-hidden="true" width="26" height="20" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 9h5l2.5-6 4 12 3-8 1.8 2H23"/></svg></button>
+              <button type="button" class="inpulse" id="dash-pulse" aria-label="Pulse, for when you're feeling a type of way. Opens a grounding moment."><svg aria-hidden="true" width="26" height="20" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 9h5l2.5-6 4 12 3-8 1.8 2H23"/></svg></button>
               <button type="button" class="insend" id="dash-send" aria-label="Send to Bestie"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></button>
             </div>
           </div>
@@ -483,8 +477,7 @@
       <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
     </button>
     <form id="login-form" class="hero" novalidate>
-      <img class="couch small" src="couch.png" alt="" width="502" height="315">
-      <h1 id="login-title" tabindex="-1">Welcome back.</h1>
+      <h1 id="login-title" class="await" tabindex="-1">Options await.</h1>
       <div class="field">
         <label class="flabel" for="li-email">Email</label>
         <input type="email" id="li-email" autocomplete="email" inputmode="email" aria-describedby="li-err">
@@ -498,10 +491,10 @@
         <p class="error" id="li-err" role="alert"></p>
       </div>
       <div class="actions">
-        <button type="submit" class="btn">Log in</button>
-        <button type="button" class="link" data-go="forgot">Forgot password?</button>
-        <button type="button" class="linkbtn" data-go="meet">Create an account</button>
+        <button type="submit" class="startbtn">Log in</button>
+        <button type="button" class="linkbtn" data-go="forgot">Forgot password?</button>
       </div>
+      <p class="newhere">New here? <button type="button" class="linkbtn newlink" data-go="meet">Create an account</button></p>
     </form>
   </section>
 
@@ -635,7 +628,7 @@
   <div class="friendbar">
     <p class="talknote" id="talk-note" role="status" aria-live="polite"></p>
     <div class="inner">
-      <button type="button" class="pulsebtn" id="open-pulse" aria-label="Pulse. Tap when you're feeling a type of way.">
+      <button type="button" class="pulsebtn" id="open-pulse" aria-label="Pulse, for when you're feeling a type of way. Opens a grounding moment.">
         <svg aria-hidden="true" width="26" height="20" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 9h5l2.5-6 4 12 3-8 1.8 2H23"/></svg>
         <span class="ring" aria-hidden="true"></span>
       </button>

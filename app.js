@@ -127,12 +127,14 @@
     setFriend(settings.friend || '');
     setNickname(settings.nick || '');
     avatar = settings.avatar || 'curly';
-    extras = { friendLook: settings.friendLook || 'elephant', hidden: settings.hidden || [], reminders: settings.reminders || { times: [], auto: false } };
+    extras = { friendLook: settings.friendLook || 'elephant', hidden: settings.hidden || [], reminders: settings.reminders || { times: [], auto: false }, lock: settings.lock || null };
+    // The PIN is saved with the account, so it isn't lost if the browser clears its storage.
+    if (window.OptionalLock && window.OptionalLock.load){ window.OptionalLock.load(settings.lock || null); }
     if (window.OptionalInApp){ window.OptionalInApp.setAvatar(avatar); }
     if (window.OptionalDash){ window.OptionalDash.start(settings); }
     openStart();
   }
-  function allSettings(){ return { friend: friendName, nick: nickname, avatar: avatar, friendLook: extras.friendLook, hidden: extras.hidden, reminders: extras.reminders }; }
+  function allSettings(){ return { friend: friendName, nick: nickname, avatar: avatar, friendLook: extras.friendLook, hidden: extras.hidden, reminders: extras.reminders, lock: extras.lock || null }; }
 
   // Open the "check your email" screen for a sign-up or a password reset.
   function openCode(mode, email){
@@ -170,18 +172,17 @@
   });
   $('skip-intro').addEventListener('click', function(){
     setFriend('');
-    setNickname('');
-    go('signup');
+    go('you');   // everyone still names themselves
   });
 
   // ---------- your name ----------
   $('you-form').addEventListener('submit', function(event){
     event.preventDefault();
-    setNickname($('user-name').value.trim());
-    go('signup');
-  });
-  $('skip-you').addEventListener('click', function(){
-    setNickname('');
+    var name = $('user-name').value.trim();
+    // Everyone gives themselves a name here, even a made-up one.
+    if (!name){ setError('user-name', 'you-err', 'Name yourself Dynamite if you\u2019d like.'); $('user-name').focus(); return; }
+    setError('user-name', 'you-err', '');
+    setNickname(name);
     go('signup');
   });
 
@@ -313,8 +314,12 @@
   $('jot-form').addEventListener('submit', function(event){
     event.preventDefault();
     var text = $('jot').value.trim();
-    if (text){ picked = text; }
-    finish();
+    if (!text){ finish(); return; }
+    // What they wrote goes to Bestie, not the Options page.
+    picked = text;
+    $('jot').value = '';
+    go('dash');
+    if (window.OptionalDash && window.OptionalDash.sendFromBar){ window.OptionalDash.sendFromBar(text); }
   });
   $('maybe-later').addEventListener('click', function(){ picked = ''; finish(); });
 
@@ -466,7 +471,7 @@
       return Account.saveSettings(allSettings());
     },
     updateSettings: function(patch){
-      for (var k in patch){ if (k === 'friendLook' || k === 'hidden' || k === 'reminders') extras[k] = patch[k]; }
+      for (var k in patch){ if (k === 'friendLook' || k === 'hidden' || k === 'reminders' || k === 'lock') extras[k] = patch[k]; }
       return Account.saveSettings(allSettings());
     }
   };

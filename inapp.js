@@ -217,10 +217,9 @@
     var d = scrim.querySelectorAll('.gdots .gdot');
     for (var i = 0; i < d.length; i++){ d[i].classList.remove('popped', 'press'); d[i].setAttribute('aria-pressed', 'false'); if (!d[i].querySelector('svg')) d[i].innerHTML = CREASE; }
   }
-  function openPulse(){
-    // If the heartbeat didn't start on touch (keyboard, or the phone blocked it), start it now.
-    if (!canVibrate) iosTick(); // iPhone browsers only allow one light tap
-    else if (Date.now() - beatStarted > 1500) startHeartbeat();
+  function openPulse(withPulse){
+    // A hold already pulsed. Opening straight away (keyboard, screen reader) pulses here instead.
+    if (withPulse){ if (!canVibrate) iosTick(); else startHeartbeat(); }
     openBtn.classList.remove('beat'); void openBtn.offsetWidth; openBtn.classList.add('beat');
     resetDots(); scrim.hidden = false; document.body.style.overflow = 'hidden'; showStep('intro');
   }
@@ -229,15 +228,54 @@
     scrim.hidden = true; document.body.style.overflow = '';
     if (returnFocus) openBtn.focus();
   }
-  // The heartbeat starts the moment a finger touches Pulse, not when it lifts.
+  // ---------- Pulse is held: it pulses for about 5 seconds while held, a ring fills, then grounding opens ----------
   var HEARTBEAT = [70,120,110,700, 70,120,110,750, 70,120,110,800, 70,120,110,850, 70,120,140]; // about 5 seconds, easing as it goes
-  var beatStarted = 0;
-  function startHeartbeat(){
-    if (!canVibrate) return;
-    try { if (navigator.vibrate(HEARTBEAT)) beatStarted = Date.now(); } catch (e){}
+  var HOLD_MS = 5000;
+  function startHeartbeat(){ if (!canVibrate) return; try { navigator.vibrate(HEARTBEAT); } catch (e){} }
+  function stopHeartbeat(){ if (!canVibrate) return; try { navigator.vibrate(0); } catch (e){} }
+  // A small torn-paper note that fades, for a quick tap.
+  var note = document.createElement('p'); note.className = 'holdnote'; note.setAttribute('role', 'status'); note.hidden = true;
+  document.body.appendChild(note);
+  var noteTimer = null;
+  function holdNote(){
+    note.textContent = 'Hold the heartbeat for a few seconds.';
+    note.hidden = false; note.classList.remove('fade'); void note.offsetWidth;
+    clearTimeout(noteTimer);
+    noteTimer = setTimeout(function(){ note.classList.add('fade'); noteTimer = setTimeout(function(){ note.hidden = true; }, 400); }, 3000);
   }
-  openBtn.addEventListener('pointerdown', startHeartbeat);
-  openBtn.addEventListener('click', openPulse);
+  // Every Pulse button works the same way: hold it and a ring fills while it pulses.
+  function makeHold(btn){
+    if (!btn) return;
+    btn.classList.add('holdable');
+    // The filling ring, drawn around the button so everyone can see the hold, not only feel it.
+    btn.insertAdjacentHTML('beforeend', '<svg class="holdring" aria-hidden="true" viewBox="0 0 44 44"><circle cx="22" cy="22" r="19"/></svg>');
+    var holdTimer = null, lastPointer = 0;
+    function endHold(){ clearTimeout(holdTimer); holdTimer = null; btn.classList.remove('holding'); }
+    btn.addEventListener('pointerdown', function(e){
+      if (e.button && e.button !== 0) return;
+      e.preventDefault();
+      lastPointer = Date.now();
+      try { btn.setPointerCapture(e.pointerId); } catch (err){}
+      startHeartbeat(); if (!canVibrate) iosTick();
+      btn.classList.remove('holding'); void btn.offsetWidth; btn.classList.add('holding');
+      holdTimer = setTimeout(function(){ endHold(); openPulse(false); }, HOLD_MS);
+    });
+    function letGo(){
+      lastPointer = Date.now();
+      if (!holdTimer) return;           // already opened
+      endHold(); stopHeartbeat(); holdNote();
+    }
+    btn.addEventListener('pointerup', letGo);
+    btn.addEventListener('pointercancel', letGo);
+    btn.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+    // Keyboard and screen readers can't hold, so for them the button opens Pulse straight away.
+    btn.addEventListener('click', function(){
+      if (Date.now() - lastPointer < 800) return;   // a finger or mouse already handled it
+      openPulse(true);
+    });
+  }
+  makeHold(openBtn);
+  makeHold($('dash-pulse'));
   $('close-pulse').addEventListener('click', function(){ closePulse(true); });
   $('pulse-done').addEventListener('click', function(){ closePulse(true); });
   $('pulse-talk').addEventListener('click', function(){ closePulse(false); goTo('dash'); });

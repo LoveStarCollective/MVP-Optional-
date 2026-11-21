@@ -355,7 +355,7 @@
   function sendBox(){ var t = dashIn.value; dashIn.value = ''; say(t); dashIn.focus(); }
   dashSend.addEventListener('click', sendBox);
   dashIn.addEventListener('keydown', function(e){ if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendBox(); } });
-  $('dash-pulse').addEventListener('click', function(){ var p = $('open-pulse'); if (p) p.click(); });
+  // The Pulse button here is set up as a hold button in inapp.js.
 
   /* ---------- mood stickers ---------- */
   var moodRow = document.querySelector('.moodrow');
@@ -501,7 +501,7 @@
   });
   var AFTER_LABELS = { '1': 'After 1 minute', '10': 'After 10 minutes', '30': 'After 30 minutes', 'closed': 'Only when the app is closed' };
   function showAfter(){ var l = $('autolock-label'); if (l) l.textContent = AFTER_LABELS[mode()] || AFTER_LABELS.closed; }
-  function setAfter(v){ if (!mem) return; mem.after = v; put(mem); showAfter(); }
+  function setAfter(v){ if (!mem) return; mem.after = v; put(mem); showAfter(); if (typeof saveToAccount === 'function') saveToAccount(); }
   document.querySelectorAll('input[name="lock-after"]').forEach(function(r){ r.addEventListener('change', function(){ if (this.checked) { if (mem) setAfter(this.value); else pendingAfter = this.value; } }); });
   var pendingAfter = 'closed';
   var alScrim = $('autolock-scrim');
@@ -515,12 +515,18 @@
   showAfter();
   window.addEventListener('hashchange', check);
   function msg(id, t){ $(id).textContent = t; }
+  // Keep the PIN (salted and hashed) and the auto-lock choice in the account's encrypted settings too.
+  function saveToAccount(){
+    if (!window.OptionalApp || !OptionalApp.updateSettings) return;
+    var keep = mem ? { salt: mem.salt, pin: mem.pin, after: mem.after || 'closed' } : null;
+    try { OptionalApp.updateSettings({ lock: keep }); } catch (e){}
+  }
   function goodPin(p){ return /^\d{4,6}$/.test(p); }
   $('lock-save').addEventListener('click', async function(){
     var a = $('lock-pin').value.trim(), b = $('lock-pin2').value.trim();
     if (!goodPin(a)) { msg('lock-setup-msg', 'Use 4 to 6 numbers.'); $('lock-pin').focus(); return; }
     if (a !== b) { msg('lock-setup-msg', 'Those two don’t match. Try again.'); $('lock-pin2').focus(); return; }
-    var salt = b64(rand(16)); mem = { salt: salt, pin: await hash(a, salt), cred: null, after: pendingAfter }; put(mem); showAfter();
+    var salt = b64(rand(16)); mem = { salt: salt, pin: await hash(a, salt), cred: null, after: pendingAfter }; put(mem); showAfter(); saveToAccount();
     if (bioOK) { show('lock-bio-offer'); $('lock-bio-title').focus(); } else unlock();
   });
   $('lock-bio-yes').addEventListener('click', async function(){
@@ -549,8 +555,19 @@
   $('lock-unlock').addEventListener('click', tryPin);
   $('lock-pin-in').addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); tryPin(); } });
   $('lock-forgot').addEventListener('click', function(){
-    if (window.OptionalDash && OptionalDash.confirmIt) OptionalDash.confirmIt('Reset your PIN?', 'You\u2019ll be logged out. Log back in with your password, then pick a new PIN.', 'Log out', function(){ mem = null; put(null); var o = document.querySelector('.do-logout'); if (o) o.click(); });
+    if (window.OptionalDash && OptionalDash.confirmIt) OptionalDash.confirmIt('Reset your PIN?', 'You\u2019ll be logged out. Log back in with your password, then pick a new PIN.', 'Log out', function(){ mem = null; put(null); saveToAccount(); var o = document.querySelector('.do-logout'); if (o) o.click(); });
   });
-  window.OptionalLock = { check: check, lock: lock, reset: function(){ mem = null; put(null); try { localStorage.removeItem(K); } catch (e){} lock(); } };
+  // Called after log in with the PIN saved in the account, so nobody is asked to create a new PIN.
+  function load(saved){
+    if (saved && saved.pin && saved.salt){
+      var cred = (mem && mem.pin === saved.pin) ? mem.cred : null;   // Face ID / fingerprint stays tied to this phone
+      mem = { salt: saved.salt, pin: saved.pin, cred: cred, after: saved.after || 'closed' };
+      put(mem);
+    } else if (mem && mem.pin){
+      saveToAccount();   // a PIN set on this phone before this fix: copy it to the account
+    }
+    showAfter(); draw();
+  }
+  window.OptionalLock = { check: check, lock: lock, load: load, reset: function(){ mem = null; put(null); try { localStorage.removeItem(K); } catch (e){} lock(); } };
   check();
 })();
