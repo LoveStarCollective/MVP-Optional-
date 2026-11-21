@@ -861,3 +861,5 @@ body.on-dash .friendbar-wrap{display:none;}
   border-radius:1.4rem 0.9rem 1.3rem 1rem / 1rem 1.3rem 0.9rem 1.4rem; box-shadow:0 0.15rem 0.3rem rgba(52,48,42,0.3);}
 .keybox .copy::after{content:""; position:absolute; inset:0.3rem; border:0.1rem dashed rgba(251,246,234,0.7); border-radius:1.1rem 0.7rem 1rem 0.8rem / 0.8rem 1rem 0.7rem 1.1rem; pointer-events:none;}
 .keybox .copy:hover{background:#4F5B38;}
+
+.check input{accent-color:#5E6B44;}

@@ -208,8 +208,11 @@
     setError('su-email', 'su-email-err', emailOk ? '' : 'Enter your email address, like name@example.com.');
     setError('su-pass', 'su-pass-err', passError);
     setError(null, 'su-form-err', '');
+    var adult = $('su-age').checked;
+    setError(null, 'su-age-err', adult ? '' : 'Optional is for people 18 and older.');
     if (!emailOk){ $('su-email').focus(); return; }
     if (passError){ $('su-pass').focus(); return; }
+    if (!adult){ $('su-age').focus(); return; }
 
     var button = this.querySelector('button[type="submit"]');
     setBusy(button, true, 'Checking your password…');
