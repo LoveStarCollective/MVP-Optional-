@@ -176,11 +176,23 @@
   });
 
   // ---------- your name ----------
+  // Tapping Let's go with no name gets a different suggestion each time, then loops.
+  var NAME_IDEAS = [
+    'Name yourself Dynamite if you\u2019d like.',
+    'Or Sugar. Sugar works.',
+    'How about Wednesday?',
+    'Emperor has a nice ring to it.',
+    'Captain? Captain is good.',
+    'Moonbeam, maybe?',
+    'Sir Naps-a-Lot is available.',
+    'Okay, just Bob, then.'
+  ];
+  var nameTry = 0;
   $('you-form').addEventListener('submit', function(event){
     event.preventDefault();
     var name = $('user-name').value.trim();
     // Everyone gives themselves a name here, even a made-up one.
-    if (!name){ setError('user-name', 'you-err', 'Name yourself Dynamite if you\u2019d like.'); $('user-name').focus(); return; }
+    if (!name){ setError('user-name', 'you-err', NAME_IDEAS[nameTry % NAME_IDEAS.length]); nameTry++; $('user-name').focus(); return; }
     setError('user-name', 'you-err', '');
     setNickname(name);
     go('signup');
