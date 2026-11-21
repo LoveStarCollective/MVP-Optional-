@@ -211,7 +211,7 @@
     if (!emailOk){ $('su-email').focus(); return; }
     if (passError){ $('su-pass').focus(); return; }
 
-    var button = this.querySelector('.btn');
+    var button = this.querySelector('button[type="submit"]');
     setBusy(button, true, 'Checking your password…');
     Account.isLeakedPassword(pass).then(function(leaked){
       if (leaked){
@@ -243,7 +243,7 @@
       return;
     }
     setError('code-input', 'code-err', '');
-    var button = this.querySelector('.btn');
+    var button = this.querySelector('button[type="submit"]');
     setBusy(button, true, 'Checking…');
 
     if (codeMode === 'reset'){
@@ -346,7 +346,7 @@
     }
     setError(null, 'li-err', '');
 
-    var button = this.querySelector('.btn');
+    var button = this.querySelector('button[type="submit"]');
     setBusy(button, true, 'Logging in…');
     Account.logIn(email, pass).then(function(result){
       setBusy(button, false);
@@ -374,7 +374,7 @@
       return;
     }
     setError('fg-email', 'fg-err', '');
-    var button = this.querySelector('.btn');
+    var button = this.querySelector('button[type="submit"]');
     setBusy(button, true, 'Sending…');
     Account.startReset(email).then(function(){
       setBusy(button, false);
@@ -398,7 +398,7 @@
     if (keyError){ $('rs-key').focus(); return; }
     if (passError){ $('rs-pass').focus(); return; }
 
-    var button = this.querySelector('.btn');
+    var button = this.querySelector('button[type="submit"]');
     setBusy(button, true, 'Checking your password…');
     Account.isLeakedPassword(pass).then(function(leaked){
       if (leaked){
@@ -436,7 +436,7 @@
     if (passError){ $('fr-pass').focus(); return; }
     if (!sure){ $('fr-sure').focus(); return; }
 
-    var button = this.querySelector('.btn');
+    var button = this.querySelector('button[type="submit"]');
     setBusy(button, true, 'Checking your password…');
     Account.isLeakedPassword(pass).then(function(leaked){
       if (leaked){
