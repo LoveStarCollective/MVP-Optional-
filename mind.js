@@ -18,7 +18,8 @@
       why:'Noticing what you can see, hear and feel can pull attention out of a spiral and back into the present.' },
     { key:'meditate', name:'Meditation', tool:'meditate', videos:[
         { id:'8vMEoPgg-PE', title:'You Are Life Itself \u2014 Guided Meditation with Mooji', by:'Moojiji', channel:'https://www.youtube.com/@Moojiji' },
-        { id:'vj0JDwQLof4', title:'10-Minute Guided Meditation: Self-Love', by:'Manoj Dias, on SELF', mins:10 } ],
+        { id:'vj0JDwQLof4', title:'10-Minute Guided Meditation: Self-Love', by:'Manoj Dias, on SELF', mins:10 },
+        { id:'sfSDQRdIvTc', title:'10 Min Meditation to Quiet Your Thoughts & Relax', by:'Satvic Yoga', mins:10, channel:'https://www.youtube.com/@satvicyoga' } ],
       what:'Sitting with your breath and your thoughts for a few minutes, without needing to fix anything.',
       why:'A regular practice can make it easier to notice thoughts and urges without acting on them right away.' },
     { key:'nidra', name:'Yoga Nidra', videos:[
