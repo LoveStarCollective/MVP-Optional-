@@ -28,6 +28,7 @@
       b.type = 'button'; b.className = 'avopt'; b.setAttribute('aria-label', set[k].name);
       b.setAttribute('aria-pressed', chosen[which] === k ? 'true' : 'false');
       b.innerHTML = set[k].svg;
+      if (set[k].spirit) b.setAttribute('aria-label', set[k].name + ', ' + set[k].spirit);
       b.addEventListener('click', function(){
         var before = chosen[which];
         chosen[which] = k; paint();
@@ -36,8 +37,15 @@
         $('pick-note').textContent = 'Saving\u2026';
         saving.then(function(){ $('pick-note').textContent = 'Saved.'; }, function(){ chosen[which] = before; paint(); $('pick-note').textContent = 'That didn\u2019t save. Try again.'; });
       });
-      pickGrid.appendChild(b);
+      if (set[k].spirit){
+        var cell = document.createElement('div'); cell.className = 'avcell';
+        cell.appendChild(b);
+        var cap = document.createElement('span'); cap.className = 'avcap'; cap.setAttribute('aria-hidden', 'true');
+        cap.innerHTML = '<strong>' + set[k].name + '</strong>' + set[k].spirit;
+        cell.appendChild(cap); pickGrid.appendChild(cell);
+      } else pickGrid.appendChild(b);
     });
+    pickGrid.classList.toggle('withcaps', which === 'friend');
     openSheet(pickScrim);
   }
   paint();

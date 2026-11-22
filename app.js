@@ -4,9 +4,9 @@
 // Accounts and encryption live in account.js (window.OptionalAccount).
 // =========================================================
 (function(){
-  var screens = ['welcome','meet','you','signup','code','key','more','options','dash','help','world','login','forgot','reset','fresh'];
-  var needsLogin = ['key','more','options','dash','help','world'];   // screens only a logged-in person can see
-  var inApp = ['options','dash','help','world'];   // screens that show the companion bar
+  var screens = ['welcome','meet','you','signup','code','key','more','options','dash','help','world','mind','login','forgot','reset','fresh'];
+  var needsLogin = ['key','more','options','dash','help','world','mind'];   // screens only a logged-in person can see
+  var inApp = ['options','dash','help','world','mind'];   // screens that show the companion bar
 
   var friendName = 'Bestie';   // what the user named their Optional Friend
   var nickname = '';           // what the app calls the user

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Optional · Mind Body Connect preview</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dangrek&family=Caveat:wght@600&family=Nunito:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="app.css?v=20261122c">
+<style>
+  .demo #mind{padding-bottom:3rem;}
+  .demointro{margin:0.6rem 0 0.2rem; padding:1rem 1.1rem; border-radius:0.3rem; background:var(--paper); box-shadow:0 0.2rem 0.5rem rgba(52,48,42,0.2); text-align:center;}
+  .demointro p{margin:0.4rem 0;}
+  .demotag{font-family:'Caveat', cursive; font-weight:600; font-size:1.5rem; color:#A02020;}
+  .demo .topbar{justify-content:center;} .demo .topbar .spacer{display:none;}
+  .demo #mind-title{margin-top:1rem;}
+  .demofoot{text-align:center; font-size:0.95rem; margin:2rem 0 0;}
+</style>
+</head>
+<body class="demo">
+<main class="app">
+<section class="screen" id="mind" aria-labelledby="mind-title">
+  <div class="topbar">
+      <p class="wordmark">Optional</p>
+    <span class="spacer"></span>
+  </div>
+  <div class="demointro">
+    <p class="demotag">A preview for creators</p>
+    <p>Optional helps people notice their triggers early on so that they can potentially choose something else. No rules, just choices. It was created in a program that teaches people with disabilities, and an organization that supports rehabs approached us about using it.</p>
+    <p>This is our Mind Body Connect page. Your videos would play through YouTube&rsquo;s own player, with your name and a link to your channel. Tap any strip to look around.</p>
+  </div>
+  <h1 id="mind-title" class="wintro"><span class="sr-only">Mind Body Connect. </span><span class="wl">Before you do that&hellip; <em>thing</em>,</span> <span class="wl">you might connect with your mind and body.</span></h1>
+  <div class="mhero"><img src="mind-hero.jpg" alt="A person of many earthy colors in a calm handstand, eyes closed, on a mat in rolling hills."></div>
+    <p class="wnote mnote">Tap the eyelids to hide anything you&rsquo;d rather not see.</p>
+  <ul class="mlist" id="m-list" aria-label="Mind and body activities"></ul>
+  <div class="fhidden" id="m-hidden" hidden>
+    <button type="button" class="fhidtoggle" id="m-hidtoggle" aria-expanded="false" aria-controls="m-hidlist">Hidden items <span id="m-hidcount"></span><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+    <ul class="fhidlist" id="m-hidlist" hidden></ul>
+  </div>
+</section>
+</main>
+<!-- Mind Body Connect activity -->
+<div class="sheet-scrim" id="m-scrim" hidden>
+  <div class="sheet-wrap"><div class="sheet wsheet msheet" role="dialog" aria-modal="true" aria-labelledby="m-title">
+    <div class="shead"><button type="button" class="iconbtn" id="m-close" aria-label="Close"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <h2 id="m-title" class="wsheettitle"></h2>
+    <div id="m-body"></div>
+  </div></div>
+</div>
+<p class="holdnote wtoast" id="m-toast" role="status" hidden></p>
+<script>
+  /* Demo page: no account. Saving to a journal is only for people with an account. */
+  window.OptionalAccount = { addEntry:function(){ return Promise.reject(); } };
+</script>
+<script src="mind.js?v=20261122c"></script>
+<script>OptionalMind.show();</script>
+</body>
+</html>

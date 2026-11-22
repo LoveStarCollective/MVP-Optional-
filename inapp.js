@@ -53,6 +53,8 @@
     else { app().go('options'); }
   }
   $('open-dash').addEventListener('click', function(){ goTo('dash'); });
+  var minds = document.querySelectorAll('[data-mind]');
+  for (var mi = 0; mi < minds.length; mi++) minds[mi].addEventListener('click', function(){ if (typeof closeMenu === 'function') closeMenu(false); goTo('mind'); });
   var worlds = document.querySelectorAll('[data-world]');
   for (var w = 0; w < worlds.length; w++) worlds[w].addEventListener('click', function(){ if (typeof closeMenu === 'function') closeMenu(false); goTo('world'); });
   var backs = document.querySelectorAll('.inback');
@@ -309,6 +311,7 @@
     onShow: function(id){
       if (id === 'options'){ stepsIn = 0; showQuote(); }
       if (id === 'world' && window.OptionalWorld) OptionalWorld.show();
+      if (id === 'mind' && window.OptionalMind) OptionalMind.show();
       var notes = document.querySelectorAll('.hubnote');
       for (var i = 0; i < notes.length; i++) notes[i].textContent = '';
     },
