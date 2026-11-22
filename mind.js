@@ -46,7 +46,7 @@
     { key:'music', name:'Music therapy', tool:'music', videos:[],
       what:'Using music on purpose, to sit with a feeling or to shift it.',
       why:'Music can meet you where you are, then help move you somewhere else.' },
-    { key:'yoga', name:'Yoga', videos:[],
+    { key:'yoga', name:'Yoga', videos:[ { id:'24qDdn2QXjk', title:'Hip opener yoga', by:'Caitlin Keli Yoga' } ],
       what:'Gentle movement and breath together.',
       why:'Moving with your breath can help you reconnect with your body and notice what it’s telling you.' },
     { key:'taichi', name:'Tai chi', videos:[ { id:'-zLXGinTAWQ', title:'5 Minute “Follow Me” Tai Chi', by:'Taichi for beginners', mins:5 } ],
