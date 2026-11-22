@@ -25,7 +25,8 @@
         { id:'5wqXvdr3bGw', title:'35 Minute Yoga Nidra', by:'Liberation Yoga', mins:35 } ],
       what:'A guided rest, usually lying down, where a voice walks you through your body and breath.',
       why:'It’s a way to rest deeply without having to do anything. Many people use it to unwind or before sleep.' },
-    { key:'sounds', name:'Calming sounds', tool:'sounds', videos:[ { id:'VU0mIwdZFAA', title:'Singing bowl with water', by:'WaterSong Singing Bowl' } ],
+    { key:'sounds', name:'Calming sounds', tool:'sounds', videos:[ { id:'VU0mIwdZFAA', title:'Singing bowl with water', by:'WaterSong Singing Bowl' },
+        { id:'GS7_ufjA7lQ', title:'Singing bowl sound bath', by:'Healing Vibrations' } ],
       what:'Rain, ocean, a crackling fire or soft noise, made right here in the app.',
       why:'Steady, gentle sound can give a busy mind something easy to rest on.' },
     { key:'odd', name:'Oddly Satisfying', tool:'odd', videos:[],
@@ -127,6 +128,9 @@
                   { name:'10\u201330 min', ok:function(m){ return m && m >= 10 && m <= 30; } },
                   { name:'Longer', ok:function(m){ return m && m > 30; } } ];
   var PAGE = 4;
+  function homeScreen(){
+    try { return window.navigator.standalone === true || (window.matchMedia && (matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches || matchMedia('(display-mode: minimal-ui)').matches)); } catch (e){ return false; }
+  }
   function drawVideos(k, a, vb, all){
     var len = 0, shown = PAGE;
     vb.innerHTML = '<h3 class="mh3">' + (a.tool ? 'Or watch' : 'Videos') + ' <span class="mvcount">(' + all.length + ')</span></h3>';
@@ -145,6 +149,8 @@
           '<div class="mvmeta"><span class="mvtext"><strong>' + esc(v.title) + '</strong><span>' + esc(v.by) + (v.mins ? '<span class="sr-only">, ' + v.mins + ' minutes</span>' : '') + '</span>' + (v.sample ? '' : '<a class="mchan" href="' + esc(v.channel || ('https://www.youtube.com/watch?v=' + v.id)) + '" target="_blank" rel="noopener">' + (v.channel ? 'Visit channel' : 'Watch on YouTube') + '<span class="sr-only"> (opens YouTube)</span></a>') + '</span><button type="button" class="feye" aria-label="Hide ' + esc(v.title) + '">' + LIDS + '</button></div>';
         li.querySelector('.mthumb').addEventListener('click', function(){
           if (v.sample) return;
+          // Opened from the home screen: YouTube asks for a sign-in inside installed apps, so open the video in YouTube instead.
+          if (homeScreen()){ window.open('https://www.youtube.com/watch?v=' + v.id, '_blank', 'noopener'); return; }
           li.classList.add('playing');
           var org = encodeURIComponent(location.origin);
           this.outerHTML = '<div class="mframe"><iframe src="https://www.youtube.com/embed/' + v.id + '?rel=0&playsinline=1&enablejsapi=1&origin=' + org + '&widget_referrer=' + org + '" title="' + esc(v.title) + '" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>';
