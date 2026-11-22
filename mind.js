@@ -146,7 +146,8 @@
         li.querySelector('.mthumb').addEventListener('click', function(){
           if (v.sample) return;
           li.classList.add('playing');
-          this.outerHTML = '<div class="mframe"><iframe src="https://www.youtube-nocookie.com/embed/' + v.id + '?autoplay=1&rel=0" title="' + esc(v.title) + '" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>';
+          var org = encodeURIComponent(location.origin);
+          this.outerHTML = '<div class="mframe"><iframe src="https://www.youtube.com/embed/' + v.id + '?rel=0&playsinline=1&enablejsapi=1&origin=' + org + '&widget_referrer=' + org + '" title="' + esc(v.title) + '" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>';
         });
         li.querySelector('.feye').addEventListener('click', function(){ hide('v:' + v.id); all = all.filter(function(x){ return x !== v; }); if (!all.length) drawSheet(k); else { vb.querySelector('.mvcount').textContent = '(' + all.length + ')'; list(); } });
         ul.appendChild(li);
