@@ -53,6 +53,8 @@
     else { app().go('options'); }
   }
   $('open-dash').addEventListener('click', function(){ goTo('dash'); });
+  var knows = document.querySelectorAll('[data-know]');
+  for (var ki = 0; ki < knows.length; ki++) knows[ki].addEventListener('click', function(){ if (typeof closeMenu === 'function') closeMenu(false); goTo('know'); });
   var minds = document.querySelectorAll('[data-mind]');
   for (var mi = 0; mi < minds.length; mi++) minds[mi].addEventListener('click', function(){ if (typeof closeMenu === 'function') closeMenu(false); goTo('mind'); });
   var worlds = document.querySelectorAll('[data-world]');
@@ -312,6 +314,7 @@
       if (id === 'options'){ stepsIn = 0; showQuote(); }
       if (id === 'world' && window.OptionalWorld) OptionalWorld.show();
       if (id === 'mind' && window.OptionalMind) OptionalMind.show();
+      if (id === 'know' && window.OptionalKnow) OptionalKnow.show();
       var notes = document.querySelectorAll('.hubnote');
       for (var i = 0; i < notes.length; i++) notes[i].textContent = '';
     },

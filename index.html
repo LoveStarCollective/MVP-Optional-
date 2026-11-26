@@ -7,7 +7,7 @@
 <title>Optional</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dangrek&family=Caveat:wght@600&family=Nunito:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="stylesheet" href="app.css?v=20261122o">
+<link rel="stylesheet" href="app.css?v=20261126i">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="theme-color" content="#E8D2BC">
@@ -268,7 +268,7 @@
       <div class="stripwrap hasmore" data-key="world"><button type="button" class="hubstrip" data-world><span class="t">Out in the World</span></button><button type="button" class="morebtn" data-hide="world" data-name="Out in the World" aria-label="Hide Out in the World"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5c2.4 3.2 5.4 4.8 9 4.8s6.6-1.6 9-4.8"/><path d="M5.6 13.4l-1.6 2.2"/><path d="M9.6 15l-.6 2.7"/><path d="M14.4 15l.6 2.7"/><path d="M18.4 13.4l1.6 2.2"/></svg></button></div>
       <div class="stripwrap"><button type="button" class="hubstrip green" data-mind><span class="t">Mind Body Connect</span></button></div>
       <div class="stripwrap hasmore" data-key="realtalk"><button type="button" class="hubstrip blue soon-btn"><span class="t">Real Talk</span><span class="soon">soon</span></button><button type="button" class="morebtn" data-hide="realtalk" data-name="Real Talk" aria-label="Hide Real Talk"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5c2.4 3.2 5.4 4.8 9 4.8s6.6-1.6 9-4.8"/><path d="M5.6 13.4l-1.6 2.2"/><path d="M9.6 15l-.6 2.7"/><path d="M14.4 15l.6 2.7"/><path d="M18.4 13.4l1.6 2.2"/></svg></button></div>
-      <div class="stripwrap"><button type="button" class="hubstrip pink soon-btn"><span class="t">Good to Know</span></button></div>
+      <div class="stripwrap"><button type="button" class="hubstrip pink" data-know><span class="t">Good to Know</span></button></div>
     </div>
     <p class="hubnote" role="status"></p>
   </section>
@@ -521,6 +521,36 @@
   </div>
 </section>
 
+<section class="screen" id="know" aria-labelledby="know-title" hidden>
+  <div class="topbar">
+      <span class="navpair"><button type="button" class="iconbtn menubtn" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg></button></span>
+    <p class="wordmark">Optional</p>
+    <span class="spacer"></span>
+  </div>
+  <h1 id="know-title" class="wintro"><span class="sr-only">Good to Know. </span><span class="wl">Before you do that&hellip; <em>thing</em>,</span> <span class="wl">you might learn something new.</span></h1>
+  <p class="kabout"><button type="button" class="linkbtn" id="k-about" aria-haspopup="dialog">About these picks</button></p>
+  <div class="kshare"><button type="button" class="startbtn" id="k-share" aria-haspopup="dialog">Pin something</button>
+    <p class="hintline">Found something helpful? Share it with the community.</p></div>
+  <div class="fchips moodchips kchips" id="k-chips" role="group" aria-label="Categories"></div>
+  <p class="wnote mnote">Tap the eyelids to hide anything you&rsquo;d rather not see.</p>
+  <div class="kframe">
+    <div class="kboard">
+      <button type="button" class="khelp" id="k-helpcard" aria-haspopup="dialog">
+        <span class="ktype t-support">Help &amp; Resources</span>
+        <span class="khelptitle">If you need someone now</span>
+        <span class="khelpline"><strong>988</strong> Suicide &amp; Crisis Lifeline, call or text</span>
+        <span class="khelpline"><strong>1-800-662-4357</strong> SAMHSA treatment helpline</span>
+        <span class="khelpmore">Tap for more help and resources</span>
+      </button>
+      <div class="kcards" id="k-cards"></div>
+    </div>
+  </div>
+  <div class="fhidden" id="k-hidden" hidden>
+    <button type="button" class="fhidtoggle" id="k-hidtoggle" aria-expanded="false" aria-controls="k-hidlist">Hidden items <span id="k-hidcount"></span><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+    <ul class="fhidlist" id="k-hidlist" hidden></ul>
+  </div>
+</section>
+
 <section class="screen" id="world" aria-labelledby="world-title" hidden>
   <div class="topbar">
       <span class="navpair"><button type="button" class="iconbtn menubtn" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg></button></span>
@@ -536,7 +566,7 @@
   </div>
   <div class="wbar">
     <button type="button" class="startbtn wfilter" id="w-filter" aria-haspopup="dialog">Filter<span class="wcount" id="w-fcount" hidden></span></button>
-    <button type="button" class="startbtn wshare" id="w-share" aria-haspopup="dialog" aria-label="Share something happening"><span aria-hidden="true" class="wplus">+</span> Share</button>
+    <button type="button" class="startbtn wshare" id="w-share" aria-haspopup="dialog" aria-label="Share something happening"><span aria-hidden="true" class="wplus">+</span> Share something</button>
   </div>
   <p class="wstatus" id="w-status" role="status"></p>
 
@@ -552,7 +582,7 @@
   <div class="sheet-wrap"><div class="sheet wsheet" role="dialog" aria-modal="true" aria-labelledby="f-title">
     <div class="shead"><button type="button" class="iconbtn" id="f-close" aria-label="Close"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <h2 id="f-title" class="wsheettitle">Filter</h2>
-    <p class="wnote">Tap to narrow it down. Tap the eyelids to hide something you&rsquo;d rather not see.</p>
+    <p class="wnote">Tap to narrow it down. Tap the eyelids to hide anything you&rsquo;d rather not see.</p>
     <div id="f-groups"></div>
     <div class="fhidden" id="f-hidden" hidden>
       <button type="button" class="fhidtoggle" id="f-hidtoggle" aria-expanded="false" aria-controls="f-hidlist">Hidden items <span id="f-hidcount"></span><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
@@ -564,6 +594,84 @@
     </div>
   </div></div>
 </div>
+
+<!-- Good to Know pin -->
+<div class="sheet-scrim" id="k-scrim" hidden>
+  <div class="sheet-wrap"><div class="sheet wsheet" role="dialog" aria-modal="true" aria-labelledby="k-title">
+    <div class="shead"><button type="button" class="iconbtn" id="k-close" aria-label="Close"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <h2 id="k-title" class="wsheettitle ksheettitle"></h2>
+    <div id="k-body"></div>
+  </div></div>
+</div>
+<!-- Good to Know help -->
+<div class="sheet-scrim" id="kh-scrim" hidden>
+  <div class="sheet-wrap"><div class="sheet wsheet" role="dialog" aria-modal="true" aria-labelledby="kh-title">
+    <div class="shead"><button type="button" class="iconbtn" id="kh-close" aria-label="Close"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <h2 id="kh-title" class="wsheettitle">Help &amp; Resources</h2>
+    <p class="wnote">Free and confidential. Reach out whenever you need to.</p>
+    <ul class="khlist">
+      <li><span class="khname">Emergency</span><a class="khnum" href="tel:911">911</a><span class="khwhat">If you or someone else is in danger right now.</span></li>
+      <li><span class="khname">988 Suicide &amp; Crisis Lifeline</span><a class="khnum" href="tel:988">Call 988</a><a class="khnum" href="sms:988">Text 988</a><span class="khwhat">24/7 support for anyone in distress.</span></li>
+      <li><span class="khname">SAMHSA National Helpline</span><a class="khnum" href="tel:18006624357">1-800-662-4357</a><span class="khwhat">Free, confidential treatment referrals and information, 24/7, in English and Spanish. You can also text your zip code to 435748 (HELP4U).</span></li>
+      <li><span class="khname">FindTreatment.gov</span><a class="khnum" href="https://findtreatment.gov" target="_blank" rel="noopener">Search treatment near you<span class="sr-only"> (opens a new page)</span></a><span class="khwhat">Search inpatient, outpatient and telehealth programs.</span></li>
+      <li><span class="khname">The American Boy Project</span><span class="khwhat">A nonprofit led by Megan Megale that helps anyone struggling with addiction, and supports their families through it.</span></li>
+    </ul>
+    <p class="hintline khsoon">A fuller Resources page, with rehabs, ashrams, retreats and meditation centers, is on the way.</p>
+  </div></div>
+</div>
+<div class="sheet-scrim confirm-scrim" id="ka-scrim" hidden>
+  <div class="sheet-wrap"><div class="sheet hidepanel" role="dialog" aria-modal="true" aria-labelledby="ka-title" aria-describedby="ka-text">
+    <h2 id="ka-title" tabindex="-1">About these picks</h2>
+    <p class="hidesub" id="ka-text">We&rsquo;re not here to tell anyone how to think. These are resources that we and people in the Optional community have found interesting, and that might be helpful. They don&rsquo;t speak for the app or for anyone in particular. Take what helps, and leave the rest.</p>
+    <button type="button" class="pbtn hidebtn" id="ka-ok">Got it</button>
+  </div></div>
+</div>
+<div class="sheet-scrim confirm-scrim" id="kw-scrim" hidden>
+  <div class="sheet-wrap"><div class="sheet hidepanel" role="dialog" aria-modal="true" aria-labelledby="kw-title" aria-describedby="kw-text">
+    <h2 id="kw-title" tabindex="-1">Almost there</h2>
+    <p class="hidesub" id="kw-text">To keep this board kind and helpful, pinning opens up once your account is a month old. You&rsquo;ll be able to pin things starting <span id="kw-when"></span>. Until then, enjoy what&rsquo;s here.</p>
+    <button type="button" class="pbtn hidebtn" id="kw-ok">Got it</button>
+  </div></div>
+</div>
+<div class="sheet-scrim" id="kp-scrim" hidden>
+  <div class="sheet-wrap"><div class="sheet wsheet" role="dialog" aria-modal="true" aria-labelledby="kp-title">
+    <div class="shead"><button type="button" class="iconbtn" id="kp-close" aria-label="Close"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <h2 id="kp-title" class="wsheettitle">Pin something</h2>
+    <p class="wnote">One of us looks at every pin before it goes up.</p>
+    <form id="kp-form" novalidate>
+      <div class="field">
+        <label class="flabel" for="kp-t">What is it called?</label>
+        <input type="text" id="kp-t" name="title" maxlength="120" autocomplete="off">
+      </div>
+      <div class="field">
+        <label class="flabel" for="kp-by">Who made it? <span class="hint">(optional)</span></label>
+        <input type="text" id="kp-by" name="by" maxlength="120" autocomplete="off">
+      </div>
+      <fieldset class="field wfs">
+        <legend class="flabel" id="kp-cats-label">Which categories fit? <span class="hint">(pick as many as you like)</span></legend>
+        <div class="fchips moodchips kpcats" id="kp-cats" role="group" aria-labelledby="kp-cats-label"></div>
+      </fieldset>
+      <div class="field">
+        <label class="flabel" for="kp-url">Link <span class="hint">(optional)</span></label>
+        <input type="text" id="kp-url" name="url" inputmode="url" maxlength="500" placeholder="https://" autocomplete="off">
+      </div>
+      <div class="field">
+        <label class="flabel" for="kp-why">Why did it help you?</label>
+        <textarea id="kp-why" name="why" rows="3" maxlength="400"></textarea>
+      </div>
+      <fieldset class="field wfs">
+        <legend class="flabel">How should it be signed?</legend>
+        <label class="radiorow" id="kp-nickrow"><input type="radio" name="who" value="nick" checked> <span>With my nickname, <span id="kp-nickname"></span></span></label>
+        <label class="radiorow"><input type="radio" name="who" value="anon"> Anonymous</label>
+      </fieldset>
+      <p class="error" id="kp-err" role="alert"></p>
+      <div class="actions">
+        <button type="submit" class="startbtn" id="kp-send">Send for review</button>
+      </div>
+    </form>
+  </div></div>
+</div>
+<p class="holdnote wtoast" id="k-toast" role="status" hidden></p>
 
 <!-- Mind Body Connect activity -->
 <div class="sheet-scrim" id="m-scrim" hidden>
@@ -580,7 +688,7 @@
   <div class="sheet-wrap"><div class="sheet wsheet" role="dialog" aria-modal="true" aria-labelledby="s-title">
     <div class="shead"><button type="button" class="iconbtn" id="s-close" aria-label="Close"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <h2 id="s-title" class="wsheettitle">Share</h2>
-    <p class="wnote">Spotted something good? Share it. Posts are anonymous.</p>
+    <p class="wnote">Spotted something good? Share it.</p>
     <form id="s-form" novalidate>
       <div class="field">
         <label class="flabel" for="s-type">What kind of thing is it?</label>
@@ -646,6 +754,11 @@
         <p><strong>Meetups are at your own risk.</strong> Meet in public places, tell someone where you&rsquo;re going, and trust your gut.</p>
         <label class="check" for="s-meetok"><input type="checkbox" id="s-meetok"><span>Got it</span></label>
       </div>
+      <fieldset class="field wfs">
+        <legend class="flabel">How should it be signed?</legend>
+        <label class="radiorow" id="s-nickrow"><input type="radio" name="s-who" value="nick" checked> <span>With my nickname, <span id="s-nickname"></span></span></label>
+        <label class="radiorow"><input type="radio" name="s-who" value="anon"> Anonymous</label>
+      </fieldset>
       <p class="error" id="s-err" role="alert"></p>
       <div class="actions">
         <button type="submit" class="startbtn">Share it</button>
@@ -715,7 +828,7 @@
     <li class="hasmore" data-key="world"><button type="button" data-world>Out in the World</button><button type="button" class="morebtn" data-hide="world" data-name="Out in the World" aria-label="Hide Out in the World"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5c2.4 3.2 5.4 4.8 9 4.8s6.6-1.6 9-4.8"/><path d="M5.6 13.4l-1.6 2.2"/><path d="M9.6 15l-.6 2.7"/><path d="M14.4 15l.6 2.7"/><path d="M18.4 13.4l1.6 2.2"/></svg></button></li>
     <li><button type="button" data-mind>Mind Body Connect</button></li>
     <li class="hasmore" data-key="realtalk"><button type="button" class="soon-btn">Real Talk <span class="soon soonin">soon</span></button><button type="button" class="morebtn" data-hide="realtalk" data-name="Real Talk" aria-label="Hide Real Talk"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5c2.4 3.2 5.4 4.8 9 4.8s6.6-1.6 9-4.8"/><path d="M5.6 13.4l-1.6 2.2"/><path d="M9.6 15l-.6 2.7"/><path d="M14.4 15l.6 2.7"/><path d="M18.4 13.4l1.6 2.2"/></svg></button></li>
-    <li><button type="button" class="soon-btn">Good to Know</button></li>
+    <li><button type="button" data-know>Good to Know</button></li>
     <li><button type="button" class="soon-btn">Settings</button></li>
     <li><button type="button" class="do-logout">Log out</button></li>
   </ul>
@@ -802,12 +915,13 @@
 <script src="quotes.js?v=20261122o"></script>
 <script src="avatars.js?v=20261122o"></script>
 <script src="friends.js?v=20261122o"></script>
-<script src="account.js?v=20261122o"></script>
-<script src="inapp.js?v=20261122o"></script>
-<script src="app.js?v=20261122o"></script>
+<script src="account.js?v=20261126i"></script>
+<script src="inapp.js?v=20261126i"></script>
+<script src="app.js?v=20261126i"></script>
 <script src="dash.js?v=20261122o"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<script src="world.js?v=20261122o"></script>
+<script src="world.js?v=20261126i"></script>
 <script src="mind.js?v=20261122o"></script>
+<script src="know.js?v=20261126i"></script>
 </body>
 </html>

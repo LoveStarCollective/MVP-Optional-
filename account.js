@@ -507,6 +507,31 @@
       }
     },
 
+    // ---------- Good to Know community pins ----------
+    // When the account was made, so the app can say when pinning opens up (the database checks it too).
+    accountCreatedAt: async function(){
+      var res = await getClient().auth.getUser();
+      if (res.error || !res.data || !res.data.user){ throw fail(res.error || new Error('login')); }
+      return res.data.user.created_at;
+    },
+    // Approved pins everyone can see (the database only returns approved ones, plus your own).
+    listPins: async function(){
+      var result = await getClient().from('pins').select('id, title, by, type, url, cats, why, nickname, status, created_at')
+        .eq('status', 'approved').order('created_at', { ascending: false }).limit(300);
+      if (result.error){ throw fail(result.error); }
+      return result.data || [];
+    },
+    // A new pin waits as 'pending' until one of us approves it.
+    addPin: async function(pin){
+      var row = { user_id: userId, title: pin.title, by: pin.by || null, type: pin.type, url: pin.url || null, cats: pin.cats, why: pin.why, nickname: pin.nickname || null };
+      var result = await getClient().from('pins').insert(row);
+      if (result.error){ throw fail(result.error); }
+    },
+    reportPin: async function(id){
+      var result = await getClient().from('pin_reports').insert({ pin_id: id, user_id: userId });
+      if (result.error && result.error.code !== '23505'){ throw fail(result.error); }   // 23505 = already reported
+    },
+
     isLoggedIn: function(){
       return !!dataKey;
     }

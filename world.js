@@ -190,7 +190,7 @@
       html += '<div class="wtags"><span class="wtag type">' + esc(typeLabel(p.type)) + '</span><span class="wtag">' + esc(p.price || p.cost) + '</span>' +
         p.tags.map(function(t){ return '<span class="wtag">' + esc(t) + '</span>'; }).join('') + '</div>';
       if (p.type === 'meetup') html += '<p class="wdisc">Meetups are at your own risk. Meet in public and look out for yourself.</p>';
-      if (p.start) html += '<div class="wpostfoot"><span>Shared anonymously · ' + esc(p.ago || 'just now') + ' · ' + p.still + ' say it’s on</span>' +
+      if (p.start) html += '<div class="wpostfoot"><span>' + (p.nick ? 'Shared by ' + esc(p.nick) : 'Shared anonymously') + ' · ' + esc(p.ago || 'just now') + ' · ' + p.still + ' say it’s on</span>' +
         '<span><button type="button" class="linkbtn w-still">Still on</button><button type="button" class="linkbtn w-report">Report</button></span></div>';
       li.innerHTML = html;
       li.querySelector('.wname').addEventListener('click', function(){ pick(p, true); });
@@ -327,13 +327,19 @@
     var c = here(), cost = document.querySelector('input[name="s-cost"]:checked').value, price = $('s-price').value.trim();
     var tags = Array.prototype.map.call(document.querySelectorAll('#s-form .wfs input[type=checkbox]:checked'), function(i){ return i.value; });
     if (AUTO_TAG[kind] && tags.indexOf(AUTO_TAG[kind]) === -1) tags.push(AUTO_TAG[kind]);
-    var p = { id:'n' + Date.now(), type:type, name:title || kind, kind:kind, where:where, lat:c.lat, lng:c.lng, start:new Date(date + 'T' + time).toISOString(), cost:cost, price:price || '', tags:tags, ago:'just now', still:0 };
+    var p = { id:'n' + Date.now(), type:type, name:title || kind, kind:kind, where:where, lat:c.lat, lng:c.lng, start:new Date(date + 'T' + time).toISOString(), cost:cost, price:price || '', tags:tags, ago:'just now', still:0,
+      nick:(document.querySelector('input[name="s-who"]:checked') || {}).value === 'nick' && window.OptionalApp && OptionalApp.nick ? OptionalApp.nick() : '' };
     posts.unshift(p);
     $('s-form').reset(); $('s-meetup').hidden = true; $('s-otherwrap').hidden = true; $('s-whatwrap').hidden = true;
     closeSheet('s-scrim', 'w-share'); selected = p.id; render();
     toast('Shared. Thanks for putting it out there.');
   });
-  $('w-share').addEventListener('click', function(){ openSheet('s-scrim'); });
+  $('w-share').addEventListener('click', function(){
+    var nick = window.OptionalApp && OptionalApp.nick ? OptionalApp.nick() : '';
+    $('s-nickname').textContent = nick; $('s-nickrow').hidden = !nick;
+    if (!nick){ var an = document.querySelector('input[name="s-who"][value="anon"]'); if (an) an.checked = true; }
+    openSheet('s-scrim');
+  });
   $('s-close').addEventListener('click', function(){ closeSheet('s-scrim', 'w-share'); });
   document.addEventListener('keydown', function(e){ if (e.key !== 'Escape') return; if (!$('f-scrim').hidden) closeSheet('f-scrim', 'w-filter'); if (!$('s-scrim').hidden) closeSheet('s-scrim', 'w-share'); });
 
